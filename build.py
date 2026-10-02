@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import html
+import json
 import pathlib
 import re
 import subprocess
@@ -154,6 +155,96 @@ def render(title: str, body: str, toc: str = "") -> str:
     return page.replace("$body$", body)
 
 
+def write_sw() -> None:
+    """Генерирует sw.js: precache всех страниц/ассетов/документов.
+
+    Имя кэша = хэш содержимого — любая правка (включая перегенерацию
+    зашифрованных docs/) даёт новый кэш и удаление старого на activate.
+    """
+    import hashlib
+
+    files: list[str] = []
+    for p in sorted(ROOT.glob("*.html")):
+        if p.name != "template.html":
+            files.append(p.name)
+    for sub in ("assets", "docs"):
+        for p in sorted((ROOT / sub).rglob("*")):
+            if p.is_file():
+                files.append(p.relative_to(ROOT).as_posix())
+    if (ROOT / "manifest.json").exists():
+        files.append("manifest.json")
+
+    h = hashlib.sha1()
+    for rel in files:
+        h.update(rel.encode())
+        h.update((ROOT / rel).read_bytes())
+    ver = h.hexdigest()[:12]
+
+    assets_js = ",\n  ".join(json.dumps(f, ensure_ascii=False) for f in files)
+    sw = f"""/* Генерируется build.py — не редактировать вручную.
+   Версия кэша (sha1 содержимого): {ver} */
+"use strict";
+var CACHE = "cr-{ver}";
+var ASSETS = [
+  {assets_js}
+];
+
+self.addEventListener("install", function (e) {{
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(function (c) {{ return c.addAll(ASSETS); }})
+      .then(function () {{ return self.skipWaiting(); }})
+  );
+}});
+
+self.addEventListener("activate", function (e) {{
+  e.waitUntil(
+    caches.keys().then(function (keys) {{
+      return Promise.all(keys.filter(function (k) {{ return k !== CACHE; }})
+        .map(function (k) {{ return caches.delete(k); }}));
+    }}).then(function () {{ return self.clients.claim(); }})
+  );
+}});
+
+self.addEventListener("fetch", function (e) {{
+  var req = e.request;
+  if (req.method !== "GET") return;
+  var url = new URL(req.url);
+  // чужие домены (погода, статусы рейсов) — всегда напрямую в сеть
+  if (url.origin !== self.location.origin) return;
+
+  e.respondWith(
+    caches.open(CACHE).then(function (c) {{
+      return c.match(req, {{ ignoreSearch: true }}).then(function (hit) {{
+        if (hit) {{
+          // stale-while-revalidate: отдаём кэш, фоново обновляем
+          if (!url.search) {{
+            fetch(req).then(function (resp) {{
+              if (resp.ok) c.put(req, resp.clone());
+            }}).catch(function () {{}});
+          }}
+          return hit;
+        }}
+        return fetch(req).then(function (resp) {{
+          if (resp.ok && !url.search) c.put(req, resp.clone());
+          return resp;
+        }}).catch(function (err) {{
+          if (req.mode === "navigate") {{
+            return c.match("index.html", {{ ignoreSearch: true }}).then(function (fb) {{
+              return fb || Promise.reject(err);
+            }});
+          }}
+          throw err;
+        }});
+      }});
+    }})
+  );
+}});
+"""
+    (ROOT / "sw.js").write_text(sw, encoding="utf-8")
+    print(f"  sw.js            {len(files)} файлов, кэш cr-{ver}")
+
+
 def main() -> None:
     for md_name, (out, title) in PAGES_MD.items():
         src = SRC_MD / md_name
@@ -175,6 +266,7 @@ def main() -> None:
         (ROOT / out).write_text(render(title, body), encoding="utf-8")
         print(f"  {out:16} ← src/{src_name}")
 
+    write_sw()
     print("done")
 
 

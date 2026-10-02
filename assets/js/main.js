@@ -91,6 +91,41 @@
     paintProgress();
   }
 
+  /* ---------- Service worker: офлайн-кэш (только в браузере) ---------- */
+  if ("serviceWorker" in navigator &&
+      location.protocol.indexOf("http") === 0 &&
+      !window.Capacitor) {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+
+  /* ---------- Тост ---------- */
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "toast";
+      el.setAttribute("role", "status");
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.classList.remove("show"); }, 3200);
+  }
+
+  /* ---------- Внешние ссылки без сети: тост вместо ошибки браузера ---------- */
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+    if (!a || a.target === "_blank") return;
+    var url;
+    try { url = new URL(a.getAttribute("href"), location.href); } catch (err) { return; }
+    if (url.protocol !== "http:" && url.protocol !== "https:") return;
+    if (url.origin !== location.origin && !navigator.onLine) {
+      e.preventDefault();
+      toast("Нет сети — ссылка откроется при подключении");
+    }
+  });
+
   /* ---------- Обратный отсчёт ---------- */
   var cd = document.getElementById("countdown");
   if (cd) {

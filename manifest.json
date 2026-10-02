@@ -1,0 +1,18 @@
+{
+  "name": "Коста-Рика 2026 — личный путеводитель",
+  "short_name": "Коста-Рика",
+  "lang": "ru",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#fdfbf7",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "assets/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
