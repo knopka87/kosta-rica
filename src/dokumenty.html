@@ -1,0 +1,40 @@
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-ico">🔐</div>
+  <h1>Документы</h1>
+  <p>Билеты, бронирования и прочие PDF защищены паролем.<br>Файлы зашифрованы — без пароля они не читаются даже напрямую.</p>
+  <form class="lock-form" id="lockForm" autocomplete="off">
+    <input type="password" id="lockPassword" placeholder="Пароль" autocomplete="current-password" required>
+    <button type="submit">Открыть</button>
+  </form>
+  <div class="lock-err" id="lockErr"></div>
+  <div class="lock-hint">Пароль один на всю страницу. После открытия он живёт до закрытия вкладки.</div>
+</div>
+
+<div class="doc-list" id="docList">
+  <h1>Документы</h1>
+  <p class="chips">
+    <span class="chip ok" id="docCount">7 файлов</span>
+    <span class="chip">PDF · зашифровано AES-256</span>
+    <span class="chip">открываются в новой вкладке</span>
+  </p>
+
+  <div id="docRows"></div>
+
+  <div class="note info">
+    <h4>ℹ️ Что здесь лежит</h4>
+    <p>Все подтверждения по поездке: РЖД (поезда 131 и 070), Turkish Airlines (VKO⇄PTY), Copa Airlines (PTY⇄SJO), Sansa Airlines (SJO⇄LIR), travel plan от «Тривио». Распечатывать не обязательно — достаточно паспорта, но подтверждения пригодятся на границах.</p>
+  </div>
+
+  <div class="note warn">
+    <h4>⚠️ Если забыл пароль</h4>
+    <p>Пароль нигде не хранится в открытом виде — восстановить его из сайта нельзя. Он записан в твоих заметках по поездке.</p>
+  </div>
+
+  <div class="note">
+    <h4>🔒 Как это работает</h4>
+    <p>Сайт статический (GitHub Pages), поэтому «серверной» защиты нет. Вместо этого каждый PDF зашифрован алгоритмом AES-256-GCM, ключ выводится из пароля (PBKDF2, 210 000 итераций) прямо в браузере. Без пароля исходный PDF недоступен ни по какой ссылке.</p>
+  </div>
+
+  <button id="lockBtn" type="button" style="font:inherit;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--ink-mute);border-radius:999px;padding:8px 16px;cursor:pointer">🔒 Закрыть документы</button>
+</div>
+

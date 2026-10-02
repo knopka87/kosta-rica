@@ -1,0 +1,38 @@
+{
+ "arenal.jpg": {
+  "title": "File:Arenal Volcano 01.jpg",
+  "license": "CC0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Bgag\" title=\"User:Bgag\">Bernard Gagnon</a>",
+  "url": "https://commons.wikimedia.org/wiki/File:Arenal_Volcano_01.jpg"
+ },
+ "panama-canal.jpg": {
+  "title": "File:Panama Canal Miraflores Locks.jpg",
+  "license": "CC BY-SA 3.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Stan_Shebs\" title=\"User:Stan Shebs\">User:Stan Shebs</a>",
+  "url": "https://commons.wikimedia.org/wiki/File:Panama_Canal_Miraflores_Locks.jpg"
+ },
+ "casco-viejo.jpg": {
+  "title": "File:Panama Casco Antiguo panorama.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Kruusam%C3%A4gi\" title=\"User:Kruusamägi\">Ivo Kruusamägi</a>",
+  "url": "https://commons.wikimedia.org/wiki/File:Panama_Casco_Antiguo_panorama.jpg"
+ },
+ "conchal.jpg": {
+  "title": "File:Playa Conchal.jpg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Haakon S. Krohn",
+  "url": "https://commons.wikimedia.org/wiki/File:Playa_Conchal.jpg"
+ },
+ "tamarindo-beach.jpg": {
+  "title": "File:Tamarindo, Costa Rica (Unsplash).jpg",
+  "license": "CC0",
+  "artist": "Pablo Robles <a rel=\"nofollow\" class=\"external text\" href=\"https://unsplash.com/@pablorobles\">pablorobles</a>",
+  "url": "https://commons.wikimedia.org/wiki/File:Tamarindo,_Costa_Rica_(Unsplash).jpg"
+ },
+ "tamarindo-street.jpg": {
+  "title": "File:Tamarindo-Guanacaste-Costa Rica.JPG",
+  "license": "CC BY 2.0",
+  "artist": "ReservasdeCoches.com",
+  "url": "https://commons.wikimedia.org/wiki/File:Tamarindo-Guanacaste-Costa_Rica.JPG"
+ }
+}

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Фото и источники · Коста-Рика 2026</title>
+<meta name="description" content="Личный путеводитель: Коста-Рика, 30.10 – 10.11.2026">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-flag">🇨🇷</span>
+      <span class="brand-text">Коста-Рика<small>30.10 – 10.11.2026</small></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="index.html" data-page="index">Главная</a>
+      <a href="marshrut.html" data-page="marshrut">Маршрут</a>
+      <a href="hotel.html" data-page="hotel">Отель и карта</a>
+      <a href="eda.html" data-page="eda">Еда</a>
+      <a href="sbory.html" data-page="sbory">Сборы</a>
+      <a href="pokupki.html" data-page="pokupki">Покупки</a>
+      <a href="pravila.html" data-page="pravila">Правила</a>
+      <a href="lifehacks.html" data-page="lifehacks">Лайфхаки</a>
+      <a href="dokumenty.html" data-page="dokumenty" class="nav-lock">Документы</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page">
+  <main class="prose">
+<h1>Фото и источники</h1>
+<p class="lead">Откуда взяты изображения сайта и какие материалы лежат в его основе.</p>
+
+<h2>Фотографии</h2>
+<p>Все фото — со Wikimedia Commons, свободные лицензии. Атрибуция обязательна, поэтому она дублируется в подписях под снимками.</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Файл</th><th>Автор</th><th>Лицензия</th><th>Источник</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>tamarindo-beach.jpg (главная)</td>
+      <td>Pablo Robles</td>
+      <td>CC0</td>
+      <td><a href="https://commons.wikimedia.org/wiki/File:Tamarindo,_Costa_Rica_(Unsplash).jpg">Wikimedia Commons</a></td>
+    </tr>
+    <tr>
+      <td>conchal.jpg</td>
+      <td>Haakon S. Krohn</td>
+      <td>CC BY-SA 3.0</td>
+      <td><a href="https://commons.wikimedia.org/wiki/File:Playa_Conchal.jpg">Wikimedia Commons</a></td>
+    </tr>
+    <tr>
+      <td>tamarindo-street.jpg</td>
+      <td>ReservasdeCoches.com</td>
+      <td>CC BY 2.0</td>
+      <td><a href="https://commons.wikimedia.org/wiki/File:Tamarindo-Guanacaste-Costa_Rica.JPG">Wikimedia Commons</a></td>
+    </tr>
+    <tr>
+      <td>arenal.jpg</td>
+      <td>Bernard Gagnon</td>
+      <td>CC0</td>
+      <td><a href="https://commons.wikimedia.org/wiki/File:Arenal_Volcano_01.jpg">Wikimedia Commons</a></td>
+    </tr>
+    <tr>
+      <td>casco-viejo.jpg</td>
+      <td>Ivo Kruusamägi</td>
+      <td>CC BY-SA 4.0</td>
+      <td><a href="https://commons.wikimedia.org/wiki/File:Panama_Casco_Antiguo_panorama.jpg">Wikimedia Commons</a></td>
+    </tr>
+    <tr>
+      <td>panama-canal.jpg</td>
+      <td>Stan Shebs</td>
+      <td>CC BY-SA 3.0</td>
+      <td><a href="https://commons.wikimedia.org/wiki/File:Panama_Canal_Miraflores_Locks.jpg">Wikimedia Commons</a></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Схемы и карты</h2>
+<p>Карта отеля и окрестностей (<code>map-hotel.svg</code>) и схема маршрута (<code>route-map.svg</code>) нарисованы вручную как условные пояснительные схемы: <strong>не в масштабе</strong>, расстояния и время — из билетов и плана поездки.</p>
+
+<h2>Текстовые материалы</h2>
+<p>Весь контент сайта собран из личных заметок по поездке:</p>
+<ul>
+  <li><code>plan-poezdki.md</code> — план, билеты, тайминги, инструкции</li>
+  <li><code>eda.md</code> — еда по датам, рестораны, список продуктов в поезд</li>
+  <li><code>packing-list.md</code> — сборы</li>
+  <li><code>chto-kupit.md</code> — покупки и дьюти-фри</li>
+  <li><code>pravila-zakony.md</code> — правила, законы, безопасность</li>
+  <li><code>lifehacks.md</code> — лайфхаки и описание отеля</li>
+</ul>
+
+<h2>Как это работает</h2>
+<ul>
+  <li>Статический сайт (HTML/CSS/JS), собирается скриптом <code>build.py</code> через pandoc.</li>
+  <li>Отметки в чек-лисах хранятся в localStorage браузера — на сайте сервера нет.</li>
+  <li>PDF в разделе «Документы» зашифрованы AES-256-GCM; пароль выводит ключ в браузере.</li>
+</ul>
+
+  </main>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <strong>Пura Vida · личный путеводитель</strong><br>
+      Поездка 30.10 – 10.11.2026 · Киров → Москва → Стамбул → Панама → Коста-Рика
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Главная</a>
+      <a href="marshrut.html">Маршрут</a>
+      <a href="dokumenty.html">Документы</a>
+      <a href="credits.html">Фото и источники</a>
+    </div>
+  </div>
+</footer>
+
+<div class="totop" id="totop" role="button" aria-label="Наверх">↑</div>
+<script src="assets/js/docs.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

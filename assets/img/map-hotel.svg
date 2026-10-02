@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#0e7490"/>
+    </linearGradient>
+    <linearGradient id="land" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7f2e8"/>
+      <stop offset="1" stop-color="#efe7d8"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- земля -->
+  <rect width="960" height="660" fill="url(#land)"/>
+
+  <!-- океан -->
+  <path d="M0,0 H175 Q205,80 175,160 Q145,240 180,330 Q215,420 178,510 Q150,590 185,660 H0 Z" fill="url(#sea)"/>
+  <g stroke="#ffffff" stroke-opacity=".55" fill="none" stroke-width="3" stroke-linecap="round">
+    <path d="M30,120 q18,-12 36,0 t36,0"/>
+    <path d="M60,260 q18,-12 36,0 t36,0"/>
+    <path d="M35,400 q18,-12 36,0 t36,0"/>
+    <path d="M70,540 q18,-12 36,0 t36,0"/>
+  </g>
+  <text x="86" y="340" fill="#ffffff" font-size="17" font-weight="700" letter-spacing="2" transform="rotate(-90 86 340)" text-anchor="middle">OCÉANO PACÍFICO · ТИХИЙ ОКЕАН</text>
+
+  <!-- пляж -->
+  <path d="M175,0 Q205,80 175,160 Q145,240 180,330 Q215,420 178,510 Q150,590 185,660 H262 Q235,590 262,510 Q295,420 258,330 Q225,240 262,160 Q292,80 262,0 Z" fill="#f5e6c8"/>
+  <text x="222" y="500" fill="#8a7448" font-size="14" font-weight="700" letter-spacing="1" transform="rotate(-90 222 500)" text-anchor="middle">PLAYA TAMARINDO</text>
+
+  <!-- дорога в LIR (сверху) -->
+  <path d="M440,250 V70 H690" stroke="#94a3b8" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M440,250 V70 H690" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="10 10" fill="none"/>
+  <rect x="452" y="10" width="496" height="46" rx="10" fill="#ffffff" stroke="#e7e0d3"/>
+  <text x="470" y="29" font-size="14" font-weight="700" fill="#0f766e">↑ Ruta 185 → Аэропорт LIR (Либерия)</text>
+  <text x="470" y="47" font-size="13" fill="#44403c">60 км · 45–60 мин · трансфер 06.11 выезд в 05:00</text>
+
+  <!-- дорога в SJO (внизу) -->
+  <path d="M440,450 V612 H930" stroke="#94a3b8" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M440,450 V612 H930" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="10 10" fill="none"/>
+  <rect x="470" y="556" width="478" height="46" rx="10" fill="#ffffff" stroke="#e7e0d3"/>
+  <text x="488" y="575" font-size="14" font-weight="700" fill="#0f766e">↓ Ruta 27 → Сан-Хосе (SJO)</text>
+  <text x="488" y="593" font-size="13" fill="#44403c">370–400 км · ~4 часа (в дождь 4.5)</text>
+
+  <!-- главная улица -->
+  <rect x="662" y="60" width="34" height="480" rx="14" fill="#e2e0db" stroke="#cbd5e1"/>
+  <text x="679" y="340" font-size="13" font-weight="800" fill="#57534e" letter-spacing="1.5" transform="rotate(-90 679 340)" text-anchor="middle">AVENIDA TAMARINDO · ГЛАВНАЯ УЛИЦА</text>
+
+  <!-- тропинка отеля к улице -->
+  <path d="M596,340 H656" stroke="#0f766e" stroke-width="3" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+  <text x="626" y="328" font-size="12.5" font-weight="700" fill="#0f766e" text-anchor="middle">5–10 мин</text>
+
+  <!-- отель -->
+  <rect x="290" y="250" width="306" height="200" rx="18" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+  <rect x="290" y="250" width="306" height="44" rx="18" fill="#0f766e"/>
+  <rect x="290" y="282" width="306" height="12" fill="#0f766e"/>
+  <text x="443" y="279" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle">OCCIDENTAL TAMARINDO 4★</text>
+  <text x="443" y="315" font-size="14" font-weight="700" fill="#115e59" text-anchor="middle">All Inclusive · закрытая территория</text>
+  <ellipse cx="368" cy="366" rx="56" ry="26" fill="#7dd3fc" stroke="#0ea5e9"/>
+  <ellipse cx="512" cy="374" rx="44" ry="21" fill="#38bdf8" stroke="#0ea5e9"/>
+  <text x="368" y="371" font-size="11" fill="#075985" text-anchor="middle">бассейн</text>
+  <text x="512" y="378" font-size="10" fill="#075985" text-anchor="middle">бассейн</text>
+  <rect x="312" y="408" width="126" height="30" rx="8" fill="#fde68a"/>
+  <text x="375" y="428" font-size="13" font-weight="700" fill="#854d0e" text-anchor="middle">Ресторан (3 × в день)</text>
+  <rect x="450" y="408" width="126" height="30" rx="8" fill="#fecaca"/>
+  <text x="513" y="428" font-size="13" font-weight="700" fill="#991b1b" text-anchor="middle">Бар · снеки</text>
+
+  <!-- выход на пляж -->
+  <path d="M286,350 H262" stroke="#0f766e" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="274" y="338" font-size="12.5" font-weight="700" fill="#0f766e" text-anchor="middle">на пляж</text>
+
+  <!-- POI на главной улице -->
+  <g font-size="14">
+    <g>
+      <rect x="712" y="72" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="91" font-weight="700" fill="#1c1917">🍽 Sodas · Menu del Día</text>
+      <text x="726" y="108" fill="#78716c" font-size="12.5">домашняя еда, $5–8</text>
+    </g>
+    <g>
+      <rect x="712" y="128" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="147" font-weight="700" fill="#1c1917">🛒 Tienda · магазин</text>
+      <text x="726" y="164" fill="#78716c" font-size="12.5">вода, пиво, снеки, $1–5</text>
+    </g>
+    <g>
+      <rect x="712" y="184" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="203" font-weight="700" fill="#1c1917">🏧 ATM · наличные</text>
+      <text x="726" y="220" fill="#78716c" font-size="12.5">комиссия ~$5, снимать крупно</text>
+    </g>
+    <g>
+      <rect x="712" y="240" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="259" font-weight="700" fill="#1c1917">🥖 Panadería · пекарня</text>
+      <text x="726" y="276" fill="#78716c" font-size="12.5">завтрак на вынос, $1–3</text>
+    </g>
+    <g>
+      <rect x="712" y="296" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="315" font-weight="700" fill="#1c1917">🛒 Supermarket</text>
+      <text x="726" y="332" fill="#78716c" font-size="12.5">продукты, фрукты, вода</text>
+    </g>
+    <g>
+      <rect x="712" y="352" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="371" font-weight="700" fill="#1c1917">🍺 Бары · cervecerías</text>
+      <text x="726" y="388" fill="#78716c" font-size="12.5">пиво $2–3, музыка пт/сб</text>
+    </g>
+    <g>
+      <rect x="712" y="408" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="427" font-weight="700" fill="#1c1917">🏄 Сёрфинг · уроки</text>
+      <text x="726" y="444" fill="#78716c" font-size="12.5">$30–50, доска в аренду $10–15</text>
+    </g>
+    <g>
+      <rect x="712" y="464" width="234" height="44" rx="10" fill="#fff" stroke="#e7e0d3"/>
+      <text x="726" y="483" font-weight="700" fill="#9a3412">🚕 Такси</text>
+      <text x="726" y="500" fill="#78716c" font-size="12.5">цена ДО поездки, таксометра нет</text>
+    </g>
+  </g>
+
+  <!-- точки-привязки POI к улице -->
+  <g stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 5">
+    <path d="M696,94 H712"/><path d="M696,150 H712"/><path d="M696,206 H712"/><path d="M696,262 H712"/>
+    <path d="M696,318 H712"/><path d="M696,374 H712"/><path d="M696,430 H712"/><path d="M696,486 H712"/>
+  </g>
+
+  <!-- рядом -->
+  <rect x="256" y="66" width="176" height="60" rx="10" fill="#ffffff" stroke="#e7e0d3"/>
+  <text x="270" y="88" font-size="13.5" font-weight="700" fill="#1c1917">🌴 Мангровы · каякинг</text>
+  <text x="270" y="107" font-size="12.5" fill="#78716c">15 мин на такси</text>
+
+  <rect x="256" y="500" width="176" height="60" rx="10" fill="#ffffff" stroke="#e7e0d3"/>
+  <text x="270" y="522" font-size="13.5" font-weight="700" fill="#1c1917">🐚 Playa Conchal</text>
+  <text x="270" y="541" font-size="12.5" fill="#78716c">10 мин на такси</text>
+
+  <!-- компас -->
+  <g transform="translate(84,74)">
+    <circle r="30" fill="#ffffff" fill-opacity=".92" stroke="#e7e0d3"/>
+    <path d="M0,-19 L7,6 L0,1 L-7,6 Z" fill="#f97316"/>
+    <text y="-34" font-size="14" font-weight="800" fill="#1c1917" text-anchor="middle">С</text>
+  </g>
+
+  <!-- легенда -->
+  <g transform="translate(18,556)">
+    <rect width="234" height="92" rx="12" fill="#ffffff" fill-opacity=".95" stroke="#e7e0d3"/>
+    <text x="14" y="24" font-size="12.5" font-weight="800" fill="#57534e" letter-spacing="1">ЛЕГЕНДА</text>
+    <rect x="14" y="34" width="16" height="12" rx="3" fill="#0f766e"/><text x="38" y="44" font-size="12.5" fill="#44403c">отель</text>
+    <rect x="94" y="34" width="16" height="12" rx="3" fill="#7dd3fc"/><text x="118" y="44" font-size="12.5" fill="#44403c">бассейн</text>
+    <rect x="14" y="54" width="16" height="12" rx="3" fill="#f5e6c8"/><text x="38" y="64" font-size="12.5" fill="#44403c">пляж</text>
+    <rect x="94" y="54" width="16" height="12" rx="3" fill="#94a3b8"/><text x="118" y="64" font-size="12.5" fill="#44403c">дорога</text>
+    <text x="14" y="84" font-size="11.5" fill="#78716c">схема условная, не в масштабе</text>
+  </g>
+</svg>

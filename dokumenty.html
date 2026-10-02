@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Документы · Коста-Рика 2026</title>
+<meta name="description" content="Личный путеводитель: Коста-Рика, 30.10 – 10.11.2026">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-flag">🇨🇷</span>
+      <span class="brand-text">Коста-Рика<small>30.10 – 10.11.2026</small></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="index.html" data-page="index">Главная</a>
+      <a href="marshrut.html" data-page="marshrut">Маршрут</a>
+      <a href="hotel.html" data-page="hotel">Отель и карта</a>
+      <a href="eda.html" data-page="eda">Еда</a>
+      <a href="sbory.html" data-page="sbory">Сборы</a>
+      <a href="pokupki.html" data-page="pokupki">Покупки</a>
+      <a href="pravila.html" data-page="pravila">Правила</a>
+      <a href="lifehacks.html" data-page="lifehacks">Лайфхаки</a>
+      <a href="dokumenty.html" data-page="dokumenty" class="nav-lock">Документы</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="page">
+  <main class="prose">
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-ico">🔐</div>
+  <h1>Документы</h1>
+  <p>Билеты, бронирования и прочие PDF защищены паролем.<br>Файлы зашифрованы — без пароля они не читаются даже напрямую.</p>
+  <form class="lock-form" id="lockForm" autocomplete="off">
+    <input type="password" id="lockPassword" placeholder="Пароль" autocomplete="current-password" required>
+    <button type="submit">Открыть</button>
+  </form>
+  <div class="lock-err" id="lockErr"></div>
+  <div class="lock-hint">Пароль один на всю страницу. После открытия он живёт до закрытия вкладки.</div>
+</div>
+
+<div class="doc-list" id="docList">
+  <h1>Документы</h1>
+  <p class="chips">
+    <span class="chip ok" id="docCount">7 файлов</span>
+    <span class="chip">PDF · зашифровано AES-256</span>
+    <span class="chip">открываются в новой вкладке</span>
+  </p>
+
+  <div id="docRows"></div>
+
+  <div class="note info">
+    <h4>ℹ️ Что здесь лежит</h4>
+    <p>Все подтверждения по поездке: РЖД (поезда 131 и 070), Turkish Airlines (VKO⇄PTY), Copa Airlines (PTY⇄SJO), Sansa Airlines (SJO⇄LIR), travel plan от «Тривио». Распечатывать не обязательно — достаточно паспорта, но подтверждения пригодятся на границах.</p>
+  </div>
+
+  <div class="note warn">
+    <h4>⚠️ Если забыл пароль</h4>
+    <p>Пароль нигде не хранится в открытом виде — восстановить его из сайта нельзя. Он записан в твоих заметках по поездке.</p>
+  </div>
+
+  <div class="note">
+    <h4>🔒 Как это работает</h4>
+    <p>Сайт статический (GitHub Pages), поэтому «серверной» защиты нет. Вместо этого каждый PDF зашифрован алгоритмом AES-256-GCM, ключ выводится из пароля (PBKDF2, 210 000 итераций) прямо в браузере. Без пароля исходный PDF недоступен ни по какой ссылке.</p>
+  </div>
+
+  <button id="lockBtn" type="button" style="font:inherit;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--ink-mute);border-radius:999px;padding:8px 16px;cursor:pointer">🔒 Закрыть документы</button>
+</div>
+
+
+  </main>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <strong>Пura Vida · личный путеводитель</strong><br>
+      Поездка 30.10 – 10.11.2026 · Киров → Москва → Стамбул → Панама → Коста-Рика
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Главная</a>
+      <a href="marshrut.html">Маршрут</a>
+      <a href="dokumenty.html">Документы</a>
+      <a href="credits.html">Фото и источники</a>
+    </div>
+  </div>
+</footer>
+
+<div class="totop" id="totop" role="button" aria-label="Наверх">↑</div>
+<script src="assets/js/docs.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 856" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="856" rx="16" fill="#fdfbf7"/>
+
+  <!-- заголовки колонок -->
+  <rect x="10" y="12" width="455" height="34" rx="10" fill="#0f766e"/>
+  <text x="237" y="35" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle">🚆 ✈️ ТУДА · 30.10 – 01.11</text>
+  <rect x="495" y="12" width="455" height="34" rx="10" fill="#115e59"/>
+  <text x="722" y="35" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle">✈️ 🚆 ОБРАТНО · 06.11 – 10.11</text>
+
+  <!-- ============ ТУДА ============ -->
+  <g>
+    <!-- 1 -->
+    <rect x="10" y="58" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="10" y="58" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="84" font-size="15" font-weight="800" fill="#1c1917">🚄 Киров-Пасс</text>
+    <text x="30" y="106" font-size="13" fill="#78716c">поезд 131, вагон 06, купе, нижнее · 13 ч 22 мин</text>
+    <text x="448" y="84" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">30.10 07:27</text>
+
+    <path d="M60,118 V152" stroke="#0f766e" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="78" y="141" font-size="13" fill="#44403c">🚇 прибытие Восточный 20:49 → Внуково (метро ~70 мин)</text>
+
+    <!-- 2 -->
+    <rect x="10" y="156" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="10" y="156" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="182" font-size="15" font-weight="800" fill="#1c1917">✈️ Москва, Внуково (VKO)</text>
+    <text x="30" y="204" font-size="13" fill="#78716c">терминал A · быть к 01:00 · ночь = самое тяжёлое окно</text>
+    <text x="448" y="182" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">31.10 02:40</text>
+
+    <path d="M60,216 V250" stroke="#0f766e" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="78" y="239" font-size="13" fill="#44403c">✈️ TK 422 (A321) · 4 ч 15 мин</text>
+
+    <!-- 3 -->
+    <rect x="10" y="254" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="10" y="254" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="280" font-size="15" font-weight="800" fill="#1c1917">✈️ Стамбул IST</text>
+    <text x="30" y="302" font-size="13" fill="#78716c">пересадка 6 ч 55 мин — основное окно для сна (lounge)</text>
+    <text x="448" y="280" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">06:55</text>
+
+    <path d="M60,314 V348" stroke="#0f766e" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="78" y="337" font-size="13" fill="#44403c">✈️ TK 903 (A350) · 14 ч 15 мин · багаж до Панамы</text>
+
+    <!-- 4 -->
+    <rect x="10" y="352" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="10" y="352" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="378" font-size="15" font-weight="800" fill="#1c1917">🛬 Панама, Токумен (PTY)</text>
+    <text x="30" y="400" font-size="13" fill="#78716c">таможня, багаж, отель · ночь UTC−5</text>
+    <text x="448" y="378" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">31.10 20:05</text>
+
+    <path d="M60,412 V446" stroke="#0f766e" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="78" y="435" font-size="13" fill="#44403c">✈️ CM 342 · 1 ч 23 мин (вылет 01.11 13:28)</text>
+
+    <!-- 5 -->
+    <rect x="10" y="450" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="10" y="450" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="476" font-size="15" font-weight="800" fill="#1c1917">🛬 Сан-Хосе (SJO) — окно 2 ч</text>
+    <text x="30" y="498" font-size="13" fill="#78716c">багаж с ленты, 📸 duty free, сдача на Sansa к 15:15</text>
+    <text x="448" y="476" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">01.11 13:51</text>
+
+    <path d="M60,510 V544" stroke="#0f766e" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="78" y="533" font-size="13" fill="#44403c">✈️ RZ 1076 (Sansa) · 50 мин · багаж 13 кг!</text>
+
+    <!-- 6 -->
+    <rect x="10" y="548" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="10" y="548" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="574" font-size="15" font-weight="800" fill="#1c1917">🛬 Либерия (LIR)</text>
+    <text x="30" y="596" font-size="13" fill="#78716c">Гуанакасте · трансфер из аэропорта в Тамариндо</text>
+    <text x="448" y="574" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">01.11 16:50</text>
+
+    <path d="M60,608 V642" stroke="#0f766e" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="78" y="631" font-size="13" fill="#44403c">🚗 трансфер ~1 час (60 км, 45–60 мин)</text>
+
+    <!-- 7 -->
+    <rect x="10" y="646" width="455" height="60" rx="12" fill="#eafaf6" stroke="#0f766e" stroke-width="2"/>
+    <rect x="10" y="646" width="6" height="60" rx="3" fill="#0f766e"/>
+    <text x="30" y="672" font-size="15" font-weight="800" fill="#0f766e">🏨 Тамариндо · Occidental 4★</text>
+    <text x="30" y="694" font-size="13" fill="#44403c">All Inclusive · командировка и туры · 5 ночей</text>
+    <text x="448" y="672" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">01.11 ~18:30</text>
+
+    <path d="M60,706 V740" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 6"/>
+    <text x="78" y="729" font-size="13" fill="#78716c">02–05.11 — рабочие дни, закаты, sodas</text>
+
+    <!-- 8 -->
+    <rect x="10" y="744" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3" stroke-dasharray="6 5"/>
+    <rect x="10" y="744" width="6" height="60" rx="3" fill="#f97316"/>
+    <text x="30" y="770" font-size="15" font-weight="800" fill="#1c1917">☀️ 06.11 — начало обратного пути</text>
+    <text x="30" y="792" font-size="13" fill="#78716c">выезд 05:00, breakfast box, багаж строго 13 кг!</text>
+    <text x="448" y="770" font-size="14" font-weight="800" fill="#f97316" text-anchor="end">05:00</text>
+  </g>
+
+  <!-- ============ ОБРАТНО ============ -->
+  <g>
+    <rect x="495" y="58" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3" stroke-dasharray="6 5"/>
+    <rect x="495" y="58" width="6" height="60" rx="3" fill="#115e59"/>
+    <text x="515" y="84" font-size="15" font-weight="800" fill="#1c1917">☀️ Тамариндо → дорога</text>
+    <text x="515" y="106" font-size="13" fill="#78716c">выезд из отеля 05:00, ~60 км, 45–60 мин</text>
+    <text x="933" y="84" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">06.11 05:00</text>
+
+    <path d="M545,118 V152" stroke="#115e59" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="563" y="141" font-size="13" fill="#44403c">🚕 такси/shuttle → аэропорт Либерии, к 06:00</text>
+
+    <rect x="495" y="156" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="495" y="156" width="6" height="60" rx="3" fill="#dc2626"/>
+    <text x="515" y="182" font-size="15" font-weight="800" fill="#1c1917">✈️ Либерия (LIR) → Сан-Хосе</text>
+    <text x="515" y="204" font-size="13" fill="#dc2626">Sansa RZ 1073 · маленький самолёт · багаж 13 кг!</text>
+    <text x="933" y="182" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">07:30 → 08:20</text>
+
+    <path d="M545,216 V250" stroke="#115e59" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="563" y="239" font-size="13" fill="#44403c">⏳ ожидание 6 ч 26 мин + ✈️ CM 343 · 1 ч 26 мин</text>
+
+    <rect x="495" y="254" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="495" y="254" width="6" height="60" rx="3" fill="#115e59"/>
+    <text x="515" y="280" font-size="15" font-weight="800" fill="#1c1917">🛬 Панама (PTY) — сутки!</text>
+    <text x="515" y="302" font-size="13" fill="#78716c">Casco Viejo, Панамский канал, отель (бронь!)</text>
+    <text x="933" y="280" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">06.11 17:12</text>
+
+    <path d="M545,314 V348" stroke="#115e59" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="563" y="337" font-size="13" fill="#44403c">✈️ TK 904 (A350) · 12 ч 45 мин · ужин + завтрак</text>
+
+    <rect x="495" y="352" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="495" y="352" width="6" height="60" rx="3" fill="#115e59"/>
+    <text x="515" y="378" font-size="15" font-weight="800" fill="#1c1917">✈️ Стамбул IST</text>
+    <text x="515" y="400" font-size="13" fill="#78716c">пересадка 6 ч 35 мин · дьюти-фри — только ручная</text>
+    <text x="933" y="378" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">08.11 18:45</text>
+
+    <path d="M545,412 V446" stroke="#115e59" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="563" y="435" font-size="13" fill="#44403c">✈️ TK 407 (A321) · 4 ч</text>
+
+    <rect x="495" y="450" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="495" y="450" width="6" height="60" rx="3" fill="#115e59"/>
+    <text x="515" y="476" font-size="15" font-weight="800" fill="#1c1917">🛬 Москва, Внуково (VKO)</text>
+    <text x="515" y="498" font-size="13" fill="#78716c">8 часов в Москве: камера хранения, завтрак, город</text>
+    <text x="933" y="476" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">09.11 05:20</text>
+
+    <path d="M545,510 V544" stroke="#115e59" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="563" y="533" font-size="13" fill="#44403c">🚇 метро ~70 мин до Ярославского вокзала</text>
+
+    <rect x="495" y="548" width="455" height="60" rx="12" fill="#fff" stroke="#e7e0d3"/>
+    <rect x="495" y="548" width="6" height="60" rx="3" fill="#115e59"/>
+    <text x="515" y="574" font-size="15" font-weight="800" fill="#1c1917">🚆 Москва-Ярославская</text>
+    <text x="515" y="596" font-size="13" fill="#78716c">поезд 070, вагон 03, купе, нижнее · к поезду 12:50</text>
+    <text x="933" y="574" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">09.11 13:20</text>
+
+    <path d="M545,608 V642" stroke="#115e59" stroke-width="3" marker-end="url(#ar)"/>
+    <text x="563" y="631" font-size="13" fill="#44403c">🚆 15 ч 47 мин · ужин включён · 1 ночь</text>
+
+    <rect x="495" y="646" width="455" height="60" rx="12" fill="#eafaf6" stroke="#0f766e" stroke-width="2"/>
+    <rect x="495" y="646" width="6" height="60" rx="3" fill="#0f766e"/>
+    <text x="515" y="672" font-size="15" font-weight="800" fill="#0f766e">🏠 Киров-Пасс — дома</text>
+    <text x="515" y="694" font-size="13" fill="#44403c">12 дней от Кирова до Кирова · 4 страны</text>
+    <text x="933" y="672" font-size="14" font-weight="800" fill="#0f766e" text-anchor="end">10.11 05:07</text>
+  </g>
+
+  <text x="480" y="834" font-size="12.5" fill="#78716c" text-anchor="middle">Схема маршрута · местное время · билеты на разные PNR — багаж между авиакомпаниями не пересылается</text>
+</svg>
