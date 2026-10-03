@@ -1,0 +1,314 @@
+/* Коста-Рика 2026 — компоненты страницы этапа.
+ *
+ * Отдельный файл, а не дописка в style.css: эти классы генерирует build.py
+ * из trip.json, и правятся они вместе с ним. Токены берём из style.css.
+ *
+ * Правило, из-за которого файл вообще появился: разметка без стилей — это
+ * сломанная страница. Каждый класс, который печатает build.py, описан здесь.
+ */
+
+/* --- общий блок этапа --- */
+
+.step-block {
+  margin: 0 0 28px;
+}
+
+.step-block > h2 {
+  font-size: clamp(18px, 2.4vw, 22px);
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--line);
+}
+
+.step-block-hint {
+  margin: 8px 0 14px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.step-block-hint a { font-weight: 600; }
+
+/* --- «Что сделать» и «Подготовить к следующему» --- */
+
+.acts {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  /* 14px по вертикали даёт ≥48px на строку даже у однострочного пункта:
+     попадать пальцем на ходу важнее компактности */
+  padding: 14px 14px 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+.act:last-child { border-bottom: 0; }
+
+.act-at {
+  flex: 0 0 auto;
+  min-width: 52px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--jungle-700);
+  font-size: 15px;
+}
+
+.act-text { flex: 1 1 240px; }
+
+.act.critical .act-text { font-weight: 600; }
+
+.act.critical {
+  padding-left: 14px;
+  border-left: 4px solid var(--warn);
+  background: linear-gradient(90deg, rgba(220, 38, 38, .06), transparent 60%);
+}
+
+.pn-for {
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  background: var(--sand-100);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+/* Чекбоксы приходят из editable-list.js — выравниваем под .act */
+.editable-list .acts .act { padding-right: 0; }
+
+/* --- «Что может понадобиться» --- */
+
+.need-list {
+  margin: 14px 0 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+}
+
+.need-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 30%) 1fr;
+  gap: 0 18px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.need-row:last-child { border-bottom: 0; }
+.need-row:nth-child(odd) { background: var(--sand-50); }
+
+.need-row dt {
+  margin: 0;
+  font-weight: 650;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+}
+
+.need-row dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .need-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .need-row dt { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+}
+
+/* --- таймлайн этапа --- */
+
+.timeline {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.tl-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.tl-row:last-child { border-bottom: 0; }
+
+.tl-time {
+  flex: 0 0 auto;
+  min-width: 56px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--jungle-700);
+}
+
+.t-home {
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+
+.tl-main { display: flex; flex-direction: column; gap: 2px; }
+.tl-title { font-size: 15.5px; font-weight: 600; }
+.tl-route, .tl-num { font-size: 13.5px; color: var(--ink-soft); }
+
+/* --- план Б --- */
+
+.plan-b-list {
+  margin: 14px 0 0;
+  padding: 14px 16px 14px 34px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--coral);
+  border-radius: var(--radius);
+  background: var(--coral-soft);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.plan-b-list li + li { margin-top: 10px; }
+
+/* --- задачи подготовки с дедлайнами --- */
+
+.tasks { list-style: none; margin: 14px 0 0; padding: 0; }
+
+.task {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.task:last-child { border-bottom: 0; }
+
+.task-due {
+  flex: 0 0 auto;
+  min-width: 104px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--jungle-700);
+}
+
+.task.critical .task-due { color: var(--warn); }
+
+.task-main { flex: 1 1 260px; display: flex; flex-direction: column; gap: 5px; }
+.task-title { font-size: 16px; font-weight: 650; line-height: 1.35; }
+.task-note { font-size: 14.5px; line-height: 1.55; color: var(--ink-soft); }
+
+.task-why {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-mute);
+  padding-left: 11px;
+  border-left: 3px solid var(--line);
+}
+
+/* --- сколько наличных брать --- */
+
+.cash-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.cash-table th, .cash-table td { padding: 11px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+.cash-table thead th { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
+.cash-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 650; }
+.cash-table .cash-note { color: var(--ink-soft); font-size: 13.5px; line-height: 1.45; }
+.cash-table tfoot th { font-size: 16px; border-bottom: 0; border-top: 2px solid var(--line); }
+
+@media (max-width: 560px) {
+  .cash-table .cash-note { display: none; }
+}
+
+/* --- справочные разделы в аккордеонах --- */
+
+.det {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  margin: 0 0 8px;
+}
+
+.det > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  /* 48px — нижняя граница комфортного тач-таргета на ходу */
+  min-height: 48px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15.5px;
+  border-radius: var(--radius);
+  list-style: none;
+}
+
+.det > summary::-webkit-details-marker { display: none; }
+
+.det > summary::after {
+  content: "▾";
+  margin-left: auto;
+  color: var(--ink-mute);
+  transition: transform .15s ease;
+}
+
+.det[open] > summary::after { transform: rotate(180deg); }
+.det[open] > summary { border-bottom: 1px solid var(--line); border-radius: var(--radius) var(--radius) 0 0; }
+
+.det > summary:focus-visible { outline: 2px solid var(--jungle-600); outline-offset: 2px; }
+
+.det-src {
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--ink-mute);
+  background: var(--sand-100);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+.det-body { padding: 4px 16px 16px; }
+.det-body > :first-child { margin-top: 12px; }
+
+/* Внутри аккордеона заголовки раздела не должны спорить с h2 страницы */
+.det-body h1, .det-body h2 { font-size: 17px; margin-top: 20px; }
+.det-body h3 { font-size: 15.5px; }
+
+/* --- оглавление этапов --- */
+
+.step-count {
+  font-size: 12.5px;
+  color: var(--ink-mute);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .det > summary::after { transition: none; }
+}
+
+@media (prefers-color-scheme: dark) {
+  .need-row:nth-child(odd) { background: rgba(255, 255, 255, .03); }
+  .pn-for, .det-src { background: var(--sand-200); color: var(--ink-soft); }
+  .plan-b-list { background: var(--coral-soft); }
+  .act.critical { background: linear-gradient(90deg, rgba(248, 113, 113, .12), transparent 60%); }
+  .task-why { border-left-color: var(--sand-200); }
+}
+
+@media print {
+  /* Закрытый <details> браузер на печать не раскрывает — раскрываем сами.
+     Иначе распечатка этапа теряет всю справочную часть. */
+  .det { border: 0; padding: 0; }
+  .det > summary { font-size: 16px; padding: 10px 0; }
+  .det > summary::after { content: none; }
+  .det-body { padding: 0; }
+  .det:not([open]) > .det-body { display: block; }
+  .det[open] > summary { border-bottom: 0; }
+}

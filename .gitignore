@@ -1,6 +1,7 @@
 # Секреты и временные артефакты сборки
 .tmp-secret/
 .env
+.scratch/
 
 # Веб-сборка для Capacitor
 www/

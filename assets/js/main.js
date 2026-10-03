@@ -100,8 +100,12 @@
     wrap.appendChild(label);
     wrap.appendChild(track);
     wrap.appendChild(reset);
-    var firstList = boxes[0] && boxes[0].closest("ul, ol");
-    prose.insertBefore(wrap, firstList || prose.firstChild);
+    /* Список может лежать сколь угодно глубоко — например, внутри
+       <details> на странице этапа. insertBefore принимает только прямого
+       потомка, поэтому поднимаемся до него. */
+    var anchor = boxes[0] && boxes[0].closest("ul, ol");
+    while (anchor && anchor.parentNode !== prose) anchor = anchor.parentNode;
+    prose.insertBefore(wrap, anchor || prose.firstChild);
     paintProgress();
   }
 

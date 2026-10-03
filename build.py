@@ -214,151 +214,334 @@ def add_list_ids(body: str) -> str:
 
 
 # --- этапы маршрута (пошаговый путеводитель) ---------------------------------
+#
+# Единственный источник правды по маршруту — trip.json (генерируется
+# tools/gen_trip.py). Здесь он только читается: раньше рядом жили ещё два
+# ручных списка (STEPS и CALENDAR_EVENTS) с теми же рейсами, и они разошлись.
 
-# dateStart/dateEnd — ISO-даты (None = без границы); after/until — HH:MM,
-# уточняют границу первого/последнего дня (текущий этап = последний подходящий).
-STEPS: list[dict] = [
-    {"id": "prep", "num": 0, "icon": "🧳", "title": "Подготовка к поездке",
-     "dateStart": None, "dateEnd": "2026-10-29", "dateLabel": "до 29 октября",
-     "place": "Киров", "summary": "Документы, билеты, сборы, дела, деньги, связь, аптечка и чек-листы — всё, что делаем до отъезда."},
-    {"id": "train-msk", "num": 1, "icon": "🚆", "title": "Поезд Киров → Москва",
-     "dateStart": "2026-10-30", "dateEnd": "2026-10-30", "dateLabel": "30 октября",
-     "place": "№131 · посадка 07:27", "summary": "13 ч 22 мин в пути: один приём пищи в билете, еда с собой, прибытие на Восточный 20:49 и переезд во Внуково."},
-    {"id": "ist-flight", "num": 2, "icon": "✈️", "title": "Москва → Стамбул",
-     "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "dateLabel": "31 октября",
-     "place": "TK 422", "summary": "Ночной вылет 02:40, прилёт в Стамбул 06:55, пересадка 6 ч 55 мин."},
-    {"id": "ist-layover", "num": 3, "icon": "🔄", "title": "Стамбул: пересадка 6ч 55м",
-     "dateStart": "2026-10-31", "after": "06:55", "dateEnd": "2026-10-31", "until": "13:50",
-     "dateLabel": "31 октября", "place": "IST, пересадка",
-     "summary": "Лаунж, душ, завтрак, выход в город (если время). Багаж до Панамы, но в Панаме его забирать."},
-    {"id": "ist-panama", "num": 4, "icon": "✈️", "title": "Стамбул → Панама",
-     "dateStart": "2026-10-31", "after": "13:50", "dateEnd": "2026-10-31", "dateLabel": "31 октября",
-     "place": "TK 903", "summary": "Длинный перелёт ~15ч, прилёт в Панаму 20:05. Ночь в отеле рядом с аэропортом."},
-    {"id": "panama-night", "num": 5, "icon": "🌃", "title": "Ночь в Панаме",
-     "dateStart": "2026-10-31", "after": "20:05", "dateEnd": "2026-11-01", "until": "13:28",
-     "dateLabel": "31.10 ночью – 01.11 до обеда", "place": "Отель рядом с PTY",
-     "summary": "Только ночь: ужин у отеля, пограничный контроль Панамы, вылет в Сан-Хосе 13:28."},
-    {"id": "arrival-cr", "num": 6, "icon": "🛬", "title": "Прилёт в Коста-Рику",
-     "dateStart": "2026-11-01", "after": "13:28", "dateEnd": "2026-11-01", "dateLabel": "1 ноября",
-     "place": "SJO → LIR → Тамариндо", "summary": "CM 342, два часа в SJO (сдача багажа на Sansa, разведка цен), рейс в Либерию 16:00 и трансфер в отель ~18:30."},
-    {"id": "tamarindo", "num": 7, "icon": "🏖️", "title": "Тамариндо: 5 дней",
-     "dateStart": "2026-11-01", "after": "18:30", "dateEnd": "2026-11-06", "until": "05:00",
-     "dateLabel": "1 – 6 ноября", "place": "Occidental 4★ · All Inclusive",
-     "summary": "Пляжи, командировка, туры и закаты — главная база поездки. Питание включено, правила Коста-Рики и разговорник под рукой."},
-    {"id": "sjo-window", "num": 8, "icon": "🔁", "title": "Вылет и окно в SJO",
-     "dateStart": "2026-11-06", "after": "05:00", "dateEnd": "2026-11-06", "until": "17:12",
-     "dateLabel": "6 ноября", "place": "LIR → SJO → Панама",
-     "summary": "Выезд 05:00 с breakfast box, Sansa в 07:30, шесть часов в Сан-Хосе (покупки!), Copa в Панаму 14:46."},
-    {"id": "panama-days", "num": 9, "icon": "🇵🇦", "title": "Панама: полные сутки",
-     "dateStart": "2026-11-06", "after": "17:12", "dateEnd": "2026-11-07", "until": "22:00",
-     "dateLabel": "6 – 7 ноября", "place": "Casco Viejo · Панамский канал",
-     "summary": "Ужин в Casco Viejo, ночью шлюзы, днём канал и город, покупки и дьюти-фри PTY."},
-    {"id": "home", "num": 10, "icon": "🏠", "title": "Обратно: Панама → Стамбул → Москва",
-     "dateStart": "2026-11-07", "after": "22:00", "dateEnd": "2026-11-09", "dateLabel": "7 – 9 ноября",
-     "place": "TK 904 + TK 407",
-     "summary": "Ночной перелёт, стыковка в Стамбуле, Внуково 05:20, восемь часов в Москве и поезд домой."},
-]
+TRIP = json.loads((ROOT / "trip.json").read_text(encoding="utf-8"))
+SEGMENTS: list[dict] = TRIP["segments"]
 
-# Краткие редакторские вступления на странице шага (HTML).
-STEP_INTRO: dict[str, str] = {
-    "prep": """<div class="note info"><h4>🧭 С чего начать</h4>
-<p>Этот шаг — всё, что делается <strong>до 30 октября</strong>: билеты и брони в «Документах», чек-листы сборов и дел (галочки сохраняются), деньги, связь и аптечка. Отмечай выполненное прямо здесь.</p></div>""",
-    "train-msk": """<div class="note info"><h4>🚆 На этом шаге</h4>
-<p>Посадка 07:27, в купе <strong>один приём пищи</strong> — вагон-ресторан платный, поэтому еда с собой (чек-лист магазина — в «Подготовке»). На Восточный прибываем 20:49 — дальше метро/такси во Внуково, вылет в 02:40.</p></div>""",
-    "ist-flight": """<div class="note info"><h4>✈️ На этом шаге</h4>
-<p>Ночной рейс <strong>TK 422</strong> Внуково → Стамбул. Вылет 02:40, прилёт 06:55. Спим в самолёте, завтрак на борту. Багаж идёт до Панамы, но в Панаме его надо забрать и пройти таможню (билеты разные — "Золотое правило" из "Подготовки").</p></div>""",
-    "ist-layover": """<div class="note info"><h4>🔄 На этом шаге</h4>
-<p><strong>6 ч 55 мин</strong> пересадки в Стамбуле (IST): лаунж, душ, завтрак. Если время позволит — краткая экскурсия (но лучше остаться в аэропорту, запас времени!). Дальше рейс TK 903 в Панаму.</p></div>""",
-    "ist-panama": """<div class="note info"><h4>✈️ На этом шаге</h4>
-<p>Длинный перелёт <strong>TK 903</strong> Стамбул → Панама (~15ч). Вылет 13:50, прилёт 20:05. Обед/ужин на борту. Ночь в отеле рядом с аэропортом PTY.</p></div>""", 
-    "panama-night": """<div class="note info"><h4>🌃 На этом шаге</h4>
-<p>Только ночь: ужин у отеля, ранний завтрак (выезд до 13:28). Проходите <strong>пограничный контроль Панамы</strong> — правила и что проверяют — ниже. Номер отеля и ваучер — в «Документах».</p></div>""",
-    "arrival-cr": """<div class="note info"><h4>🛬 На этом шаге</h4>
-<p>Прилёт 13:51, <strong>два часа окна в SJO</strong>: забрать багаж → выход в общий зал → сдача на Sansa к 15:15 (13 кг!) → успеть duty free с ценами. Рейс в Либерию 16:00, дальше ~60 км до Тамариндо — вези воду и перекус. К заселению ~18:30.</p></div>""",
-    "tamarindo": """<div class="note info"><h4>🏖️ На этом шаге</h4>
-<p>Главная база: All Inclusive (завтрак/обед/ужин/напитки), пляж с территории, командировка и туры. Здесь пригодятся <a href="phrasebook.html">разговорник</a>, <a href="hotel.html">карта отеля</a> и правила Коста-Рики ниже. Вода/снеки включены в отель.</p></div>""",
-    "sjo-window": """<div class="note info"><h4>🔁 На этом шаге</h4>
-<p>Самый насыщенный транзитный день: выезд 05:00 (накануне заказать <strong>breakfast box</strong> на ресепшене), Sansa только со стойки, в SJO <strong>6 ч 26 мин</strong> — основное окно покупок. Багаж: забрать → общий зал → регистрация на Copa заново.</p></div>""",
-    "panama-days": """<div class="note info"><h4>🇵🇦 На этом шаге</h4>
-<p><strong>Полные сутки</strong>, а не транзит: ужин в Casco Viejo, ночной выезд на расписание шлюзов, днём Панамский канал и город, покупки (mola, tagua) и дьюти-фри PTY перед вылетом 22:00.</p></div>""",
-    "home": """<div class="note info"><h4>🚂 На этом шаге</h4>
-<p>TK 904 22:00 (12 ч 45) → Стамбул, лаунж и дьюти-фри IST → TK 407 → Внуково 05:20. Восемь часов в Москве: чемодан в камеру хранения на Ярославском, к поезду 070 к 12:20. Последний шанс — покупки на вынос.</p></div>""",
+
+def _page_groups() -> list[dict]:
+    """Сегменты → страницы этапов. Микро-сегменты (переезд во Внуково,
+    стыковка в SJO, перелёт на Либерию) своей страницы не получают: они
+    показываются внутри страницы того этапа, частью которого являются."""
+    order: list[str] = []
+    by_page: dict[str, list[dict]] = {}
+    for seg in SEGMENTS:
+        pid = seg.get("page", seg["id"])
+        if pid not in by_page:
+            by_page[pid] = []
+            order.append(pid)
+        by_page[pid].append(seg)
+
+    groups = []
+    for num, pid in enumerate(order):
+        segs = by_page[pid]
+        groups.append({
+            "id": pid,
+            "num": num,
+            "segments": segs,
+            "lead": segs[0],
+            # Заголовок ведущего сегмента описывает только его: страница
+            # arrival-cr это не «Панама → Сан-Хосе», а весь прилёт в страну.
+            "title": segs[0].get("pageTitle", segs[0]["title"]),
+            "summary": segs[0].get("pageSummary", segs[0].get("summary", "")),
+            "startAt": segs[0]["startAt"],
+            "endAt": segs[-1]["endAt"],
+        })
+    return groups
+
+
+STEP_PAGES: list[dict] = _page_groups()
+
+MONTHS_GEN = ("января", "февраля", "марта", "апреля", "мая", "июня", "июля",
+              "августа", "сентября", "октября", "ноября", "декабря")
+
+
+def _dt(iso: str) -> "datetime.datetime":
+    import datetime as _d
+    return _d.datetime.fromisoformat(iso)
+
+
+def date_label(group: dict) -> str:
+    """«30 октября», «1–6 ноября», «до 30 октября» — для шапки и оглавления."""
+    a, b = _dt(group["startAt"]), _dt(group["endAt"])
+    if group["lead"]["kind"] == "preparation":
+        return f"до {b.day} {MONTHS_GEN[b.month - 1]}"
+    if (a.year, a.month, a.day) == (b.year, b.month, b.day):
+        return f"{a.day} {MONTHS_GEN[a.month - 1]}"
+    if a.month == b.month:
+        return f"{a.day}–{b.day} {MONTHS_GEN[a.month - 1]}"
+    return f"{a.day} {MONTHS_GEN[a.month - 1]} – {b.day} {MONTHS_GEN[b.month - 1]}"
+
+
+def page_place(group: dict) -> str:
+    lead = group["lead"]
+    if lead.get("place"):
+        return lead["place"]
+    frm, to = lead.get("from", {}), group["segments"][-1].get("to", {})
+    a = frm.get("code") or frm.get("name") or ""
+    b = to.get("code") or to.get("name") or ""
+    return f"{a} → {b}".strip(" →") or "—"
+
+
+def tz_offset(tz: str) -> int:
+    return {"Europe/Kirov": 3, "Europe/Moscow": 3, "Europe/Istanbul": 3,
+            "America/Panama": -5, "America/Costa_Rica": -6}[tz]
+
+
+def dual_time(iso: str, tz: str) -> str:
+    """Местное время + кировское, когда они расходятся. При разнице в 9 часов
+    «вылет в 13:50» без второй цифры читается неверно."""
+    import datetime as _d
+    dt = _dt(iso)
+    local = dt.astimezone(_d.timezone(_d.timedelta(hours=tz_offset(tz))))
+    home = dt.astimezone(_d.timezone(_d.timedelta(hours=3)))
+    out = local.strftime("%H:%M")
+    if local.utcoffset() != home.utcoffset():
+        out += f' <span class="t-home">({home.strftime("%H:%M")} Киров)</span>'
+    return out
+
+
+# --- блоки страницы этапа ----------------------------------------------------
+
+ALERT_META = {
+    "critical": ("alert-critical", "Критично"),
+    "warning": ("alert-warning", "Внимание"),
+    "info": ("alert-info", "Имей в виду"),
 }
+
+
+def render_alerts(segs: list[dict]) -> str:
+    rows = []
+    for seg in segs:
+        for a in seg.get("alerts", []):
+            cls, label = ALERT_META.get(a.get("level", "info"), ALERT_META["info"])
+            rows.append(
+                f'<div class="alert {cls}"><strong>{label}.</strong> '
+                f'{html.escape(a["text"])}</div>'
+            )
+    return "\n".join(rows)
+
+
+def render_do_now(group: dict) -> str:
+    """«Что сделать» — чекбоксы с устойчивыми id, состояние переживает пересборку."""
+    items = []
+    for seg in group["segments"]:
+        for act in seg.get("doNow", []):
+            when = f'<span class="act-at">{html.escape(act["at"])}</span>' if act.get("at") else ""
+            cls = " critical" if act.get("critical") else ""
+            items.append(
+                f'<li class="act{cls}">{when}'
+                f'<span class="act-text">{html.escape(act["text"])}</span></li>'
+            )
+    if not items:
+        return ""
+    body = f'<ul class="acts">{"".join(items)}</ul>'
+    return (
+        '<section class="step-block" id="do-now">'
+        "<h2>✅ Что сделать на этом этапе</h2>"
+        + wrap_editable_cfg(body, {"key": f'step-{group["id"]}-do', "label": "сделано"})
+        + "</section>"
+    )
+
+
+def render_need(group: dict) -> str:
+    rows = []
+    for seg in group["segments"]:
+        for n in seg.get("need", []):
+            rows.append(
+                f'<div class="need-row"><dt>{html.escape(n["label"])}</dt>'
+                f'<dd>{html.escape(n["value"])}</dd></div>'
+            )
+    if not rows:
+        return ""
+    return (
+        '<section class="step-block" id="need">'
+        "<h2>📌 Что может понадобиться</h2>"
+        f'<dl class="need-list">{"".join(rows)}</dl>'
+        "</section>"
+    )
+
+
+def render_prepare_next(group: dict, next_group: dict | None) -> str:
+    seg_title = {s["id"]: s["title"] for s in SEGMENTS}
+    items = []
+    for seg in group["segments"]:
+        for p in seg.get("prepareNext", []):
+            target = seg_title.get(p.get("for", ""), "")
+            tag = f'<span class="pn-for">к этапу «{html.escape(target)}»</span>' if target else ""
+            cls = " critical" if p.get("critical") else ""
+            items.append(
+                f'<li class="act{cls}"><span class="act-text">{html.escape(p["text"])}</span>{tag}</li>'
+            )
+    if not items:
+        return ""
+    hint = ""
+    if next_group:
+        hint = (
+            f'<p class="step-block-hint">Дальше: '
+            f'<a href="step-{next_group["id"]}.html">{next_group["lead"]["icon"]} '
+            f'{html.escape(next_group["title"])}</a>, '
+            f'{html.escape(date_label(next_group))}.</p>'
+        )
+    body = f'<ul class="acts">{"".join(items)}</ul>'
+    return (
+        '<section class="step-block" id="prepare-next">'
+        "<h2>🔜 Подготовить к следующему этапу</h2>" + hint
+        + wrap_editable_cfg(body, {"key": f'step-{group["id"]}-next', "label": "готово"})
+        + "</section>"
+    )
+
+
+def render_timeline(group: dict) -> str:
+    """Таймлайн нужен там, где этап склеен из нескольких сегментов."""
+    segs = group["segments"]
+    if len(segs) < 2:
+        return ""
+    rows = []
+    for seg in segs:
+        route = ""
+        if seg.get("from") and seg.get("to"):
+            a = seg["from"].get("code") or seg["from"].get("name", "")
+            b = seg["to"].get("code") or seg["to"].get("name", "")
+            route = f'<span class="tl-route">{html.escape(a)} → {html.escape(b)}</span>'
+        num = f'<span class="tl-num">{html.escape(seg["number"])}</span>' if seg.get("number") else ""
+        rows.append(
+            '<li class="tl-row">'
+            f'<span class="tl-time">{dual_time(seg["startAt"], seg["startTz"])}</span>'
+            f'<span class="tl-main"><span class="tl-title">{seg["icon"]} '
+            f'{html.escape(seg["title"])}</span>{route}{num}</span>'
+            "</li>"
+        )
+    return (
+        '<section class="step-block" id="timeline">'
+        "<h2>🕐 Как проходит этап</h2>"
+        f'<ol class="timeline">{"".join(rows)}</ol>'
+        "</section>"
+    )
+
+
+def render_plan_b(group: dict) -> str:
+    rows = [s["planB"] for s in group["segments"] if s.get("planB")]
+    if not rows:
+        return ""
+    body = "".join(f"<li>{html.escape(t)}</li>" for t in rows)
+    return (
+        '<section class="step-block" id="plan-b">'
+        "<h2>🛟 Если что-то пошло не так</h2>"
+        f"<ul class=\"plan-b-list\">{body}</ul>"
+        "</section>"
+    )
+
+
+def render_prep_tasks() -> str:
+    """Задачи подготовки с дедлайнами: без дат «оформить страховку» висит вечно."""
+    import datetime as _d
+    rows = []
+    for t in TRIP.get("prepTasks", []):
+        due = _d.date.fromisoformat(t["due"])
+        cls = " critical" if t.get("critical") else ""
+        why = f'<span class="task-why">{html.escape(t["why"])}</span>' if t.get("why") else ""
+        rows.append(
+            f'<li class="task{cls}">'
+            f'<span class="task-due">до {due.day} {MONTHS_GEN[due.month - 1]}</span>'
+            f'<span class="task-main"><span class="task-title">{html.escape(t["title"])}</span>'
+            f'<span class="task-note">{html.escape(t["note"])}</span>{why}</span>'
+            "</li>"
+        )
+    if not rows:
+        return ""
+    body = f'<ul class="tasks">{"".join(rows)}</ul>'
+    return (
+        '<section class="step-block" id="do-now">'
+        "<h2>✅ Что сделать до отъезда</h2>"
+        '<p class="step-block-hint">По дедлайнам, а не списком: часть пунктов '
+        "нельзя закрыть за день до вылета.</p>"
+        + wrap_editable_cfg(body, {"key": "prep-tasks", "label": "сделано"})
+        + "</section>"
+    )
+
+
+def render_cash_plan() -> str:
+    """Сколько наличных брать. Билеты и гостиницы оплачивает компания —
+    здесь только то, что Alex платит сам."""
+    plan = TRIP.get("cashPlan")
+    if not plan:
+        return ""
+    rows = "".join(
+        f'<tr><td>{html.escape(i["label"])}</td>'
+        f'<td class="num">${html.escape(i["amount"])}</td>'
+        f'<td class="cash-note">{html.escape(i.get("note", ""))}</td></tr>'
+        for i in plan["items"]
+    )
+    return (
+        '<section class="step-block" id="cash">'
+        "<h2>💵 Сколько наличных брать</h2>"
+        f'<p class="step-block-hint">{html.escape(plan["note"])}</p>'
+        '<div class="table-wrap"><table class="cash-table">'
+        "<thead><tr><th>На что</th><th>Сколько</th><th>Пояснение</th></tr></thead>"
+        f"<tbody>{rows}</tbody>"
+        f'<tfoot><tr><th>Итого</th><th class="num">${html.escape(plan["total"])}</th>'
+        "<th></th></tr></tfoot>"
+        "</table></div>"
+        f'<div class="alert alert-info"><strong>Допущение.</strong> '
+        f'{html.escape(plan["assumption"])}</div>'
+        "</section>"
+    )
+
 
 # Контент шага: (md-файл, "## заголовок" | "### заголовок" | "*" = весь файл)
 # или ("@meal", маркеры) — строки таблицы «Питание по маршруту» по шагам.
 STEP_INCLUDES: dict[str, list] = {
+    # Что остаётся в «Подробностях»: справка, к которой возвращаются, а не
+    # действия — действия теперь в trip.json и печатаются выше по странице.
+    # Общие своды правил живут на своих страницах (pravila.html, lifehacks.html,
+    # eda.html) и дублировать их в каждый этап смысла нет.
     "prep": [
         ("plan-poezdki.md", "## 📋 Общая информация"),
         ("plan-poezdki.md", "## 🎫 Все билеты — сводная таблица"),
         ("plan-poezdki.md", "## 🕐 Часовые пояса"),
-        ("plan-poezdki.md", "### Сводная таблица"),
-        ("plan-poezdki.md", "### 📖 Инструкция C — Когда билеты разные (самое важное)"),
-        ("plan-poezdki.md", "## 🍽️ Питание и вода"),
-        ("plan-poezdki.md", "## 📝 Важные даты"),
         ("plan-poezdki.md", "## 🛂 Документы на каждом участке"),
-        ("plan-poezdki.md", "## 💡 Общие лайфхаки по перелётам"),
         ("plan-poezdki.md", "## ⚠️ Что нужно доделать"),
-        ("packing-list.md", "*"),
-        ("eda.md", "## 🚆 Поезда — что с едой"),
-        ("eda.md", "## 🚆 Еда в поезд — что купить с собой"),
-        ("eda.md", "## ✈️ Самолёты — что дают на борту"),
-        ("eda.md", "## 🛒 Перекусы — чем устроить"),
-        ("eda.md", "## 💧 Вода"),
-        ("eda.md", "## ☕ Кофе"),
-        ("eda.md", "## 💰 Бюджет на еду"),
-        ("eda.md", "## ✅ Чек-лист по еде"),
         ("pravila-zakony.md", "## Въезд и пребывание"),
         ("pravila-zakony.md", "## Лекарства и здоровье"),
         ("pravila-zakony.md", "## Экстренные контакты"),
-        ("pravila-zakony.md", "## Валюта и платежи"),
         ("lifehacks.md", "## 💰 Деньги и платежи"),
         ("lifehacks.md", "## 📱 Связь и интернет"),
-        ("lifehacks.md", "## 🎒 Паковка — что реально нужно"),
-        ("lifehacks.md", "## 🗣️ Коммуникация"),
-        ("lifehacks.md", "## 🌿 Здоровье и медицина"),
-        ("lifehacks.md", "## 🎯 Чек-лист перед поездкой"),
-        ("chto-kupit.md", "## 🧳 Когда и где покупать — с учётом билетов"),
-        ("chto-kupit.md", "## 🚫 Что НЕ покупать"),
-        ("chto-kupit.md", "## 📦 Ограничения"),
-        ("chto-kupit.md", "## 💰 Бюджет"),
+        ("packing-list.md", "*"),
         ("dela.html", "*"),
     ],
     "train-msk": [
         ("plan-poezdki.md", "### 30 октября 2026, Пятница — Поезд Киров → Москва"),
-        ("lifehacks.md", "### 30.10 — Поезд, прибытие в Москву 20:49"),
+        ("eda.md", "## 🚆 Еда в поезд — что купить с собой"),
         ("@meal", ["Поезд Киров", "Москва, Восточный"]),
     ],
     "ist-flight": [
         ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
-        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
-        ("pravila-zakony.md", "### Турция (транзит в Стамбуле IST)"),
         ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
         ("@meal", ["TK 422"]),
     ],
     "ist-layover": [
-        ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
+        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
         ("pravila-zakony.md", "### Турция (транзит в Стамбуле IST)"),
-        ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
         ("@meal", ["Стамбул, пересадка 6 ч 55"]),
     ],
     "ist-panama": [
-        ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
-        ("pravila-zakony.md", "### 31.10 — Ночной перелёт Москва → Стамбул → Панама"),
-        ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
+        ("plan-poezdki.md", "### 📖 Инструкция C — Когда билеты разные (самое важное)"),
+        ("plan-poezdki.md", "### 📖 Инструкция D — Пограничный контроль"),
         ("@meal", ["TK 903"]),
     ],
     "panama-night": [
-        ("plan-poezdki.md", "### 31.10 (20:05) – 01.11 (13:28) — Ночь в Панаме"),
         ("plan-poezdki.md", "### 1-я: 31.10 (20:05) → 01.11 (13:28) — только ночь"),
-        ("plan-poezdki.md", "### 📖 Инструкция D — Пограничный контроль"),
         ("pravila-zakony.md", "### Панама"),
         ("pravila-zakony.md", "### 31.10–01.11 — Пограничный контроль в Панаме (1-я остановка)"),
         ("@meal", ["Панама 20:05", "Завтрак в Панаме"]),
     ],
     "arrival-cr": [
         ("plan-poezdki.md", "### 1 ноября 2026, Воскресенье — Панама → Сан-Хосе → Либерия"),
-        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
         ("pravila-zakony.md", "### 01.11 — Прилёт в Сан-Хосе 13:51"),
         ("lifehacks.md", "### 01.11 — Прилёт в Сан-Хосе 13:51, вылет в Либерию 16:00"),
         ("chto-kupit.md", "## 📍 Разведка 01.11 — прилёт в SJO: снять цены, чтобы потом купить правильно"),
@@ -366,67 +549,43 @@ STEP_INCLUDES: dict[str, list] = {
     ],
     "tamarindo": [
         ("plan-poezdki.md", "## 🏨 Тамариндо (01.11 – 06.11)"),
-        ("eda.md", "## 🌴 Коста-Рика — где поесть"),
-        ("eda.md", "## 🥃 Алкоголь — где дешевле"),
-        ("eda.md", "## 🍽️ Питание на турах"),
-        ("pravila-zakony.md", "## Поведение и этикет"),
-        ("pravila-zakony.md", "## Безопасность на водах"),
-        ("pravila-zakony.md", "## Вождение"),
-        ("pravila-zakony.md", "## Национальные парки и природа"),
-        ("pravila-zakony.md", "## Камуфляжная одежда"),
-        ("pravila-zakony.md", "## Фото и приватность"),
-        ("pravila-zakony.md", "## Наркотики"),
-        ("pravila-zakony.md", "## Таможня (вывоз)"),
-        ("pravila-zakony.md", "## Полиция и правовая система"),
-        ("pravila-zakony.md", "## Пикантные моменты и табу"),
-        ("pravila-zakony.md", "## Культурные нормы и табу"),
-        ("pravila-zakony.md", "## Частые ошибки туристов"),
-        ("pravila-zakony.md", "## 📅 Ноябрь (1–6) — сезонные особенности"),
-        ("lifehacks.md", "## 🚐 Транспорт"),
-        ("lifehacks.md", "## 🍽️ Еда и напитки"),
-        ("lifehacks.md", "## 🏖️ Пляжи и природа"),
-        ("lifehacks.md", "## 🛡️ Безопасность в Тамариндо"),
-        ("lifehacks.md", "## 🛡️ Общая безопасность"),
-        ("lifehacks.md", "## 🗓️ Тайминг — когда ехать"),
-        ("lifehacks.md", "## 🛒 Шопинг и сувениры"),
-        ("lifehacks.md", "## 🤫 Секретные места (менее туристические)"),
         ("lifehacks.md", "## 🏨 Occidental Tamarindo — максимум деталей"),
         ("lifehacks.md", "## 🏖️ Тамариндо — навигация"),
         ("lifehacks.md", "## 📅 Ноябрь (1–6) — конкретные рекомендации"),
+        ("lifehacks.md", "## 🛡️ Безопасность в Тамариндо"),
+        ("eda.md", "## 🌴 Коста-Рика — где поесть"),
+        ("lifehacks.md", "## 🚐 Транспорт"),
+        ("lifehacks.md", "## 🏖️ Пляжи и природа"),
+        ("lifehacks.md", "## 🤫 Секретные места (менее туристические)"),
+        ("pravila-zakony.md", "## Поведение и этикет"),
+        ("pravila-zakony.md", "## Безопасность на водах"),
+        ("pravila-zakony.md", "## Национальные парки и природа"),
+        ("pravila-zakony.md", "## Частые ошибки туристов"),
         ("chto-kupit.md", "### Из Коста-Рики"),
-        ("chto-kupit.md", "## ☕ Коста-Рика — подробно"),
         ("@meal", ["Occidental, All Inclusive"]),
     ],
     "sjo-window": [
         ("plan-poezdki.md", "### 6 ноября 2026, Пятница — Тамариндо → Либерия → Сан-Хосе"),
         ("plan-poezdki.md", "### 6 ноября 2026, Пятница — Сан-Хосе → Панама (запас по времени)"),
-        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
-        ("pravila-zakony.md", "### 06.11 — Ранний вылет из LIR + 6 часов в SJO + вылет в Панаму"),
-        ("lifehacks.md", "### 06.11 — Ранний вылет из LIR в 07:30"),
         ("chto-kupit.md", "### 🥉 SJO (Сан-Хосе, 06.11, 6 часов) — **основное окно покупок**"),
         ("chto-kupit.md", "### LIR (Либерия, 06.11, 06:00–07:30) — почти нет времени"),
+        ("lifehacks.md", "### 06.11 — Ранний вылет из LIR в 07:30"),
         ("@meal", ["Завтрак в отеле", "RZ 1073", "SJO, пересадка 6 ч 26", "CM 343"]),
     ],
     "panama-days": [
         ("plan-poezdki.md", "### 2-я: 06.11 (17:12) → 07.11 (22:00) — **полные сутки!**"),
-        ("plan-poezdki.md", "### 📖 Инструкция D — Пограничный контроль"),
-        ("pravila-zakony.md", "### Панама"),
-        ("pravila-zakony.md", "### 06–07.11 — Пограничный контроль в Панаме (2-я остановка, сутки!)"),
         ("lifehacks.md", "### 06–07.11 — Полные сутки в Панаме (а не одна ночь!)"),
         ("eda.md", "## 🌆 Панама — где поесть (06–07.11)"),
         ("chto-kupit.md", "## 🇵🇦 Панама — где и что покупать"),
-        ("chto-kupit.md", "### Из Панамы"),
+        ("pravila-zakony.md", "### 06–07.11 — Пограничный контроль в Панаме (2-я остановка, сутки!)"),
         ("@meal", ["Панама, сутки"]),
     ],
     "home": [
         ("plan-poezdki.md", "### 7 ноября 2026, Суббота — Панама → Стамбул"),
         ("plan-poezdki.md", "### 9 ноября 2026, Понедельник — Поезд Москва → Киров"),
-        ("pravila-zakony.md", "### 09.11 — Прибытие в Москву, поезд в Киров"),
         ("lifehacks.md", "### 09.11 — Прибытие в Москву 05:20, поезд в 13:20"),
         ("chto-kupit.md", "### 🥇 PTY (Панама, 07.11) — лучшее место для алкоголя"),
         ("chto-kupit.md", "### 🥈 IST (Стамбул, 08.11, пересадка 6 ч 35 мин) — **только ручная кладь**"),
-        ("chto-kupit.md", "### Внуково (09.11, 05:20–13:20)"),
-        ("chto-kupit.md", "### Из Стамбула (дьюти-фри IST, пересадка 6 ч 35 мин)"),
         ("@meal", ["TK 904", "Стамбул, пересадка 6 ч 35", "TK 407", "Внуково 05:20", "Поезд Москва → Киров"]),
     ],
 }
@@ -498,56 +657,78 @@ def extract_meal_rows(md_text: str, markers: list[str]) -> str:
 
 
 def write_steps() -> None:
-    """Страница-оглавление steps.html + step-*.html + JSON-сид для steps.js."""
+    """steps.html (оглавление) + step-*.html.
+
+    Структура страницы этапа отвечает на три вопроса в том порядке, в каком
+    они возникают в дороге: что сделать здесь → что держать под рукой → что
+    подготовить к следующему. Справочные разделы из markdown уезжают под
+    «Подробности»: раньше они шли сплошняком и давали 54 экрана на мобиле.
+    """
     import json as _json
 
     texts: dict[str, str] = {}
     for md_name in {inc[0] for steps in STEP_INCLUDES.values() for inc in steps} - {"@meal"}:
-        if md_name.endswith(".md"):
-            src = SRC_MD / md_name
-        else:
-            src = SRC_HTML / md_name
+        src = SRC_MD / md_name if md_name.endswith(".md") else SRC_HTML / md_name
         if not src.exists():
             raise FileNotFoundError(md_name)
         texts[md_name] = src.read_text(encoding="utf-8")
 
-    seed_steps = [
-        {k: s[k] for k in ("id", "num", "icon", "title", "dateStart", "dateEnd",
-                           "after", "until", "dateLabel", "place", "summary") if k in s}
-        for s in STEPS
-    ]
-    seed = _json.dumps(seed_steps, ensure_ascii=False)
+    # Сид для steps.js: тот же trip.json, только поля, нужные на клиенте.
+    seed = _json.dumps(
+        [
+            {
+                "id": g["id"],
+                "num": g["num"],
+                "icon": g["lead"]["icon"],
+                "title": g["title"],
+                "startAt": g["startAt"],
+                "endAt": g["endAt"],
+                "dateLabel": date_label(g),
+                "place": page_place(g),
+                "summary": g["summary"],
+            }
+            for g in STEP_PAGES
+        ],
+        ensure_ascii=False,
+    )
 
     # --- оглавление steps.html ---
     cards = []
-    for s in STEPS:
+    for g in STEP_PAGES:
+        lead = g["lead"]
+        n_do = sum(len(s.get("doNow", [])) for s in g["segments"]) or len(TRIP.get("prepTasks", []))
         cards.append(
-            f'<a class="step-card" href="step-{s["id"]}.html" data-step-card="{s["id"]}">'
+            f'<a class="step-card" href="step-{g["id"]}.html" data-step-card="{g["id"]}">'
             f'<span class="step-badge" hidden>Сейчас здесь</span>'
-            f'<span class="step-num">{s["num"]}</span>'
-            f'<span class="step-ic">{s["icon"]}</span>'
-            f'<span class="step-main"><span class="step-title">{html.escape(s["title"])}</span>'
-            f'<span class="step-summary">{html.escape(s["summary"])}</span></span>'
-            f'<span class="step-when">{html.escape(s["dateLabel"])}</span>'
-            f"</a>"
+            f'<span class="step-num">{g["num"]}</span>'
+            f'<span class="step-ic">{lead["icon"]}</span>'
+            f'<span class="step-main"><span class="step-title">{html.escape(g["title"])}</span>'
+            f'<span class="step-summary">{html.escape(g["summary"])}</span>'
+            f'<span class="step-count">{n_do} действий</span></span>'
+            f'<span class="step-when">{html.escape(date_label(g))}</span>'
+            "</a>"
         )
     index_body = (
-        '<section class="hero"><div class="hero-body">'
+        '<section class="hero step-hero"><div class="hero-body">'
         "<h1>Маршрут по шагам</h1>"
-        "<p>Девять этапов поездки: что делать, куда идти и к чему готовиться — на каждом шаге свой контент.</p>"
-        '<div class="hero-tags"><span>30.10 – 09.11.2026</span><span>Текущий этап определяется по дате</span></div>'
+        "<p>Одиннадцать этапов. На каждом — что сделать, что держать под рукой "
+        "и что подготовить к следующему.</p>"
+        '<div class="hero-tags"><span>30.10 – 10.11.2026</span>'
+        "<span>Текущий этап подсвечивается автоматически</span></div>"
         "</div></section>\n"
         '<div class="step-now" data-step-now hidden></div>\n'
         '<div class="steps-index" data-steps-index>\n' + "\n".join(cards) + "\n</div>"
     )
     (ROOT / "steps.html").write_text(render("Маршрут по шагам", index_body), encoding="utf-8")
 
-    # --- страницы шагов ---
-    for idx, s in enumerate(STEPS):
-        page = f"step-{s['id']}.html"
-        parts: list[str] = []
+    # --- страницы этапов ---
+    for idx, g in enumerate(STEP_PAGES):
+        page = f"step-{g['id']}.html"
+        lead = g["lead"]
+
+        details: list[str] = []
         md_parts: list[str] = []
-        for inc in STEP_INCLUDES[s["id"]]:
+        for inc in STEP_INCLUDES[g["id"]]:
             if inc[0] == "@meal":
                 sec = extract_meal_rows(texts["eda.md"], inc[1])
             elif inc[1] == "*":
@@ -559,69 +740,108 @@ def write_steps() -> None:
             public_md, _ = split_secret(sec, page)
             frag = pandoc(public_md, "-f", "gfm+task_lists", "-t", "html5", "--wrap=none")
             frag = postprocess_links(frag)
+            # На странице этапа h1 только один — в шапке. Заголовок целиком
+            # включённого файла снимаем, иначе на step-prep их два.
+            frag = re.sub(r"<h1[^>]*>.*?</h1>\s*", "", frag, flags=re.S)
             if inc[0] == "packing-list.md":
                 frag = wrap_editable(frag, "sbory.html")
             elif inc[0] == "dela.html":
-                frag = re.sub(r"<h1>.*?</h1>\s*", "", frag, count=1, flags=re.S)
                 frag = wrap_editable_cfg(frag, {"key": "dela", "label": "сделано"})
-            parts.append(frag)
+            details.append(details_block(inc, frag))
 
-        prev_s = STEPS[idx - 1] if idx > 0 else None
-        next_s = STEPS[idx + 1] if idx < len(STEPS) - 1 else None
+        prev_g = STEP_PAGES[idx - 1] if idx > 0 else None
+        next_g = STEP_PAGES[idx + 1] if idx < len(STEP_PAGES) - 1 else None
+
         nav_parts = []
-        if prev_s:
+        if prev_g:
             nav_parts.append(
-                f'<a class="step-prev" href="step-{prev_s["id"]}.html">← <span>{prev_s["icon"]} {html.escape(prev_s["title"])}</span></a>'
+                f'<a class="step-prev" href="step-{prev_g["id"]}.html">← '
+                f'<span>{prev_g["lead"]["icon"]} {html.escape(prev_g["title"])}</span></a>'
             )
         nav_parts.append('<a class="step-all" href="steps.html">📋 Все этапы</a>')
-        if next_s:
+        if next_g:
             nav_parts.append(
-                f'<a class="step-next" href="step-{next_s["id"]}.html"><span>{next_s["icon"]} {html.escape(next_s["title"])}</span> →</a>'
+                f'<a class="step-next" href="step-{next_g["id"]}.html">'
+                f'<span>{next_g["lead"]["icon"]} {html.escape(next_g["title"])}</span> →</a>'
             )
 
+        if g["id"] == "prep":
+            action_blocks = render_prep_tasks() + render_cash_plan()
+        else:
+            action_blocks = render_do_now(g)
+
         body = (
-            f'<section class="hero step-hero"><div class="hero-body">'
-            f'<div class="step-kicker">Шаг {s["num"]} из {len(STEPS) - 1}</div>'
-            f"<h1>{s['icon']} {html.escape(s['title'])}</h1>"
-            f"<p>{html.escape(s['summary'])}</p>"
-            f'<div class="hero-tags"><span>📅 {html.escape(s["dateLabel"])}</span>'
-            f'<span>📍 {html.escape(s["place"])}</span></div>'
-            f"</div></section>\n"
-            f'<div class="step-now" data-step-now data-step-id="{s["id"]}" hidden></div>\n'
-            f'{STEP_INTRO.get(s["id"], "")}\n'
-            + "\n".join(parts)
-            + '\n<nav class="step-nav">' + "".join(nav_parts) + "</nav>"
+            '<section class="hero step-hero"><div class="hero-body">'
+            f'<div class="step-kicker">Шаг {g["num"]} из {len(STEP_PAGES) - 1}</div>'
+            f'<h1>{lead["icon"]} {html.escape(g["title"])}</h1>'
+            f'<p>{html.escape(g["summary"])}</p>'
+            f'<div class="hero-tags"><span>📅 {html.escape(date_label(g))}</span>'
+            f'<span>📍 {html.escape(page_place(g))}</span></div>'
+            "</div></section>\n"
+            f'<div class="step-now" data-step-now data-step-id="{g["id"]}" hidden></div>\n'
+            + render_alerts(g["segments"])
+            + render_timeline(g)
+            + action_blocks
+            + render_need(g)
+            + render_prepare_next(g, next_g)
+            + render_plan_b(g)
+            + (
+                '<section class="step-block" id="details">'
+                "<h2>📖 Подробности</h2>"
+                '<p class="step-block-hint">Справочное — открывается по нажатию, '
+                "чтобы не мешать на ходу.</p>" + "\n".join(details) + "</section>"
+                if details else ""
+            )
+            + '<nav class="step-nav">' + "".join(nav_parts) + "</nav>"
         )
 
-        md_for_toc = "\n\n".join(md_parts)
-        try:
-            toc = md_toc(md_for_toc, page)
-        except SystemExit:
-            raise
-        (ROOT / page).write_text(render(f'Шаг {s["num"]}: {s["title"]}', body, toc), encoding="utf-8")
+        toc = md_toc("\n\n".join(md_parts), page)
+        (ROOT / page).write_text(render(f'Шаг {g["num"]}: {g["title"]}', body, toc), encoding="utf-8")
 
         html_text = (ROOT / page).read_text(encoding="utf-8")
-        # Вставляем seed в существующий <script id="steps-seed"> из template.html
         html_text = html_text.replace(
             '<script id="steps-seed" type="application/json"></script>',
             f'<script id="steps-seed" type="application/json">{seed}</script>',
         )
         (ROOT / page).write_text(html_text, encoding="utf-8")
-        print(f"  {page:26} шаг {s['num']} · {len(parts)} секций")
+        n_do = sum(len(s.get("doNow", [])) for s in g["segments"])
+        print(f"  {page:26} шаг {g['num']} · {n_do} действий · {len(details)} справочных блоков")
 
-    # --- сид на главную и оглавление ---
     for name in ("index.html", "steps.html"):
         p = ROOT / name
         if not p.exists():
             continue
         t = p.read_text(encoding="utf-8")
-        # Всегда заменяем пустой steps-seed на заполненный
         t = t.replace(
             '<script id="steps-seed" type="application/json"></script>',
             f'<script id="steps-seed" type="application/json">{seed}</script>',
         )
         p.write_text(t, encoding="utf-8")
-    print(f"  steps:            {len(STEPS)} шагов, steps.html + step-*.html")
+    print(f"  steps:            {len(STEP_PAGES)} страниц из {len(SEGMENTS)} сегментов")
+
+
+def details_block(inc: tuple, frag: str) -> str:
+    """Справочный раздел в <details>. Заголовок берём из самого раздела —
+    ручная карта названий рассинхронизировалась бы с markdown на первом же
+    переименовании."""
+    if inc[0] == "@meal":
+        title = "Питание на этом этапе"
+    elif inc[1] == "*":
+        title = DETAILS_TITLES.get(inc[0], inc[0])
+    else:
+        title = inc[1].lstrip("# ").strip()
+    source = LINK_TEXT.get(inc[0], "")
+    tag = f'<span class="det-src">{html.escape(source)}</span>' if source else ""
+    return (
+        f"<details class=\"det\"><summary>{html.escape(title)}{tag}</summary>"
+        f'<div class="det-body">{frag}</div></details>'
+    )
+
+
+DETAILS_TITLES = {
+    "packing-list.md": "Полный чек-лист сборов",
+    "dela.html": "Дела до отъезда",
+}
 
 
 def md_toc(src_text: str, page: str) -> str:
@@ -738,80 +958,76 @@ def write_dela_seed() -> None:
 # Все времена в UTC (DTSTART/DTEND ...Z) — без VTIMEZONE, принимается всеми
 # календарями. Смещения: Москва/Стамбул +3, Панама −5, Коста-Рика −6.
 # Все-day события — чистые даты, DTEND включительно (RFC 5545).
-CALENDAR_EVENTS: list[tuple[str, str, str, str, str]] = [
-    ("20261030T042700Z", "20261030T174900Z",
-     "🚂 Поезд 131 Киров → Москва-Восточный",
-     "07:27–20:49 по Москве. Вагон 06, нижнее.",
-     "Киров-Пасс → Москва-Восточный"),
-    ("20261030T234000Z", "20261031T035500Z",
-     "✈️ TK 422 Внуково → Стамбул",
-     "Вылет 31.10 02:40, прилёт 06:55. Быть во Внуково к 01:00.",
-     "Внуково (SVO) → Стамбул (IST)"),
-    ("20261031T105000Z", "20261101T010500Z",
-     "✈️ TK 903 Стамбул → Панама",
-     "Пересадка 6 ч 55 в Стамбуле. Вылет 13:50, прилёт в Панаму 20:05.",
-     "Стамбул (IST) → Панама (PTY)"),
-    ("20261031", "20261101",
-     "🏨 Ночь в Панаме",
-     "Прилёт 20:05. Завтра 13:28 вылет в Сан-Хосе.",
-     "Панама"),
-    ("20261101T182800Z", "20261101T195100Z",
-     "✈️ CM 342 Панама → Сан-Хосе",
-     "13:28–13:51 по местному. 2 часа в аэропорту: duty free, сдача багажа на Sansa.",
-     "Панама (PTY) → Сан-Хосе (SJO)"),
-    ("20261101T220000Z", "20261101T225000Z",
-     "✈️ RZ 1076 Сан-Хосе → Либерия",
-     "16:00–16:50 по местному. На Sansa строго 13 кг! Далее трансфер ~1 ч в Тамариндо.",
-     "Сан-Хосе (SJO) → Либерия (LIR)"),
-    ("20261102T003000Z", "20261102T010000Z",
-     "🏨 Заселение Occidental Tamarindo",
-     "~18:30 по местному (01.11). All Inclusive, прямой выход на пляж.",
-     "Occidental Tamarindo, Playa Tamarindo, Guanacaste"),
-    ("20261102", "20261106",
-     "💼 Командировка в Тамариндо",
-     "02–05 ноября. All Inclusive, туры, закаты на пляже.",
-     "Occidental Tamarindo, Guanacaste"),
-    ("20261106T110000Z", "20261106T120000Z",
-     "🚕 Выезд из отеля → аэропорт LIR",
-     "05:00–06:00 по местному. Строго к 05:00, в аэропорту к 06:00. Такси заказать накануне, breakfast box!",
-     "Occidental Tamarindo → LIR"),
-    ("20261106T133000Z", "20261106T142000Z",
-     "✈️ RZ 1073 Либерия → Сан-Хосе",
-     "07:30–08:20 по местному. Багаж 13 кг. В SJO — 6 часов ожидания.",
-     "Либерия (LIR) → Сан-Хосе (SJO)"),
-    ("20261106T204600Z", "20261106T221200Z",
-     "✈️ CM 343 Сан-Хосе → Панама",
-     "14:46–17:12 по местному. Прилёт — полные сутки в Панаме!",
-     "Сан-Хосе (SJO) → Панама (PTY)"),
-    ("20261106", "20261107",
-     "🏨 Панама — полные сутки",
-     "Ужин в Casco Viejo, ночью расписание шлюзов Панамского канала.",
-     "Панама"),
-    ("20261107", "20261108",
-     "🌎 Панамский канал и Casco Viejo",
-     "Днём канал и старый город, вечером дьюти-фри → аэропорт.",
-     "Панама"),
-    ("20261108T030000Z", "20261108T154500Z",
-     "✈️ TK 904 Панама → Стамбул",
-     "Вылет 07.11 22:00, прилёт 08.11 18:45. 12 ч 45 в воздухе.",
-     "Панама (PTY) → Стамбул (IST)"),
-    ("20261108T222000Z", "20261109T022000Z",
-     "✈️ TK 407 Стамбул → Внуково",
-     "Вылет 09.11 01:20, прилёт 05:20. 8 часов в Москве.",
-     "Стамбул (IST) → Внуково (SVO)"),
-    ("20261109T102000Z", "20261110T020700Z",
-     "🚂 Поезд 070 Москва → Киров",
-     "Ярославский вокзал 13:20, прибытие Киров-Пасс 10.11 в 05:07.",
-     "Москва-Ярославская → Киров-Пасс"),
-]
-
 ICS_BAR = (
     '\n<div class="ics-bar">\n'
     '  <a class="btn-ics" href="calendar.ics" download="kosta-rica-2026.ics">'
     "📅 Скачать календарь — весь маршрут</a>\n"
-    '  <span class="ics-hint">поезда, рейсы, отели · .ics для Apple/Google/Outlook</span>\n'
+    '  <span class="ics-hint">рейсы, поезда, отели и дедлайны подготовки · .ics для Apple/Google/Outlook</span>\n'
     "</div>\n"
 )
+
+
+def calendar_events() -> list[tuple[str, str, str, str, str]]:
+    """События календаря — из trip.json.
+
+    Раньше это был отдельный ручной список тех же рейсов рядом со STEPS.
+    Два списка одного расписания неизбежно расходятся: в прошлой версии
+    у одного был «Внуково (SVO)», у другого — сдвиг на пять часов.
+    """
+    import datetime as _d
+
+    def utc(iso: str) -> str:
+        return _d.datetime.fromisoformat(iso).astimezone(_d.timezone.utc).strftime(
+            "%Y%m%dT%H%M%SZ"
+        )
+
+    def place(seg: dict) -> str:
+        if seg.get("place"):
+            return seg["place"]
+        frm, to = seg.get("from", {}), seg.get("to", {})
+        a = frm.get("name", "") + (f' ({frm["code"]})' if frm.get("code") else "")
+        b = to.get("name", "") + (f' ({to["code"]})' if to.get("code") else "")
+        return f"{a} → {b}".strip(" →")
+
+    events = []
+    for seg in SEGMENTS:
+        if seg["kind"] == "preparation":
+            continue
+        title = seg["icon"] + " "
+        title += f'{seg["number"]} ' if seg.get("number") else ""
+        title += seg["title"]
+
+        parts = [
+            f'{dual_plain(seg["startAt"], seg["startTz"])} → '
+            f'{dual_plain(seg["endAt"], seg["endTz"])}'
+        ]
+        for a in seg.get("alerts", []):
+            parts.append(("⚠️ " if a["level"] != "info" else "") + a["text"])
+        parts += [x["text"] for x in seg.get("doNow", []) if x.get("critical")]
+        parts += [x["text"] for x in seg.get("prepareNext", []) if x.get("critical")]
+        events.append((utc(seg["startAt"]), utc(seg["endAt"]), title,
+                       " · ".join(parts), place(seg)))
+
+    # Задачи подготовки — всё-дневными событиями на дату дедлайна.
+    for t in TRIP.get("prepTasks", []):
+        due = t["due"].replace("-", "")
+        nxt = (_d.date.fromisoformat(t["due"]) + _d.timedelta(days=1)).strftime("%Y%m%d")
+        mark = "❗ " if t.get("critical") else ""
+        events.append((due, nxt, mark + t["title"], t["note"], "Киров"))
+
+    return events
+
+
+def dual_plain(iso: str, tz: str) -> str:
+    """«31.10 13:50 (13:50 Киров)» без разметки — для .ics и текста."""
+    import datetime as _d
+    dt = _d.datetime.fromisoformat(iso)
+    local = dt.astimezone(_d.timezone(_d.timedelta(hours=tz_offset(tz))))
+    home = dt.astimezone(_d.timezone(_d.timedelta(hours=3)))
+    out = local.strftime("%d.%m %H:%M")
+    if local.utcoffset() != home.utcoffset():
+        out += f' ({home.strftime("%H:%M")} Киров)'
+    return out
 
 
 def ics_escape(text: str) -> str:
@@ -846,7 +1062,8 @@ def write_calendar() -> None:
         "METHOD:PUBLISH",
         "X-WR-CALNAME:Коста-Рика 2026 · 30.10–10.11",
     ]
-    for n, (start, end, summary, desc, loc) in enumerate(CALENDAR_EVENTS, 1):
+    events = calendar_events()
+    for n, (start, end, summary, desc, loc) in enumerate(events, 1):
         lines += [
             "BEGIN:VEVENT",
             f"UID:kr2026-{n:02d}@kosta-rica",
@@ -864,7 +1081,7 @@ def write_calendar() -> None:
     text = "\r\n".join(ics_fold(line) for line in lines) + "\r\n"
     with open(ROOT / "calendar.ics", "w", encoding="utf-8", newline="") as f:
         f.write(text)
-    print(f"  calendar.ics     {len(CALENDAR_EVENTS)} событий")
+    print(f"  calendar.ics     {len(events)} событий (из trip.json)")
 
 
 def write_sw() -> None:
@@ -1029,6 +1246,7 @@ def write_www() -> None:
 
 
 def main() -> None:
+    validate_trip_json()
     for md_name, (out, title) in PAGES_MD.items():
         src = SRC_MD / md_name
         if not src.exists():
@@ -1058,61 +1276,81 @@ def main() -> None:
     write_calendar()
     write_sw()
     write_www()
-    validate_trip_json()
     print("done")
 
 
 def validate_trip_json() -> None:
-    """Валидация trip.json — падает если данные сломаны (лечит D8)."""
-    import datetime
+    """Проверка trip.json на сборке.
 
-    trip_path = ROOT / "trip.json"
-    if not trip_path.exists():
-        print("  trip.json: не найден (пропуск)")
-        return
+    Главное здесь — непрерывность. Прошлая версия допускала разрывы до 24 часов,
+    и в дереве их накопилось шесть: суммарно ~34 часа поездки, когда дашборд
+    показывал «не удалось определить этап». Допуск теперь нулевой.
+    """
+    import datetime as _d
 
-    try:
-        data = json.loads(trip_path.read_text(encoding="utf-8"))
-    except Exception as e:
-        sys.exit(f"trip.json: не удалось распарсить JSON: {e}")
-
-    segments = data.get("segments", [])
+    segments = TRIP.get("segments", [])
     if not segments:
         sys.exit("trip.json: нет segments")
 
-    # Проверка required fields
-    required = ["id", "num", "kind", "title", "startAt"]
-    valid_kinds = {"preparation", "train", "flight", "stay", "transfer", "layover", "window"}
+    valid_kinds = {"preparation", "train", "flight", "stay", "transfer", "layover"}
+    problems: list[str] = []
+
+    ids = [s.get("id") for s in segments]
+    dupes = {i for i in ids if ids.count(i) > 1}
+    if dupes:
+        problems.append(f"повторяющиеся id: {', '.join(sorted(dupes))}")
 
     for seg in segments:
-        for field in required:
+        sid = seg.get("id", "?")
+        for field in ("id", "num", "kind", "title", "icon", "startAt", "endAt",
+                      "startTz", "endTz", "page"):
             if field not in seg:
-                sys.exit(f"trip.json: сегмент {seg.get('id', '?')} без поля '{field}'")
-        if seg.get("kind") and seg["kind"] not in valid_kinds:
-            sys.exit(f"trip.json: неверный kind '{seg['kind']}' в {seg['id']}")
-
-        # Проверка startAt > 0
+                problems.append(f"{sid}: нет поля '{field}'")
+        if seg.get("kind") not in valid_kinds:
+            problems.append(f'{sid}: неизвестный kind {seg.get("kind")!r}')
         try:
-            start = datetime.datetime.fromisoformat(seg["startAt"])
-            end = datetime.datetime.fromisoformat(seg["endAt"])
-            if end <= start:
-                sys.exit(f"trip.json: endAt <= startAt в {seg['id']}")
-        except Exception as e:
-            sys.exit(f"trip.json: ошибка парсинга дат в {seg['id']}: {e}")
+            if _d.datetime.fromisoformat(seg["endAt"]) <= _d.datetime.fromisoformat(seg["startAt"]):
+                problems.append(f"{sid}: endAt не позже startAt")
+        except Exception as exc:
+            problems.append(f"{sid}: даты не парсятся ({exc})")
+        for key in ("startAt", "endAt"):
+            if key in seg and not re.search(r"[+-]\d\d:\d\d$", seg[key]):
+                problems.append(f"{sid}.{key}: нет явного UTC-offset")
 
-    # Проверка пересечений и дыр (исключаем preparation)
-    sorted_segs = sorted(
-        [s for s in segments if s.get("kind") != "preparation"],
-        key=lambda s: s["startAt"],
-    )
-    for i in range(len(sorted_segs) - 1):
-        curr_end = datetime.datetime.fromisoformat(sorted_segs[i]["endAt"])
-        next_start = datetime.datetime.fromisoformat(sorted_segs[i + 1]["startAt"])
-        diff = (next_start - curr_end).total_seconds()
-        if diff > 86400:  # >24 часов дыра
-            sys.exit(f"trip.json: дыра >24ч между {sorted_segs[i]['id']} и {sorted_segs[i+1]['id']}")
+    for a, b in zip(segments, segments[1:]):
+        try:
+            gap = _d.datetime.fromisoformat(b["startAt"]) - _d.datetime.fromisoformat(a["endAt"])
+        except Exception:
+            continue
+        if gap.total_seconds():
+            kind = "разрыв" if gap.total_seconds() > 0 else "нахлёст"
+            problems.append(f'{kind} {gap} между {a["id"]} и {b["id"]}')
 
-    print(f"  trip.json:        {len(segments)} сегментов, валидация пройдена")
+    # Каждая страница этапа должна существовать, иначе ссылка в оглавлении битая.
+    for g in STEP_PAGES:
+        if not (ROOT / f'step-{g["id"]}.html').exists():
+            problems.append(f'нет страницы step-{g["id"]}.html для группы сегментов')
+
+    # prepareNext ссылается на id сегмента — опечатка молча теряет подпись.
+    known = set(ids)
+    for seg in segments:
+        for p in seg.get("prepareNext", []):
+            if p.get("for") and p["for"] not in known:
+                problems.append(f'{seg["id"]}: prepareNext → неизвестный сегмент {p["for"]!r}')
+
+    trip_start = _d.datetime.fromisoformat(TRIP["trip"]["startAt"])
+    for t in TRIP.get("prepTasks", []):
+        due = _d.datetime.strptime(t["due"], "%Y-%m-%d").replace(
+            tzinfo=_d.timezone(_d.timedelta(hours=3))
+        )
+        if due > trip_start:
+            problems.append(f'подготовка {t["id"]}: дедлайн {t["due"]} позже отъезда')
+
+    if problems:
+        sys.exit("trip.json невалиден:\n  - " + "\n  - ".join(problems))
+
+    print(f"  trip.json:        {len(segments)} сегментов, "
+          f"{len(STEP_PAGES)} страниц, непрерывность ок")
 
 
 if __name__ == "__main__":

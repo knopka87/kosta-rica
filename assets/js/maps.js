@@ -48,11 +48,18 @@
     var label = el.getAttribute("data-map-label") || "";
     var hasMarker = !isNaN(lat) && !isNaN(lon);
 
-    var map = L.map(el, { attributionControl: true });
+    /* В архиве central-america.pmtiles данные есть только до z13 (читается из
+       заголовка PMTiles). protomaps-leaflet по умолчанию считает maxDataZoom = 15
+       и выше z13 запрашивает тайлы, которых нет, — карта становится пустой серой.
+       Указываем реальный предел: тогда z13 растягивается, а не исчезает. */
+    var MAX_DATA_ZOOM = 13;
+
+    var map = L.map(el, { attributionControl: true, maxZoom: 17, minZoom: 3 });
     protomapsL.leafletLayer({
       url: PMTILES,
       flavor: "light",
       lang: "ru",
+      maxDataZoom: MAX_DATA_ZOOM,
       attribution: ATTRIBUTION
     }).addTo(map);
 

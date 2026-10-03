@@ -1,13 +1,15 @@
-/* Коста-Рика 2026 — текущий этап поездки по дате.
+/* Коста-Рика 2026 — текущий этап поездки.
  *
- * Данные: <script id="steps-seed" type="application/json"> (генерирует build.py).
+ * Данные: <script id="steps-seed"> — срез trip.json, который кладёт build.py.
  * Блоки:
  *  - [data-steps-current]  — карточка «Сейчас» на главной;
  *  - [data-steps-index]    — оглавление шагов (текущий первым + подсветка);
  *  - [data-step-now]       — баннер на странице шага (я здесь / я в другом месте).
  *
- * Текущий этап = последний по порядку шаг, чей диапазон дат покрывает «сейчас»;
- * after/until (HH:MM) уточняют границы первого и последнего дня.
+ * Сравнение идёт по абсолютному моменту (epoch), а не по локальной дате
+ * устройства: на маршруте через UTC−6 сравнение «сегодняшней даты» с датой
+ * этапа давало неверный этап на границах суток. startAt/endAt в сиде всегда
+ * с явным offset, поэтому часовой пояс телефона на результат не влияет.
  */
 (function () {
   "use strict";
@@ -18,21 +20,17 @@
   try { steps = JSON.parse(seedEl.textContent); } catch (e) { return; }
   if (!steps || !steps.length) return;
 
-  function pad(n) { return (n < 10 ? "0" : "") + n; }
-  function iso(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
-  function hm(d) { return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function ms(iso) { return Date.parse(iso); }
 
+  /* Интервал полуоткрытый: [startAt, endAt). Сегменты в trip.json идут
+     встык, поэтому закрытый с двух сторон давал бы два «текущих» этапа
+     ровно в момент стыка. */
   function currentStep(now) {
-    var d = iso(now), t = hm(now), found = null;
+    var t = now.getTime();
     for (var i = 0; i < steps.length; i++) {
-      var s = steps[i];
-      if (s.dateStart && d < s.dateStart) continue;
-      if (s.dateEnd && d > s.dateEnd) continue;
-      if (s.after && d === s.dateStart && t < s.after) continue;
-      if (s.until && d === s.dateEnd && t > s.until) continue;
-      found = s;
+      if (t >= ms(steps[i].startAt) && t < ms(steps[i].endAt)) return steps[i];
     }
-    return found || steps[steps.length - 1];
+    return t < ms(steps[0].startAt) ? steps[0] : steps[steps.length - 1];
   }
 
   var current = currentStep(new Date());
@@ -76,11 +74,17 @@
       banner.innerHTML =
         "<b>📍 Вы здесь</b> — текущий этап маршрута (" + esc(current.dateLabel) + ").";
     } else {
+      var mineStep = null;
+      for (var k = 0; k < steps.length; k++) {
+        if (steps[k].id === mine) { mineStep = steps[k]; break; }
+      }
+      var passed = mineStep && ms(mineStep.endAt) <= Date.now();
       banner.className = "step-now elsewhere";
       banner.innerHTML =
-        "📍 Сейчас на маршруте: <a href=\"step-" + current.id + ".html\">" +
-        current.icon + " " + esc(current.title) + "</a>" +
-        " (" + esc(current.dateLabel) + ") — этот шаг пока не наступили/уже пройден.";
+        (passed ? "✅ Этот этап уже пройден." : "🕐 Этот этап ещё впереди.") +
+        " Сейчас на маршруте: <a href=\"step-" + current.id + ".html\">" +
+        current.icon + " " + esc(current.title) + "</a> (" +
+        esc(current.dateLabel) + ").";
     }
     banner.hidden = false;
   }
