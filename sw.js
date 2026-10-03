@@ -1,7 +1,7 @@
 /* Генерируется build.py — не редактировать вручную.
-   Версия кэша (sha1 содержимого): 4727969fec3c */
+   Версия кэша (sha1 содержимого): ee352d2a9060 */
 "use strict";
-var CACHE = "cr-4727969fec3c";
+var CACHE = "cr-ee352d2a9060";
 var ASSETS = [
   "budget.html",
   "credits.html",
