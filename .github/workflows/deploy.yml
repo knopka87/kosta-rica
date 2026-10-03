@@ -36,10 +36,17 @@ jobs:
         run: |
           python3 build.py
 
+      # path: . публиковал корень репозитория вместе с kosta-rica/*.md и
+      # .tmp-secret/ — исходники и расшифрованные фрагменты «под паролем».
+      # Публикуем белый список и падаем, если секрет всё же попал в артефакт.
+      - name: Assemble publishable tree
+        run: |
+          python3 tools/make_site.py _site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
   deploy:
     environment:
