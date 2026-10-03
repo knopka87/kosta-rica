@@ -115,10 +115,13 @@ a:hover { color: var(--jungle-900); }
   color: var(--ink-soft);
   font-size: 14px;
   font-weight: 600;
-  padding: 7px 11px;
+  padding: 12px 14px;
   border-radius: 999px;
   white-space: nowrap;
   transition: background .15s, color .15s;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav a:hover { background: var(--sand-200); color: var(--ink); }
@@ -133,12 +136,12 @@ a:hover { color: var(--jungle-900); }
 .burger {
   display: none;
   margin-left: auto;
-  width: 42px;
-  height: 38px;
+  width: 48px;
+  height: 48px;
   border: 1px solid var(--line);
   background: #fff;
   border-radius: 10px;
-  padding: 9px 10px;
+  padding: 12px;
   cursor: pointer;
 }
 
