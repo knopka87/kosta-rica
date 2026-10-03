@@ -74,7 +74,10 @@
 }
 
 .pn-for {
-  flex: 0 0 auto;
+  /* 0 1 auto, а не 0 0 auto: внутри .li-text это флекс-элемент, и длинная
+     подпись «к этапу …» иначе не сжимается и вылезает за 390 px. */
+  flex: 0 1 auto;
+  max-width: 100%;
   font-size: 12.5px;
   color: var(--ink-mute);
   background: var(--sand-100);
@@ -84,6 +87,36 @@
 
 /* Чекбоксы приходят из editable-list.js — выравниваем под .act */
 .editable-list .acts .act { padding-right: 0; }
+
+/* Нативный чекбокс — 13×13 px: на телефоне в дороге это промахи по главному
+   интерактивному элементу страницы. Растим сам контрол, а не только область
+   вокруг него — целиться надо по тому, что видно. */
+.act > input[type="checkbox"],
+.task > input[type="checkbox"] {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--jungle-700);
+  cursor: pointer;
+}
+
+/* editable-list.js заворачивает содержимое пункта в .li-text. Это блок во
+   всю ширину, поэтому текст уезжал под чекбокс, а внутренние элементы
+   («07:27» и сам пункт) теряли column-gap и слипались. Возвращаем обе
+   раскладки на уровень обёртки. */
+.act > .li-text,
+.task > .li-text {
+  flex: 1 1 240px;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.act > .li-text { gap: 4px 12px; }
+.task > .li-text { gap: 4px 16px; }
 
 /* --- «Что может понадобиться» --- */
 

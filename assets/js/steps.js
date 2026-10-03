@@ -79,10 +79,15 @@
         if (steps[k].id === mine) { mineStep = steps[k]; break; }
       }
       var passed = mineStep && ms(mineStep.endAt) <= Date.now();
+      // На steps.html баннер общий и своего data-step-id не имеет: «этот этап»
+      // там не к чему отнести, остаётся только указание на текущий.
+      var prefix = !mine
+        ? ""
+        : (passed ? "✅ Этот этап уже пройден." : "🕐 Этот этап ещё впереди.") + " ";
       banner.className = "step-now elsewhere";
       banner.innerHTML =
-        (passed ? "✅ Этот этап уже пройден." : "🕐 Этот этап ещё впереди.") +
-        " Сейчас на маршруте: <a href=\"step-" + current.id + ".html\">" +
+        prefix +
+        "Сейчас на маршруте: <a href=\"step-" + current.id + ".html\">" +
         current.icon + " " + esc(current.title) + "</a> (" +
         esc(current.dateLabel) + ").";
     }
