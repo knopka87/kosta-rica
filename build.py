@@ -876,7 +876,11 @@ def write_sw() -> None:
     for sub in ("assets", "docs"):
         for p in sorted((ROOT / sub).rglob("*")):
             if p.is_file():
-                files.append(p.relative_to(ROOT).as_posix())
+                rel = p.relative_to(ROOT).as_posix()
+                # D10: Не включаем PMTiles в precache — пользователь скачивает явно
+                if rel.endswith(".pmtiles"):
+                    continue
+                files.append(rel)
     if (ROOT / "manifest.json").exists():
         files.append("manifest.json")
 

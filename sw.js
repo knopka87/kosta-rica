@@ -1,7 +1,7 @@
 /* Генерируется build.py — не редактировать вручную.
-   Версия кэша (sha1 содержимого): 4a455a41ce79 */
+   Версия кэша (sha1 содержимого): 3f58d7035254 */
 "use strict";
-var CACHE = "cr-4a455a41ce79";
+var CACHE = "cr-3f58d7035254";
 var ASSETS = [
   "budget.html",
   "credits.html",
@@ -50,8 +50,8 @@ var ASSETS = [
   "assets/js/main.js",
   "assets/js/maps.js",
   "assets/js/steps.js",
+  "assets/js/versioned-storage.js",
   "assets/js/weather.js",
-  "assets/map/central-america.pmtiles",
   "assets/vendor/leaflet/images/layers-2x.png",
   "assets/vendor/leaflet/images/layers.png",
   "assets/vendor/leaflet/images/marker-icon-2x.png",
