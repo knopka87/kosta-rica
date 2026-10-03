@@ -615,12 +615,12 @@ def write_steps() -> None:
         if not p.exists():
             continue
         t = p.read_text(encoding="utf-8")
-        if "steps-seed" not in t:
-            t = t.replace(
-                "</body>",
-                f'<script id="steps-seed" type="application/json">{seed}</script>\n</body>',
-            )
-            p.write_text(t, encoding="utf-8")
+        # Всегда заменяем пустой steps-seed на заполненный
+        t = t.replace(
+            '<script id="steps-seed" type="application/json"></script>',
+            f'<script id="steps-seed" type="application/json">{seed}</script>',
+        )
+        p.write_text(t, encoding="utf-8")
     print(f"  steps:            {len(STEPS)} шагов, steps.html + step-*.html")
 
 
