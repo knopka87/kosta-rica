@@ -1083,6 +1083,159 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   background: rgba(255, 255, 255, 0.85);
 }
 
+/* ---------------- Бюджет: трекер трат ---------------- */
+
+.fact .fact-sub { font-weight: 400; font-size: 12.5px; color: var(--ink-mute); }
+
+.tx-form { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.tx-form input,
+.tx-form select {
+  font: inherit;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  padding: 7px 11px;
+  background: var(--card);
+}
+.tx-form .tx-date { max-width: 165px; }
+.tx-form .tx-note { flex: 1; min-width: 180px; }
+.tx-form .tx-cat { max-width: 150px; }
+.tx-form .tx-amount { max-width: 130px; }
+.tx-form input:focus,
+.tx-form select:focus { outline: none; border-color: var(--jungle-500); border-style: solid; }
+.tx-form button,
+.tx-tools button,
+.jr-tools button {
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 7px 13px;
+  cursor: pointer;
+}
+.tx-form button:hover,
+.tx-tools button:hover,
+.jr-tools button:hover { border-color: var(--jungle-500); color: var(--jungle-700); }
+
+.tx-stats { margin: 0 0 14px; }
+.tx-total { font-size: 16px; color: var(--ink-soft); }
+.tx-total b { font-size: 24px; color: var(--jungle-900); margin-left: 4px; }
+.tx-total span { font-size: 13px; color: var(--ink-mute); }
+.tx-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tx-cat-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 13.5px;
+}
+.tx-cat-chip .c { color: var(--ink-mute); }
+.tx-cat-chip b { color: var(--jungle-900); }
+.tx-cat-chip .plan { font-style: normal; font-size: 11.5px; color: var(--ink-mute); }
+
+.tx-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.tx-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14.5px;
+}
+.tx-when { color: var(--ink-mute); font-size: 13px; white-space: nowrap; }
+.tx-what { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.tx-kind {
+  font-size: 12px;
+  color: var(--jungle-800);
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  border-radius: 999px;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+.tx-sum { font-weight: 700; color: var(--jungle-900); white-space: nowrap; }
+.tx-del,
+.jr-edit,
+.jr-del {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ink-mute);
+  font-size: 15px;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+.tx-del:hover,
+.jr-edit:hover,
+.jr-del:hover { color: var(--warn); background: #fef2f2; }
+.tx-empty,
+.jr-empty {
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  text-align: center;
+}
+.tx-tools,
+.jr-tools { margin-top: 4px; }
+
+/* ---------------- Журнал поездки ---------------- */
+
+.jr-form { margin: 8px 0 18px; }
+.jr-form-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.jr-form input,
+.jr-form textarea {
+  font: inherit;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  padding: 7px 11px;
+  background: var(--card);
+  width: 100%;
+}
+.jr-form .jr-date { max-width: 165px; }
+.jr-form .jr-title { flex: 1; min-width: 180px; width: auto; }
+.jr-form textarea { resize: vertical; line-height: 1.5; }
+.jr-form input:focus,
+.jr-form textarea:focus { outline: none; border-color: var(--jungle-500); border-style: solid; }
+.jr-form-actions { display: flex; gap: 8px; margin-top: 8px; }
+.jr-form-actions button {
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 10px;
+  padding: 7px 13px;
+  cursor: pointer;
+}
+.jr-form-actions .jr-submit { background: var(--jungle-800); border-color: var(--jungle-800); color: #fff; }
+.jr-form-actions .jr-submit:hover { background: var(--jungle-900); color: #fff; }
+.jr-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.jr-entry {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+.jr-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.jr-when {
+  font-size: 12.5px;
+  color: #fff;
+  background: var(--jungle-700);
+  border-radius: 999px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+.jr-h { font-size: 16px; margin: 0; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.jr-btns { margin-left: auto; display: flex; gap: 2px; }
+.jr-body { font-size: 15px; color: var(--ink-soft); overflow-wrap: anywhere; }
+
 @media print {
   .topbar, .footer, .totop, .toc, .checklist-tools { display: none !important; }
   body { background: #fff; }

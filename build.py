@@ -51,6 +51,9 @@ PAGES_HTML = {
     "dokumenty.html": ("dokumenty.html", "Документы"),
     "credits.html": ("credits.html", "Фото и источники"),
     "dela.html": ("dela.html", "Дела до отъезда"),
+    "phrasebook.html": ("phrasebook.html", "Разговорник"),
+    "budget.html": ("budget.html", "Бюджет поездки"),
+    "journal.html": ("journal.html", "Журнал поездки"),
 }
 
 
