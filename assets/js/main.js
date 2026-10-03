@@ -5,9 +5,15 @@
   /* ---------- Активный пункт навигации ---------- */
   var path = location.pathname.split("/").pop() || "index.html";
   var page = path.replace(/\.html$/, "");
+  var exact = false;
   document.querySelectorAll(".nav a").forEach(function (a) {
-    if (a.dataset.page === page) a.classList.add("active");
+    if (a.dataset.page === page) { a.classList.add("active"); exact = true; }
   });
+  if (!exact && page.indexOf("step-") === 0) {
+    document.querySelectorAll('.nav a[data-page="steps"]').forEach(function (a) {
+      a.classList.add("active");
+    });
+  }
 
   /* ---------- Мобильное меню ---------- */
   var burger = document.getElementById("burger");

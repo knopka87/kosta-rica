@@ -156,7 +156,10 @@ EDITABLE = {
 
 def wrap_editable(body: str, out: str) -> str:
     """Стабильные id пунктов/разделов + обёртка .editable-list."""
-    cfg = EDITABLE[out]
+    return wrap_editable_cfg(body, EDITABLE[out])
+
+
+def wrap_editable_cfg(body: str, cfg: dict) -> str:
     body = add_list_ids(body)
     attrs = f' data-list-key="{cfg["key"]}" data-label="{cfg["label"]}"'
     if "limit" in cfg:
@@ -199,6 +202,394 @@ def add_list_ids(body: str) -> str:
         return "<li" + attrs + li[len("<li"):]
 
     return LI_RE.sub(prep, body)
+
+
+# --- этапы маршрута (пошаговый путеводитель) ---------------------------------
+
+# dateStart/dateEnd — ISO-даты (None = без границы); after/until — HH:MM,
+# уточняют границу первого/последнего дня (текущий этап = последний подходящий).
+STEPS: list[dict] = [
+    {"id": "prep", "num": 0, "icon": "🧳", "title": "Подготовка к поездке",
+     "dateStart": None, "dateEnd": "2026-10-29", "dateLabel": "до 29 октября",
+     "place": "Киров", "summary": "Документы, билеты, сборы, дела, деньги, связь, аптечка и чек-листы — всё, что делаем до отъезда."},
+    {"id": "train-msk", "num": 1, "icon": "🚆", "title": "Поезд Киров → Москва",
+     "dateStart": "2026-10-30", "dateEnd": "2026-10-30", "dateLabel": "30 октября",
+     "place": "№131 · посадка 07:27", "summary": "13 ч 22 мин в пути: один приём пищи в билете, еда с собой, прибытие на Восточный 20:49 и переезд во Внуково."},
+    {"id": "ist-panama", "num": 2, "icon": "✈️", "title": "Москва → Стамбул → Панама",
+     "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "dateLabel": "31 октября",
+     "place": "TK 422 + TK 903", "summary": "Ночной вылет 02:40, стыковка в IST 6 ч 55 мин, длинный перелёт и прилёт в Панаму в 20:05."},
+    {"id": "panama-night", "num": 3, "icon": "🌃", "title": "Ночь в Панаме",
+     "dateStart": "2026-10-31", "after": "20:05", "dateEnd": "2026-11-01", "until": "13:28",
+     "dateLabel": "31.10 ночью – 01.11 до обеда", "place": "Отель рядом с PTY",
+     "summary": "Только ночь: ужин у отеля, пограничный контроль Панамы, вылет в Сан-Хосе 13:28."},
+    {"id": "arrival-cr", "num": 4, "icon": "🛬", "title": "Прилёт в Коста-Рику",
+     "dateStart": "2026-11-01", "after": "13:28", "dateEnd": "2026-11-01", "dateLabel": "1 ноября",
+     "place": "SJO → LIR → Тамариндо", "summary": "CM 342, два часа в SJO (сдача багажа на Sansa, разведка цен), рейс в Либерию 16:00 и трансфер в отель ~18:30."},
+    {"id": "tamarindo", "num": 5, "icon": "🏖️", "title": "Тамариндо: 5 дней",
+     "dateStart": "2026-11-01", "after": "18:30", "dateEnd": "2026-11-06", "until": "05:00",
+     "dateLabel": "1 – 6 ноября", "place": "Occidental 4★ · All Inclusive",
+     "summary": "Пляжи, командировка, туры и закаты — главная база поездки. Питание включено, правила Коста-Рики и разговорник под рукой."},
+    {"id": "sjo-window", "num": 6, "icon": "🔁", "title": "Вылет и окно в SJO",
+     "dateStart": "2026-11-06", "after": "05:00", "dateEnd": "2026-11-06", "until": "17:12",
+     "dateLabel": "6 ноября", "place": "LIR → SJO → Панама",
+     "summary": "Выезд 05:00 с breakfast box, Sansa в 07:30, шесть часов в Сан-Хосе (покупки!), Copa в Панаму 14:46."},
+    {"id": "panama-days", "num": 7, "icon": "🇵🇦", "title": "Панама: полные сутки",
+     "dateStart": "2026-11-06", "after": "17:12", "dateEnd": "2026-11-07", "until": "22:00",
+     "dateLabel": "6 – 7 ноября", "place": "Casco Viejo · Панамский канал",
+     "summary": "Ужин в Casco Viejo, ночью шлюзы, днём канал и город, покупки и дьюти-фри PTY."},
+    {"id": "home", "num": 8, "icon": "🚂", "title": "Обратно: Панама → Москва → Киров",
+     "dateStart": "2026-11-07", "after": "22:00", "dateEnd": "2026-11-09", "dateLabel": "7 – 9 ноября",
+     "place": "TK 904 + TK 407 + поезд 070",
+     "summary": "Ночной перелёт, стыковка в Стамбуле, Внуково 05:20, восемь часов в Москве и поезд домой."},
+]
+
+# Краткие редакторские вступления на странице шага (HTML).
+STEP_INTRO: dict[str, str] = {
+    "prep": """<div class="note info"><h4>🧭 С чего начать</h4>
+<p>Этот шаг — всё, что делается <strong>до 30 октября</strong>: билеты и брони в «Документах», чек-листы сборов и дел (галочки сохраняются), деньги, связь и аптечка. Отмечай выполненное прямо здесь.</p></div>""",
+    "train-msk": """<div class="note info"><h4>🚆 На этом шаге</h4>
+<p>Посадка 07:27, в купе <strong>один приём пищи</strong> — вагон-ресторан платный, поэтому еда с собой (чек-лист магазина — в «Подготовке»). На Восточный прибываем 20:49 — дальше метро/такси во Внуково, вылет в 02:40.</p></div>""",
+    "ist-panama": """<div class="note info"><h4>✈️ На этом шаге</h4>
+<p>Стыковка в Стамбуле <strong>6 ч 55 мин</strong> — хватает на лаунж и ужин. Багаж идёт до Панамы, но в Панаме его надо забрать и пройти таможню (билеты разные — «Золотое правило» из «Подготовки»). Ночь в аэропорту/городе, дальше CM в Коста-Рику.</p></div>""",
+    "panama-night": """<div class="note info"><h4>🌃 На этом шаге</h4>
+<p>Только ночь: ужин у отеля, ранний завтрак (выезд до 13:28). Проходите <strong>пограничный контроль Панамы</strong> — правила и что проверяют — ниже. Номер отеля и ваучер — в «Документах».</p></div>""",
+    "arrival-cr": """<div class="note info"><h4>🛬 На этом шаге</h4>
+<p>Прилёт 13:51, <strong>два часа окна в SJO</strong>: забрать багаж → выход в общий зал → сдача на Sansa к 15:15 (13 кг!) → успеть duty free с ценами. Рейс в Либерию 16:00, дальше ~60 км до Тамариндо — вези воду и перекус. К заселению ~18:30.</p></div>""",
+    "tamarindo": """<div class="note info"><h4>🏖️ На этом шаге</h4>
+<p>Главная база: All Inclusive (завтрак/обед/ужин/напитки), пляж с территории, командировка и туры. Здесь пригодятся <a href="phrasebook.html">разговорник</a>, <a href="hotel.html">карта отеля</a> и правила Коста-Рики ниже. Вода/снеки включены в отель.</p></div>""",
+    "sjo-window": """<div class="note info"><h4>🔁 На этом шаге</h4>
+<p>Самый насыщенный транзитный день: выезд 05:00 (накануне заказать <strong>breakfast box</strong> на ресепшене), Sansa только со стойки, в SJO <strong>6 ч 26 мин</strong> — основное окно покупок. Багаж: забрать → общий зал → регистрация на Copa заново.</p></div>""",
+    "panama-days": """<div class="note info"><h4>🇵🇦 На этом шаге</h4>
+<p><strong>Полные сутки</strong>, а не транзит: ужин в Casco Viejo, ночной выезд на расписание шлюзов, днём Панамский канал и город, покупки (mola, tagua) и дьюти-фри PTY перед вылетом 22:00.</p></div>""",
+    "home": """<div class="note info"><h4>🚂 На этом шаге</h4>
+<p>TK 904 22:00 (12 ч 45) → Стамбул, лаунж и дьюти-фри IST → TK 407 → Внуково 05:20. Восемь часов в Москве: чемодан в камеру хранения на Ярославском, к поезду 070 к 12:20. Последний шанс — покупки на вынос.</p></div>""",
+}
+
+# Контент шага: (md-файл, "## заголовок" | "### заголовок" | "*" = весь файл)
+# или ("@meal", маркеры) — строки таблицы «Питание по маршруту» по шагам.
+STEP_INCLUDES: dict[str, list] = {
+    "prep": [
+        ("plan-poezdki.md", "## 📋 Общая информация"),
+        ("plan-poezdki.md", "## 🎫 Все билеты — сводная таблица"),
+        ("plan-poezdki.md", "## 🕐 Часовые пояса"),
+        ("plan-poezdki.md", "### Сводная таблица"),
+        ("plan-poezdki.md", "### 📖 Инструкция C — Когда билеты разные (самое важное)"),
+        ("plan-poezdki.md", "## 🍽️ Питание и вода"),
+        ("plan-poezdki.md", "## 📝 Важные даты"),
+        ("plan-poezdki.md", "## 🛂 Документы на каждом участке"),
+        ("plan-poezdki.md", "## 💡 Общие лайфхаки по перелётам"),
+        ("plan-poezdki.md", "## ⚠️ Что нужно доделать"),
+        ("packing-list.md", "*"),
+        ("eda.md", "## 🚆 Поезда — что с едой"),
+        ("eda.md", "## 🚆 Еда в поезд — что купить с собой"),
+        ("eda.md", "## ✈️ Самолёты — что дают на борту"),
+        ("eda.md", "## 🛒 Перекусы — чем устроить"),
+        ("eda.md", "## 💧 Вода"),
+        ("eda.md", "## ☕ Кофе"),
+        ("eda.md", "## 💰 Бюджет на еду"),
+        ("eda.md", "## ✅ Чек-лист по еде"),
+        ("pravila-zakony.md", "## Въезд и пребывание"),
+        ("pravila-zakony.md", "## Лекарства и здоровье"),
+        ("pravila-zakony.md", "## Экстренные контакты"),
+        ("pravila-zakony.md", "## Валюта и платежи"),
+        ("lifehacks.md", "## 💰 Деньги и платежи"),
+        ("lifehacks.md", "## 📱 Связь и интернет"),
+        ("lifehacks.md", "## 🎒 Паковка — что реально нужно"),
+        ("lifehacks.md", "## 🗣️ Коммуникация"),
+        ("lifehacks.md", "## 🌿 Здоровье и медицина"),
+        ("lifehacks.md", "## 🎯 Чек-лист перед поездкой"),
+        ("chto-kupit.md", "## 🧳 Когда и где покупать — с учётом билетов"),
+        ("chto-kupit.md", "## 🚫 Что НЕ покупать"),
+        ("chto-kupit.md", "## 📦 Ограничения"),
+        ("chto-kupit.md", "## 💰 Бюджет"),
+        ("dela.html", "*"),
+    ],
+    "train-msk": [
+        ("plan-poezdki.md", "### 30 октября 2026, Пятница — Поезд Киров → Москва"),
+        ("lifehacks.md", "### 30.10 — Поезд, прибытие в Москву 20:49"),
+        ("@meal", ["Поезд Киров", "Москва, Восточный"]),
+    ],
+    "ist-panama": [
+        ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
+        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
+        ("pravila-zakony.md", "### Турция (транзит в Стамбуле IST)"),
+        ("pravila-zakony.md", "### 31.10 — Ночной перелёт Москва → Стамбул → Панама"),
+        ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
+        ("@meal", ["TK 422", "Стамбул, пересадка 6 ч 55", "TK 903"]),
+    ],
+    "panama-night": [
+        ("plan-poezdki.md", "### 31.10 (20:05) – 01.11 (13:28) — Ночь в Панаме"),
+        ("plan-poezdki.md", "### 1-я: 31.10 (20:05) → 01.11 (13:28) — только ночь"),
+        ("plan-poezdki.md", "### 📖 Инструкция D — Пограничный контроль"),
+        ("pravila-zakony.md", "### Панама"),
+        ("pravila-zakony.md", "### 31.10–01.11 — Пограничный контроль в Панаме (1-я остановка)"),
+        ("@meal", ["Панама 20:05", "Завтрак в Панаме"]),
+    ],
+    "arrival-cr": [
+        ("plan-poezdki.md", "### 1 ноября 2026, Воскресенье — Панама → Сан-Хосе → Либерия"),
+        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
+        ("pravila-zakony.md", "### 01.11 — Прилёт в Сан-Хосе 13:51"),
+        ("lifehacks.md", "### 01.11 — Прилёт в Сан-Хосе 13:51, вылет в Либерию 16:00"),
+        ("chto-kupit.md", "## 📍 Разведка 01.11 — прилёт в SJO: снять цены, чтобы потом купить правильно"),
+        ("@meal", ["CM 342", "SJO, окно 2 ч", "RZ 1076", "Трансфер LIR"]),
+    ],
+    "tamarindo": [
+        ("plan-poezdki.md", "## 🏨 Тамариндо (01.11 – 06.11)"),
+        ("eda.md", "## 🌴 Коста-Рика — где поесть"),
+        ("eda.md", "## 🥃 Алкоголь — где дешевле"),
+        ("eda.md", "## 🍽️ Питание на турах"),
+        ("pravila-zakony.md", "## Поведение и этикет"),
+        ("pravila-zakony.md", "## Безопасность на водах"),
+        ("pravila-zakony.md", "## Вождение"),
+        ("pravila-zakony.md", "## Национальные парки и природа"),
+        ("pravila-zakony.md", "## Камуфляжная одежда"),
+        ("pravila-zakony.md", "## Фото и приватность"),
+        ("pravila-zakony.md", "## Наркотики"),
+        ("pravila-zakony.md", "## Таможня (вывоз)"),
+        ("pravila-zakony.md", "## Полиция и правовая система"),
+        ("pravila-zakony.md", "## Пикантные моменты и табу"),
+        ("pravila-zakony.md", "## Культурные нормы и табу"),
+        ("pravila-zakony.md", "## Частые ошибки туристов"),
+        ("pravila-zakony.md", "## 📅 Ноябрь (1–6) — сезонные особенности"),
+        ("lifehacks.md", "## 🚐 Транспорт"),
+        ("lifehacks.md", "## 🍽️ Еда и напитки"),
+        ("lifehacks.md", "## 🏖️ Пляжи и природа"),
+        ("lifehacks.md", "## 🛡️ Безопасность в Тамариндо"),
+        ("lifehacks.md", "## 🛡️ Общая безопасность"),
+        ("lifehacks.md", "## 🗓️ Тайминг — когда ехать"),
+        ("lifehacks.md", "## 🛒 Шопинг и сувениры"),
+        ("lifehacks.md", "## 🤫 Секретные места (менее туристические)"),
+        ("lifehacks.md", "## 🏨 Occidental Tamarindo — максимум деталей"),
+        ("lifehacks.md", "## 🏖️ Тамариндо — навигация"),
+        ("lifehacks.md", "## 📅 Ноябрь (1–6) — конкретные рекомендации"),
+        ("chto-kupit.md", "### Из Коста-Рики"),
+        ("chto-kupit.md", "## ☕ Коста-Рика — подробно"),
+        ("@meal", ["Occidental, All Inclusive"]),
+    ],
+    "sjo-window": [
+        ("plan-poezdki.md", "### 6 ноября 2026, Пятница — Тамариндо → Либерия → Сан-Хосе"),
+        ("plan-poezdki.md", "### 6 ноября 2026, Пятница — Сан-Хосе → Панама (запас по времени)"),
+        ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
+        ("pravila-zakony.md", "### 06.11 — Ранний вылет из LIR + 6 часов в SJO + вылет в Панаму"),
+        ("lifehacks.md", "### 06.11 — Ранний вылет из LIR в 07:30"),
+        ("chto-kupit.md", "### 🥉 SJO (Сан-Хосе, 06.11, 6 часов) — **основное окно покупок**"),
+        ("chto-kupit.md", "### LIR (Либерия, 06.11, 06:00–07:30) — почти нет времени"),
+        ("@meal", ["Завтрак в отеле", "RZ 1073", "SJO, пересадка 6 ч 26", "CM 343"]),
+    ],
+    "panama-days": [
+        ("plan-poezdki.md", "### 2-я: 06.11 (17:12) → 07.11 (22:00) — **полные сутки!**"),
+        ("plan-poezdki.md", "### 📖 Инструкция D — Пограничный контроль"),
+        ("pravila-zakony.md", "### Панама"),
+        ("pravila-zakony.md", "### 06–07.11 — Пограничный контроль в Панаме (2-я остановка, сутки!)"),
+        ("lifehacks.md", "### 06–07.11 — Полные сутки в Панаме (а не одна ночь!)"),
+        ("eda.md", "## 🌆 Панама — где поесть (06–07.11)"),
+        ("chto-kupit.md", "## 🇵🇦 Панама — где и что покупать"),
+        ("chto-kupit.md", "### Из Панамы"),
+        ("@meal", ["Панама, сутки"]),
+    ],
+    "home": [
+        ("plan-poezdki.md", "### 7 ноября 2026, Суббота — Панама → Стамбул"),
+        ("plan-poezdki.md", "### 9 ноября 2026, Понедельник — Поезд Москва → Киров"),
+        ("pravila-zakony.md", "### 09.11 — Прибытие в Москву, поезд в Киров"),
+        ("lifehacks.md", "### 09.11 — Прибытие в Москву 05:20, поезд в 13:20"),
+        ("chto-kupit.md", "### 🥇 PTY (Панама, 07.11) — лучшее место для алкоголя"),
+        ("chto-kupit.md", "### 🥈 IST (Стамбул, 08.11, пересадка 6 ч 35 мин) — **только ручная кладь**"),
+        ("chto-kupit.md", "### Внуково (09.11, 05:20–13:20)"),
+        ("chto-kupit.md", "### Из Стамбула (дьюти-фри IST, пересадка 6 ч 35 мин)"),
+        ("@meal", ["TK 904", "Стамбул, пересадка 6 ч 35", "TK 407", "Внуково 05:20", "Поезд Москва → Киров"]),
+    ],
+}
+
+
+def extract_md_section(text: str, heading: str) -> str:
+    """Заголовок (любого уровня) + тело до следующего заголовка того же/выше уровня."""
+    lines = text.splitlines()
+    start, level = None, 0
+    for i, line in enumerate(lines):
+        if line.strip() == heading:
+            start = i
+            level = len(line) - len(line.lstrip("#"))
+            break
+    if start is None:
+        raise KeyError(f"заголовок не найден: {heading!r}")
+    end = len(lines)
+    for j in range(start + 1, len(lines)):
+        m = re.match(r"^(#{1,6})\s+", lines[j])
+        if m and len(m.group(1)) <= level:
+            end = j
+            break
+    return "\n".join(lines[start:end]).strip()
+
+
+def md_heading_level(heading: str) -> int:
+    return len(heading) - len(heading.lstrip("#"))
+
+
+def postprocess_links(body: str) -> str:
+    """Переписывает ссылки .md → .html и оборачивает таблицы в .table-wrap."""
+
+    def rewrite(m: re.Match) -> str:
+        target = m.group(1)
+        frag = m.group(2) or ""
+        directory, _, base = target.rpartition("/")
+        full = (directory + "/" if directory else "") + base + ".md"
+        if full in PAGES_MD:
+            target = (directory + "/" if directory else "") + PAGES_MD[full][0]
+        else:
+            target = target + ".html"
+        return f'href="{target}{frag}"'
+
+    body = re.sub(r'href="([^"]+?)\.md(#[^"]*)?"', rewrite, body)
+
+    def humanize(m: re.Match) -> str:
+        base = m.group(2).rsplit("/", 1)[-1]
+        if base in LINK_TEXT:
+            return f'<a href="{m.group(1)}">{LINK_TEXT[base]}</a>'
+        return m.group(0)
+
+    body = re.sub(r'<a href="([^"]+)">([^<]*\.md)</a>', humanize, body)
+    body = re.sub(r"(<table>.*?</table>)", r'<div class="table-wrap">\1</div>', body, flags=re.S)
+    return body
+
+
+def extract_meal_rows(md_text: str, markers: list[str]) -> str:
+    """Строки таблицы «Питание по маршруту», попавшие под маркеры, — mini-таблица."""
+    section = extract_md_section(md_text, "## 📅 Питание по маршруту")
+    lines = [ln for ln in section.splitlines() if ln.strip().startswith("|")]
+    if len(lines) < 3:
+        return ""
+    header, sep = lines[0], lines[1]
+    rows = [ln for ln in lines[2:] if ln.strip() and ln.strip() != sep]
+    picked = [r for r in rows if any(mk in r for mk in markers)]
+    if not picked:
+        raise KeyError(f"строки питания не найдены по маркерам: {markers}")
+    return "\n".join([header, sep] + picked)
+
+
+def write_steps() -> None:
+    """Страница-оглавление steps.html + step-*.html + JSON-сид для steps.js."""
+    import json as _json
+
+    texts: dict[str, str] = {}
+    for md_name in {inc[0] for steps in STEP_INCLUDES.values() for inc in steps} - {"@meal"}:
+        if md_name.endswith(".md"):
+            src = SRC_MD / md_name
+        else:
+            src = SRC_HTML / md_name
+        if not src.exists():
+            raise FileNotFoundError(md_name)
+        texts[md_name] = src.read_text(encoding="utf-8")
+
+    seed_steps = [
+        {k: s[k] for k in ("id", "num", "icon", "title", "dateStart", "dateEnd",
+                           "after", "until", "dateLabel", "place", "summary") if k in s}
+        for s in STEPS
+    ]
+    seed = _json.dumps(seed_steps, ensure_ascii=False)
+
+    # --- оглавление steps.html ---
+    cards = []
+    for s in STEPS:
+        cards.append(
+            f'<a class="step-card" href="step-{s["id"]}.html" data-step-card="{s["id"]}">'
+            f'<span class="step-badge" hidden>Сейчас здесь</span>'
+            f'<span class="step-num">{s["num"]}</span>'
+            f'<span class="step-ic">{s["icon"]}</span>'
+            f'<span class="step-main"><span class="step-title">{html.escape(s["title"])}</span>'
+            f'<span class="step-summary">{html.escape(s["summary"])}</span></span>'
+            f'<span class="step-when">{html.escape(s["dateLabel"])}</span>'
+            f"</a>"
+        )
+    index_body = (
+        '<section class="hero"><div class="hero-body">'
+        "<h1>Маршрут по шагам</h1>"
+        "<p>Девять этапов поездки: что делать, куда идти и к чему готовиться — на каждом шаге свой контент.</p>"
+        '<div class="hero-tags"><span>30.10 – 09.11.2026</span><span>Текущий этап определяется по дате</span></div>'
+        "</div></section>\n"
+        '<div class="step-now" data-step-now hidden></div>\n'
+        '<div class="steps-index" data-steps-index>\n' + "\n".join(cards) + "\n</div>"
+    )
+    (ROOT / "steps.html").write_text(render("Маршрут по шагам", index_body), encoding="utf-8")
+
+    # --- страницы шагов ---
+    for idx, s in enumerate(STEPS):
+        page = f"step-{s['id']}.html"
+        parts: list[str] = []
+        md_parts: list[str] = []
+        for inc in STEP_INCLUDES[s["id"]]:
+            if inc[0] == "@meal":
+                sec = extract_meal_rows(texts["eda.md"], inc[1])
+            elif inc[1] == "*":
+                sec = texts[inc[0]]
+            else:
+                sec = extract_md_section(texts[inc[0]], inc[1])
+            md_parts.append(sec)
+
+            public_md, _ = split_secret(sec, page)
+            frag = pandoc(public_md, "-f", "gfm+task_lists", "-t", "html5", "--wrap=none")
+            frag = postprocess_links(frag)
+            if inc[0] == "packing-list.md":
+                frag = wrap_editable(frag, "sbory.html")
+            elif inc[0] == "dela.html":
+                frag = re.sub(r"<h1>.*?</h1>\s*", "", frag, count=1, flags=re.S)
+                frag = wrap_editable_cfg(frag, {"key": "dela", "label": "сделано"})
+            parts.append(frag)
+
+        prev_s = STEPS[idx - 1] if idx > 0 else None
+        next_s = STEPS[idx + 1] if idx < len(STEPS) - 1 else None
+        nav_parts = []
+        if prev_s:
+            nav_parts.append(
+                f'<a class="step-prev" href="step-{prev_s["id"]}.html">← <span>{prev_s["icon"]} {html.escape(prev_s["title"])}</span></a>'
+            )
+        nav_parts.append('<a class="step-all" href="steps.html">📋 Все этапы</a>')
+        if next_s:
+            nav_parts.append(
+                f'<a class="step-next" href="step-{next_s["id"]}.html"><span>{next_s["icon"]} {html.escape(next_s["title"])}</span> →</a>'
+            )
+
+        body = (
+            f'<section class="hero step-hero"><div class="hero-body">'
+            f'<div class="step-kicker">Шаг {s["num"]} из {len(STEPS) - 1}</div>'
+            f"<h1>{s["icon"]} {html.escape(s["title"])}</h1>"
+            f"<p>{html.escape(s["summary"])}</p>"
+            f'<div class="hero-tags"><span>📅 {html.escape(s["dateLabel"])}</span>'
+            f'<span>📍 {html.escape(s["place"])}</span></div>'
+            f"</div></section>\n"
+            f'<div class="step-now" data-step-now data-step-id="{s["id"]}" hidden></div>\n'
+            f'{STEP_INTRO.get(s["id"], "")}\n'
+            + "\n".join(parts)
+            + '\n<nav class="step-nav">' + "".join(nav_parts) + "</nav>"
+        )
+
+        md_for_toc = "\n\n".join(md_parts)
+        try:
+            toc = md_toc(md_for_toc, page)
+        except SystemExit:
+            raise
+        (ROOT / page).write_text(render(f'Шаг {s["num"]}: {s["title"]}', body, toc), encoding="utf-8")
+
+        html_text = (ROOT / page).read_text(encoding="utf-8")
+        html_text = html_text.replace(
+            "</body>",
+            f'<script id="steps-seed" type="application/json">{seed}</script>\n</body>',
+        )
+        (ROOT / page).write_text(html_text, encoding="utf-8")
+        print(f"  {page:26} шаг {s['num']} · {len(parts)} секций")
+
+    # --- сид на главную и оглавление ---
+    for name in ("index.html", "steps.html"):
+        p = ROOT / name
+        if not p.exists():
+            continue
+        t = p.read_text(encoding="utf-8")
+        if "steps-seed" not in t:
+            t = t.replace(
+                "</body>",
+                f'<script id="steps-seed" type="application/json">{seed}</script>\n</body>',
+            )
+            p.write_text(t, encoding="utf-8")
+    print(f"  steps:            {len(STEPS)} шагов, steps.html + step-*.html")
 
 
 def md_toc(src_text: str, page: str) -> str:
@@ -609,6 +1000,7 @@ def main() -> None:
         (ROOT / out).write_text(render(title, body), encoding="utf-8")
         print(f"  {out:16} ← src/{src_name}")
 
+    write_steps()
     write_dela_seed()
     write_calendar()
     write_sw()

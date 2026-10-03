@@ -20,14 +20,8 @@
     </a>
     <nav class="nav" id="nav">
       <a href="index.html" data-page="index">Главная</a>
-      <a href="marshrut.html" data-page="marshrut">Маршрут</a>
-      <a href="hotel.html" data-page="hotel">Отель и карта</a>
-      <a href="eda.html" data-page="eda">Еда</a>
-      <a href="sbory.html" data-page="sbory">Сборы</a>
-      <a href="dela.html" data-page="dela">Дела</a>
-      <a href="pokupki.html" data-page="pokupki">Покупки</a>
-      <a href="pravila.html" data-page="pravila">Правила</a>
-      <a href="lifehacks.html" data-page="lifehacks">Лайфхаки</a>
+      <a href="steps.html" data-page="steps">Маршрут</a>
+      <a href="step-prep.html" data-page="step-prep">Подготовка</a>
       <a href="phrasebook.html" data-page="phrasebook">Разговорник</a>
       <a href="budget.html" data-page="budget">Бюджет</a>
       <a href="journal.html" data-page="journal">Журнал</a>
@@ -44,7 +38,7 @@
     <h1>Бюджет поездки</h1>
     <p>План по категориям + трекер трат · 12 дней, Коста-Рика и Панама</p>
     <div class="hero-tags">
-      <span>Валюта: доллар США</span>
+      <span>Валюты: ₽ · $ · ₡ колоны</span>
       <span>Трекер хранится офлайн</span>
       <span>Экспорт в CSV</span>
     </div>
@@ -67,13 +61,13 @@
 </div>
 
 <h2>Трекер трат</h2>
-<p>Добавляй траты на месте — суммы и категории считаются сами, данные не покидают устройство (localStorage).</p>
+<p>Добавляй траты в той валюте, в которой платишь — рублях, долларах или колонах. По каждой валюте считаются баланс и остаток, данные не покидают устройство (localStorage).</p>
 
 <div class="tx-app" data-budget></div>
 
 <div class="note ok">
   <h4>📊 Итог</h4>
-  <p>Общий итог по трекеру сравнивается с планом по категориям. CSV выгрузка открывается в Numbers/Excel — удобно сверяться после поездки.</p>
+  <p>Итоги по каждой валюте сравниваются с планом по категориям. CSV выгрузка (с колонкой валюты) открывается в Numbers/Excel — удобно сверяться после поездки.</p>
 </div>
 
   </main>
@@ -88,7 +82,8 @@
     </div>
     <div class="footer-links">
       <a href="index.html">Главная</a>
-      <a href="marshrut.html">Маршрут</a>
+      <a href="steps.html">Маршрут</a>
+      <a href="step-prep.html">Подготовка</a>
       <a href="dokumenty.html">Документы</a>
       <a href="credits.html">Фото и источники</a>
     </div>
@@ -102,6 +97,7 @@
 <script src="assets/js/maps.js"></script>
 <script src="assets/js/budget.js"></script>
 <script src="assets/js/journal.js"></script>
+<script src="assets/js/steps.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

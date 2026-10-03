@@ -1,7 +1,7 @@
 /* Генерируется build.py — не редактировать вручную.
-   Версия кэша (sha1 содержимого): b0f18f34ba5e */
+   Версия кэша (sha1 содержимого): 41aa8d77fe5b */
 "use strict";
-var CACHE = "cr-b0f18f34ba5e";
+var CACHE = "cr-41aa8d77fe5b";
 var ASSETS = [
   "budget.html",
   "credits.html",
@@ -17,6 +17,16 @@ var ASSETS = [
   "pokupki.html",
   "pravila.html",
   "sbory.html",
+  "step-arrival-cr.html",
+  "step-home.html",
+  "step-ist-panama.html",
+  "step-panama-days.html",
+  "step-panama-night.html",
+  "step-prep.html",
+  "step-sjo-window.html",
+  "step-tamarindo.html",
+  "step-train-msk.html",
+  "steps.html",
   "calendar.ics",
   "assets/css/style.css",
   "assets/img/arenal.jpg",
@@ -35,6 +45,7 @@ var ASSETS = [
   "assets/js/journal.js",
   "assets/js/main.js",
   "assets/js/maps.js",
+  "assets/js/steps.js",
   "assets/js/weather.js",
   "assets/map/central-america.pmtiles",
   "assets/vendor/leaflet/images/layers-2x.png",
