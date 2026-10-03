@@ -401,6 +401,40 @@ a:hover { color: var(--jungle-900); }
   background: linear-gradient(to top, rgba(10, 40, 38, .92), rgba(10, 40, 38, .25) 70%, transparent);
 }
 
+/* Step hero: без картинки, H1 видимый (D2) */
+.step-hero {
+  background: linear-gradient(135deg, var(--jungle-800), var(--jungle-700));
+  padding: clamp(24px, 5vw, 40px);
+  margin-bottom: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.step-hero .hero-body {
+  position: static;
+  background: none;
+  padding: 0;
+}
+
+.step-hero .hero-body h1 {
+  color: #fff;
+  font-size: clamp(22px, 4vw, 32px);
+  margin-bottom: 8px;
+}
+
+.step-hero .hero-body p {
+  color: rgba(255, 255, 255, .9);
+  font-size: clamp(14px, 1.8vw, 16px);
+}
+
+.step-kicker {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255, 255, 255, .7);
+  margin-bottom: 8px;
+}
+
 .hero-body h1 {
   margin: 0 0 6px;
   color: #fff;

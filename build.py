@@ -593,9 +593,10 @@ def write_steps() -> None:
         (ROOT / page).write_text(render(f'Шаг {s["num"]}: {s["title"]}', body, toc), encoding="utf-8")
 
         html_text = (ROOT / page).read_text(encoding="utf-8")
+        # Вставляем seed в существующий <script id="steps-seed"> из template.html
         html_text = html_text.replace(
-            "</body>",
-            f'<script id="steps-seed" type="application/json">{seed}</script>\n</body>',
+            '<script id="steps-seed" type="application/json"></script>',
+            f'<script id="steps-seed" type="application/json">{seed}</script>',
         )
         (ROOT / page).write_text(html_text, encoding="utf-8")
         print(f"  {page:26} шаг {s['num']} · {len(parts)} секций")
@@ -609,7 +610,7 @@ def write_steps() -> None:
         if "steps-seed" not in t:
             t = t.replace(
                 "</body>",
-                f'<script id="steps-seed" type="application/json">{seed}</script>\n<script src="assets/js/app.js"></script>\n</body>',
+                f'<script id="steps-seed" type="application/json">{seed}</script>\n</body>',
             )
             p.write_text(t, encoding="utf-8")
     print(f"  steps:            {len(STEPS)} шагов, steps.html + step-*.html")
