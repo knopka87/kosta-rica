@@ -21,8 +21,6 @@
     <nav class="nav" id="nav">
       <a href="index.html" data-page="index">Главная</a>
       <a href="steps.html" data-page="steps">Маршрут</a>
-      <a href="step-prep.html" data-page="step-prep">Подготовка</a>
-      <a href="phrasebook.html" data-page="phrasebook">Разговорник</a>
       <a href="budget.html" data-page="budget">Бюджет</a>
       <a href="journal.html" data-page="journal">Журнал</a>
       <a href="dokumenty.html" data-page="dokumenty" class="nav-lock">Документы</a>
@@ -33,6 +31,7 @@
 
 <div class="page">
   <main class="prose">
+<div id="app">
 <section class="hero">
   <img src="assets/img/tamarindo-beach.jpg" alt="Пляж Тамариндо, Коста-Рика">
   <div class="hero-body">
@@ -76,11 +75,6 @@
     <h3>Маршрут по шагам</h3>
     <p>9 этапов поездки — каждый шаг отдельной страницей: что делать, куда идти, что посмотреть.</p>
   </a>
-  <a class="card" href="step-prep.html">
-    <div class="ico">🧳</div>
-    <h3>Подготовка</h3>
-    <p>Билеты, сборы, дела, деньги, связь, аптечка — всё до выезда. Отметки сохраняются.</p>
-  </a>
   <a class="card" href="step-tamarindo.html">
     <div class="ico">🏖️</div>
     <h3>Тамариндо</h3>
@@ -91,48 +85,24 @@
     <h3>Отель и карта</h3>
     <p>Occidental Tamarindo: территория, что вокруг, офлайн-карта района.</p>
   </a>
-  <a class="card" href="step-prep.html#eda-v-poezd">
-    <div class="ico">🥗</div>
-    <h3>Еда в поезд</h3>
-    <p>Что, сколько и когда купить в дорогу — поезд и самолёты без ресторанов.</p>
-  </a>
-  <a class="card" href="phrasebook.html">
-    <div class="ico">🗣️</div>
-    <h3>Разговорник</h3>
-    <p>Испанский с произношением: ресторан, такси, отель, аптека, экстренные фразы.</p>
-  </a>
   <a class="card" href="budget.html">
     <div class="ico">💰</div>
     <h3>Бюджет</h3>
-    <p>План по категориям и трекер трат — сколько осталось и куда ушло.</p>
+    <p>План бюджета + трекер трат (₽/$/₡), балансы, выгрузка CSV.</p>
   </a>
   <a class="card" href="journal.html">
-    <div class="ico">📓</div>
-    <h3>Журнал</h3>
-    <p>Дневник поездки: записи офлайн, правка и экспорт в Markdown.</p>
+    <div class="ico">📔</div>
+    <h3>Журнал поездки</h3>
+    <p>Дневник: записи, фото, экспорт в .md после поездки.</p>
   </a>
-  <a class="card accent" href="dokumenty.html">
+  <a class="card" href="dokumenty.html">
     <div class="ico">🔒</div>
     <h3>Документы</h3>
-    <p>Билеты и бронирования в PDF — страница защищена паролем, файлы зашифрованы.</p>
+    <p>Билеты, брони, паспорта — зашифровано паролем.</p>
   </a>
 </div>
 
-<h2>Что сделать до выезда</h2>
-<p>Отмечай галочками — прогресс сохраняется в браузере. Пункты можно добавлять и править прямо на <a href="step-prep.html">шаге «Подготовка»</a>.</p>
-
-<div class="note warn">
-  <h4>⛔ Критичное</h4>
-  <p>Первые два пункта — до всего остального. Вещи — в <a href="step-prep.html">чек-листе сборов</a> там же.</p>
-</div>
-
-<div class="editable-summary" data-list-key="dela" data-label="сделано"></div>
 <script type="application/json" id="dela-seed">{"sections":[{"id":"dela-kritichnoe","title":"🔥 Критичное","items":[{"id":"a537385926","checked":false,"text":"Багаж на Sansa (01.11 и 06.11): на каждом рейсе строго 13 кг — переупаковать два чемодана в один лёгкий (или наземный трансфер Тамариндо → SJO как запасной вариант)"},{"id":"2eaf0471ad","checked":false,"text":"Забронировать отель в Панаме на 06–07.11 (полные сутки!)"}]},{"id":"dela-podgotovka","title":"✅ Подготовка","items":[{"id":"616b9df5bb","checked":false,"text":"Оформить медицинскую страховку (покрытие ≥ $50 000 + эвакуация)"},{"id":"4d1f64ebd5","checked":false,"text":"Уточнить в «Тривио» правила тарифа Copa (обмен/возврат)"},{"id":"a6bcd24113","checked":false,"text":"Online check-in на TK 422 (откроется 30.10), на Copa — за 24 ч до каждого рейса"},{"id":"6d76327d15","checked":false,"text":"Сообщить в банк о поездке: Россия → Турция → Панама → Коста-Рика"},{"id":"9f1f8c2d28","checked":false,"text":"Скачать офлайн-карты Guanacaste и Панамы + офлайн-переводчик испанский"},{"id":"06348aaa16","checked":false,"text":"Проверить, включён ли трансфер LIR → Тамариндо в программу командировки"}]}]}</script>
-
-<div class="note ok">
-  <h4>✅ Куплено / готово</h4>
-  <p>Билеты на все 8 авиасегментов и 2 поезда, отель Occidental, паспорта и PDF-документы — <a href="dokumenty.html">в разделе «Документы»</a>.</p>
-</div>
 
 <h2>Ключевые даты</h2>
 <ul class="timeline">
@@ -143,40 +113,14 @@
   <li class="hot"><span class="date">06.11 (пт) 05:00</span> — <span class="what">Выезд → LIR 07:30 (Sansa, багаж 13 кг!) → SJO 08:20 → 6 ч ожидания → Панама 17:12</span></li>
     <li class="hot"><span class="date">06.11 (пт) 17:12</span> — <span class="what">Прилёт в Панаму — <strong>полные сутки!</strong> Ужин в Casco Viejo, ночью расписание шлюзов</span></li>
     <li><span class="date">07.11 (сб) 22:00</span> — <span class="what">Днём Панамский канал и Casco Viejo, вечером дьюти-фри → PTY → Стамбул (TK 904, 12 ч 45)</span></li>
-  <li><span class="date">09.11 (вс) 05:20</span> — <span class="what">Внуково, 8 часов в Москве, поезд 070 с Ярославской в 13:20</span></li>
-  <li><span class="date">10.11 (пн) 05:07</span> — <span class="what">Киров-Пасс. Дома</span></li>
+    <li><span class="date">08.11 (вс) 01:20</span> — <span class="what">Стамбул → Внуково (TK 407), прилёт 05:20</span></li>
+    <li><span class="date">09.11 (пн) 13:20</span> — <span class="what">Ярославский вокзал → поезд 070 в Киров (прибытие 10.11 05:07)</span></li>
 </ul>
 
 <div class="ics-bar">
   <a class="btn-ics" href="calendar.ics" download="kosta-rica-2026.ics">📅 Скачать календарь — весь маршрут</a>
-  <span class="ics-hint">поезда, рейсы, отели · открывается в Apple/Google/Outlook-календаре</span>
+  <span class="ics-hint">поезда, рейсы, отели · .ics для Apple/Google/Outlook</span>
 </div>
-
-<h2>Если что-то пошло не так</h2>
-<div class="grid-2">
-  <div class="note danger">
-    <h4>📞 Экстренное</h4>
-    <p><strong>911</strong> — полиция, скорая, пожарные (во всех странах маршрута).<br>
-    Туристическая полиция КР: <strong>1192</strong>.<br>
-    Посольство РФ в Коста-Рике: <strong>+506 2280-0066</strong>.</p>
-  </div>
-  <div class="note">
-    <h4>🧳 Потерял/забыл багаж</h4>
-    <p>Билеты отдельные (5 PNR) — <strong>багаж между авиакомпаниями не пересылается</strong>. В Панаме и SJO: забрать ленту → таможня/выход в общий зал → регистрация заново. Подробности — <a href="step-prep.html#book-инструкция-c--когда-билеты-разные-самое-важное">Инструкция C</a>.</p>
-  </div>
-  <div class="note">
-    <h4>💳 Деньги</h4>
-    <p>Оплата картой — <strong>всегда в CRC</strong>, не в USD (иначе теряешь 5–10% на DCC). Наличные снимай крупными суммами: комиссия фиксированная. Подробнее — <a href="step-prep.html">шаг «Подготовка»</a>.</p>
-  </div>
-  <div class="note">
-    <h4>🌊 Море</h4>
-    <p>Обратные течения — главная опасность. Плавай только у флагов: 🟢 можно, 🟡 осторожно, 🔴 нельзя. Попал в течение — <strong>не борись</strong>, плыви параллельно берегу.</p>
-  </div>
-</div>
-
-<div class="note info">
-  <h4>🌤️ Про ноябрь</h4>
-  <p>Самый дождливый месяц, но дождь обычно 1–2 часа после обеда (14:00–16:00). Утро — солнце, вечер — снова солнце. Зато цены минимальные, зелёная страна как на обложке и старт сезона китов.</p>
 </div>
 
   </main>
@@ -208,6 +152,7 @@
 <script src="assets/js/journal.js"></script>
 <script src="assets/js/steps.js"></script>
 <script src="assets/js/main.js"></script>
-<script id="steps-seed" type="application/json">[{"id": "prep", "num": 0, "icon": "🧳", "title": "Подготовка к поездке", "dateStart": null, "dateEnd": "2026-10-29", "dateLabel": "до 29 октября", "place": "Киров", "summary": "Документы, билеты, сборы, дела, деньги, связь, аптечка и чек-листы — всё, что делаем до отъезда."}, {"id": "train-msk", "num": 1, "icon": "🚆", "title": "Поезд Киров → Москва", "dateStart": "2026-10-30", "dateEnd": "2026-10-30", "dateLabel": "30 октября", "place": "№131 · посадка 07:27", "summary": "13 ч 22 мин в пути: один приём пищи в билете, еда с собой, прибытие на Восточный 20:49 и переезд во Внуково."}, {"id": "ist-panama", "num": 2, "icon": "✈️", "title": "Москва → Стамбул → Панама", "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "dateLabel": "31 октября", "place": "TK 422 + TK 903", "summary": "Ночной вылет 02:40, стыковка в IST 6 ч 55 мин, длинный перелёт и прилёт в Панаму в 20:05."}, {"id": "panama-night", "num": 3, "icon": "🌃", "title": "Ночь в Панаме", "dateStart": "2026-10-31", "dateEnd": "2026-11-01", "after": "20:05", "until": "13:28", "dateLabel": "31.10 ночью – 01.11 до обеда", "place": "Отель рядом с PTY", "summary": "Только ночь: ужин у отеля, пограничный контроль Панамы, вылет в Сан-Хосе 13:28."}, {"id": "arrival-cr", "num": 4, "icon": "🛬", "title": "Прилёт в Коста-Рику", "dateStart": "2026-11-01", "dateEnd": "2026-11-01", "after": "13:28", "dateLabel": "1 ноября", "place": "SJO → LIR → Тамариндо", "summary": "CM 342, два часа в SJO (сдача багажа на Sansa, разведка цен), рейс в Либерию 16:00 и трансфер в отель ~18:30."}, {"id": "tamarindo", "num": 5, "icon": "🏖️", "title": "Тамариндо: 5 дней", "dateStart": "2026-11-01", "dateEnd": "2026-11-06", "after": "18:30", "until": "05:00", "dateLabel": "1 – 6 ноября", "place": "Occidental 4★ · All Inclusive", "summary": "Пляжи, командировка, туры и закаты — главная база поездки. Питание включено, правила Коста-Рики и разговорник под рукой."}, {"id": "sjo-window", "num": 6, "icon": "🔁", "title": "Вылет и окно в SJO", "dateStart": "2026-11-06", "dateEnd": "2026-11-06", "after": "05:00", "until": "17:12", "dateLabel": "6 ноября", "place": "LIR → SJO → Панама", "summary": "Выезд 05:00 с breakfast box, Sansa в 07:30, шесть часов в Сан-Хосе (покупки!), Copa в Панаму 14:46."}, {"id": "panama-days", "num": 7, "icon": "🇵🇦", "title": "Панама: полные сутки", "dateStart": "2026-11-06", "dateEnd": "2026-11-07", "after": "17:12", "until": "22:00", "dateLabel": "6 – 7 ноября", "place": "Casco Viejo · Панамский канал", "summary": "Ужин в Casco Viejo, ночью шлюзы, днём канал и город, покупки и дьюти-фри PTY."}, {"id": "home", "num": 8, "icon": "🚂", "title": "Обратно: Панама → Москва → Киров", "dateStart": "2026-11-07", "dateEnd": "2026-11-09", "after": "22:00", "dateLabel": "7 – 9 ноября", "place": "TK 904 + TK 407 + поезд 070", "summary": "Ночной перелёт, стыковка в Стамбуле, Внуково 05:20, восемь часов в Москве и поезд домой."}]</script>
+<script id="steps-seed" type="application/json">[{"id": "prep", "num": 0, "icon": "🧳", "title": "Подготовка к поездке", "dateStart": null, "dateEnd": "2026-10-29", "dateLabel": "до 29 октября", "place": "Киров", "summary": "Документы, билеты, сборы, дела, деньги, связь, аптечка и чек-листы — всё, что делаем до отъезда."}, {"id": "train-msk", "num": 1, "icon": "🚆", "title": "Поезд Киров → Москва", "dateStart": "2026-10-30", "dateEnd": "2026-10-30", "dateLabel": "30 октября", "place": "№131 · посадка 07:27", "summary": "13 ч 22 мин в пути: один приём пищи в билете, еда с собой, прибытие на Восточный 20:49 и переезд во Внуково."}, {"id": "ist-flight", "num": 2, "icon": "✈️", "title": "Москва → Стамбул", "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "dateLabel": "31 октября", "place": "TK 422", "summary": "Ночной вылет 02:40, прилёт в Стамбул 06:55, пересадка 6 ч 55 мин."}, {"id": "ist-layover", "num": 3, "icon": "🔄", "title": "Стамбул: пересадка 6ч 55м", "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "after": "06:55", "until": "13:50", "dateLabel": "31 октября", "place": "IST, пересадка", "summary": "Лаунж, душ, завтрак, выход в город (если время). Багаж до Панамы, но в Панаме его забирать."}, {"id": "ist-panama", "num": 4, "icon": "✈️", "title": "Стамбул → Панама", "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "after": "13:50", "dateLabel": "31 октября", "place": "TK 903", "summary": "Длинный перелёт ~15ч, прилёт в Панаму 20:05. Ночь в отеле рядом с аэропортом."}, {"id": "panama-night", "num": 5, "icon": "🌃", "title": "Ночь в Панаме", "dateStart": "2026-10-31", "dateEnd": "2026-11-01", "after": "20:05", "until": "13:28", "dateLabel": "31.10 ночью – 01.11 до обеда", "place": "Отель рядом с PTY", "summary": "Только ночь: ужин у отеля, пограничный контроль Панамы, вылет в Сан-Хосе 13:28."}, {"id": "arrival-cr", "num": 6, "icon": "🛬", "title": "Прилёт в Коста-Рику", "dateStart": "2026-11-01", "dateEnd": "2026-11-01", "after": "13:28", "dateLabel": "1 ноября", "place": "SJO → LIR → Тамариндо", "summary": "CM 342, два часа в SJO (сдача багажа на Sansa, разведка цен), рейс в Либерию 16:00 и трансфер в отель ~18:30."}, {"id": "tamarindo", "num": 7, "icon": "🏖️", "title": "Тамариндо: 5 дней", "dateStart": "2026-11-01", "dateEnd": "2026-11-06", "after": "18:30", "until": "05:00", "dateLabel": "1 – 6 ноября", "place": "Occidental 4★ · All Inclusive", "summary": "Пляжи, командировка, туры и закаты — главная база поездки. Питание включено, правила Коста-Рики и разговорник под рукой."}, {"id": "sjo-window", "num": 8, "icon": "🔁", "title": "Вылет и окно в SJO", "dateStart": "2026-11-06", "dateEnd": "2026-11-06", "after": "05:00", "until": "17:12", "dateLabel": "6 ноября", "place": "LIR → SJO → Панама", "summary": "Выезд 05:00 с breakfast box, Sansa в 07:30, шесть часов в Сан-Хосе (покупки!), Copa в Панаму 14:46."}, {"id": "panama-days", "num": 9, "icon": "🇵🇦", "title": "Панама: полные сутки", "dateStart": "2026-11-06", "dateEnd": "2026-11-07", "after": "17:12", "until": "22:00", "dateLabel": "6 – 7 ноября", "place": "Casco Viejo · Панамский канал", "summary": "Ужин в Casco Viejo, ночью шлюзы, днём канал и город, покупки и дьюти-фри PTY."}, {"id": "home", "num": 10, "icon": "🏠", "title": "Обратно: Панама → Стамбул → Москва", "dateStart": "2026-11-07", "dateEnd": "2026-11-09", "after": "22:00", "dateLabel": "7 – 9 ноября", "place": "TK 904 + TK 407", "summary": "Ночной перелёт, стыковка в Стамбуле, Внуково 05:20, восемь часов в Москве и поезд домой."}]</script>
+<script src="assets/js/app.js"></script>
 </body>
 </html>

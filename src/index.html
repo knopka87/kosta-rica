@@ -1,3 +1,4 @@
+<div id="app">
 <section class="hero">
   <img src="assets/img/tamarindo-beach.jpg" alt="Пляж Тамариндо, Коста-Рика">
   <div class="hero-body">
@@ -41,11 +42,6 @@
     <h3>Маршрут по шагам</h3>
     <p>9 этапов поездки — каждый шаг отдельной страницей: что делать, куда идти, что посмотреть.</p>
   </a>
-  <a class="card" href="step-prep.html">
-    <div class="ico">🧳</div>
-    <h3>Подготовка</h3>
-    <p>Билеты, сборы, дела, деньги, связь, аптечка — всё до выезда. Отметки сохраняются.</p>
-  </a>
   <a class="card" href="step-tamarindo.html">
     <div class="ico">🏖️</div>
     <h3>Тамариндо</h3>
@@ -56,48 +52,24 @@
     <h3>Отель и карта</h3>
     <p>Occidental Tamarindo: территория, что вокруг, офлайн-карта района.</p>
   </a>
-  <a class="card" href="step-prep.html#eda-v-poezd">
-    <div class="ico">🥗</div>
-    <h3>Еда в поезд</h3>
-    <p>Что, сколько и когда купить в дорогу — поезд и самолёты без ресторанов.</p>
-  </a>
-  <a class="card" href="phrasebook.html">
-    <div class="ico">🗣️</div>
-    <h3>Разговорник</h3>
-    <p>Испанский с произношением: ресторан, такси, отель, аптека, экстренные фразы.</p>
-  </a>
   <a class="card" href="budget.html">
     <div class="ico">💰</div>
     <h3>Бюджет</h3>
-    <p>План по категориям и трекер трат — сколько осталось и куда ушло.</p>
+    <p>План бюджета + трекер трат (₽/$/₡), балансы, выгрузка CSV.</p>
   </a>
   <a class="card" href="journal.html">
-    <div class="ico">📓</div>
-    <h3>Журнал</h3>
-    <p>Дневник поездки: записи офлайн, правка и экспорт в Markdown.</p>
+    <div class="ico">📔</div>
+    <h3>Журнал поездки</h3>
+    <p>Дневник: записи, фото, экспорт в .md после поездки.</p>
   </a>
-  <a class="card accent" href="dokumenty.html">
+  <a class="card" href="dokumenty.html">
     <div class="ico">🔒</div>
     <h3>Документы</h3>
-    <p>Билеты и бронирования в PDF — страница защищена паролем, файлы зашифрованы.</p>
+    <p>Билеты, брони, паспорта — зашифровано паролем.</p>
   </a>
 </div>
 
-<h2>Что сделать до выезда</h2>
-<p>Отмечай галочками — прогресс сохраняется в браузере. Пункты можно добавлять и править прямо на <a href="step-prep.html">шаге «Подготовка»</a>.</p>
-
-<div class="note warn">
-  <h4>⛔ Критичное</h4>
-  <p>Первые два пункта — до всего остального. Вещи — в <a href="step-prep.html">чек-листе сборов</a> там же.</p>
-</div>
-
-<div class="editable-summary" data-list-key="dela" data-label="сделано"></div>
 <!--dela-seed-->
-
-<div class="note ok">
-  <h4>✅ Куплено / готово</h4>
-  <p>Билеты на все 8 авиасегментов и 2 поезда, отель Occidental, паспорта и PDF-документы — <a href="dokumenty.html">в разделе «Документы»</a>.</p>
-</div>
 
 <h2>Ключевые даты</h2>
 <ul class="timeline">
@@ -108,38 +80,12 @@
   <li class="hot"><span class="date">06.11 (пт) 05:00</span> — <span class="what">Выезд → LIR 07:30 (Sansa, багаж 13 кг!) → SJO 08:20 → 6 ч ожидания → Панама 17:12</span></li>
     <li class="hot"><span class="date">06.11 (пт) 17:12</span> — <span class="what">Прилёт в Панаму — <strong>полные сутки!</strong> Ужин в Casco Viejo, ночью расписание шлюзов</span></li>
     <li><span class="date">07.11 (сб) 22:00</span> — <span class="what">Днём Панамский канал и Casco Viejo, вечером дьюти-фри → PTY → Стамбул (TK 904, 12 ч 45)</span></li>
-  <li><span class="date">09.11 (вс) 05:20</span> — <span class="what">Внуково, 8 часов в Москве, поезд 070 с Ярославской в 13:20</span></li>
-  <li><span class="date">10.11 (пн) 05:07</span> — <span class="what">Киров-Пасс. Дома</span></li>
+    <li><span class="date">08.11 (вс) 01:20</span> — <span class="what">Стамбул → Внуково (TK 407), прилёт 05:20</span></li>
+    <li><span class="date">09.11 (пн) 13:20</span> — <span class="what">Ярославский вокзал → поезд 070 в Киров (прибытие 10.11 05:07)</span></li>
 </ul>
 
 <div class="ics-bar">
   <a class="btn-ics" href="calendar.ics" download="kosta-rica-2026.ics">📅 Скачать календарь — весь маршрут</a>
-  <span class="ics-hint">поезда, рейсы, отели · открывается в Apple/Google/Outlook-календаре</span>
+  <span class="ics-hint">поезда, рейсы, отели · .ics для Apple/Google/Outlook</span>
 </div>
-
-<h2>Если что-то пошло не так</h2>
-<div class="grid-2">
-  <div class="note danger">
-    <h4>📞 Экстренное</h4>
-    <p><strong>911</strong> — полиция, скорая, пожарные (во всех странах маршрута).<br>
-    Туристическая полиция КР: <strong>1192</strong>.<br>
-    Посольство РФ в Коста-Рике: <strong>+506 2280-0066</strong>.</p>
-  </div>
-  <div class="note">
-    <h4>🧳 Потерял/забыл багаж</h4>
-    <p>Билеты отдельные (5 PNR) — <strong>багаж между авиакомпаниями не пересылается</strong>. В Панаме и SJO: забрать ленту → таможня/выход в общий зал → регистрация заново. Подробности — <a href="step-prep.html#book-инструкция-c--когда-билеты-разные-самое-важное">Инструкция C</a>.</p>
-  </div>
-  <div class="note">
-    <h4>💳 Деньги</h4>
-    <p>Оплата картой — <strong>всегда в CRC</strong>, не в USD (иначе теряешь 5–10% на DCC). Наличные снимай крупными суммами: комиссия фиксированная. Подробнее — <a href="step-prep.html">шаг «Подготовка»</a>.</p>
-  </div>
-  <div class="note">
-    <h4>🌊 Море</h4>
-    <p>Обратные течения — главная опасность. Плавай только у флагов: 🟢 можно, 🟡 осторожно, 🔴 нельзя. Попал в течение — <strong>не борись</strong>, плыви параллельно берегу.</p>
-  </div>
-</div>
-
-<div class="note info">
-  <h4>🌤️ Про ноябрь</h4>
-  <p>Самый дождливый месяц, но дождь обычно 1–2 часа после обеда (14:00–16:00). Утро — солнце, вечер — снова солнце. Зато цены минимальные, зелёная страна как на обложке и старт сезона китов.</p>
 </div>

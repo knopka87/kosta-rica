@@ -1,0 +1,10 @@
+{
+  "appId": "com.knopka87.kostarica",
+  "appName": "Коста-Рика 2026",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

@@ -11,6 +11,7 @@ import html
 import json
 import pathlib
 import re
+import shutil
 import subprocess
 import sys
 
@@ -215,31 +216,38 @@ STEPS: list[dict] = [
     {"id": "train-msk", "num": 1, "icon": "🚆", "title": "Поезд Киров → Москва",
      "dateStart": "2026-10-30", "dateEnd": "2026-10-30", "dateLabel": "30 октября",
      "place": "№131 · посадка 07:27", "summary": "13 ч 22 мин в пути: один приём пищи в билете, еда с собой, прибытие на Восточный 20:49 и переезд во Внуково."},
-    {"id": "ist-panama", "num": 2, "icon": "✈️", "title": "Москва → Стамбул → Панама",
+    {"id": "ist-flight", "num": 2, "icon": "✈️", "title": "Москва → Стамбул",
      "dateStart": "2026-10-31", "dateEnd": "2026-10-31", "dateLabel": "31 октября",
-     "place": "TK 422 + TK 903", "summary": "Ночной вылет 02:40, стыковка в IST 6 ч 55 мин, длинный перелёт и прилёт в Панаму в 20:05."},
-    {"id": "panama-night", "num": 3, "icon": "🌃", "title": "Ночь в Панаме",
+     "place": "TK 422", "summary": "Ночной вылет 02:40, прилёт в Стамбул 06:55, пересадка 6 ч 55 мин."},
+    {"id": "ist-layover", "num": 3, "icon": "🔄", "title": "Стамбул: пересадка 6ч 55м",
+     "dateStart": "2026-10-31", "after": "06:55", "dateEnd": "2026-10-31", "until": "13:50",
+     "dateLabel": "31 октября", "place": "IST, пересадка",
+     "summary": "Лаунж, душ, завтрак, выход в город (если время). Багаж до Панамы, но в Панаме его забирать."},
+    {"id": "ist-panama", "num": 4, "icon": "✈️", "title": "Стамбул → Панама",
+     "dateStart": "2026-10-31", "after": "13:50", "dateEnd": "2026-10-31", "dateLabel": "31 октября",
+     "place": "TK 903", "summary": "Длинный перелёт ~15ч, прилёт в Панаму 20:05. Ночь в отеле рядом с аэропортом."},
+    {"id": "panama-night", "num": 5, "icon": "🌃", "title": "Ночь в Панаме",
      "dateStart": "2026-10-31", "after": "20:05", "dateEnd": "2026-11-01", "until": "13:28",
      "dateLabel": "31.10 ночью – 01.11 до обеда", "place": "Отель рядом с PTY",
      "summary": "Только ночь: ужин у отеля, пограничный контроль Панамы, вылет в Сан-Хосе 13:28."},
-    {"id": "arrival-cr", "num": 4, "icon": "🛬", "title": "Прилёт в Коста-Рику",
+    {"id": "arrival-cr", "num": 6, "icon": "🛬", "title": "Прилёт в Коста-Рику",
      "dateStart": "2026-11-01", "after": "13:28", "dateEnd": "2026-11-01", "dateLabel": "1 ноября",
      "place": "SJO → LIR → Тамариндо", "summary": "CM 342, два часа в SJO (сдача багажа на Sansa, разведка цен), рейс в Либерию 16:00 и трансфер в отель ~18:30."},
-    {"id": "tamarindo", "num": 5, "icon": "🏖️", "title": "Тамариндо: 5 дней",
+    {"id": "tamarindo", "num": 7, "icon": "🏖️", "title": "Тамариндо: 5 дней",
      "dateStart": "2026-11-01", "after": "18:30", "dateEnd": "2026-11-06", "until": "05:00",
      "dateLabel": "1 – 6 ноября", "place": "Occidental 4★ · All Inclusive",
      "summary": "Пляжи, командировка, туры и закаты — главная база поездки. Питание включено, правила Коста-Рики и разговорник под рукой."},
-    {"id": "sjo-window", "num": 6, "icon": "🔁", "title": "Вылет и окно в SJO",
+    {"id": "sjo-window", "num": 8, "icon": "🔁", "title": "Вылет и окно в SJO",
      "dateStart": "2026-11-06", "after": "05:00", "dateEnd": "2026-11-06", "until": "17:12",
      "dateLabel": "6 ноября", "place": "LIR → SJO → Панама",
      "summary": "Выезд 05:00 с breakfast box, Sansa в 07:30, шесть часов в Сан-Хосе (покупки!), Copa в Панаму 14:46."},
-    {"id": "panama-days", "num": 7, "icon": "🇵🇦", "title": "Панама: полные сутки",
+    {"id": "panama-days", "num": 9, "icon": "🇵🇦", "title": "Панама: полные сутки",
      "dateStart": "2026-11-06", "after": "17:12", "dateEnd": "2026-11-07", "until": "22:00",
      "dateLabel": "6 – 7 ноября", "place": "Casco Viejo · Панамский канал",
      "summary": "Ужин в Casco Viejo, ночью шлюзы, днём канал и город, покупки и дьюти-фри PTY."},
-    {"id": "home", "num": 8, "icon": "🚂", "title": "Обратно: Панама → Москва → Киров",
+    {"id": "home", "num": 10, "icon": "🏠", "title": "Обратно: Панама → Стамбул → Москва",
      "dateStart": "2026-11-07", "after": "22:00", "dateEnd": "2026-11-09", "dateLabel": "7 – 9 ноября",
-     "place": "TK 904 + TK 407 + поезд 070",
+     "place": "TK 904 + TK 407",
      "summary": "Ночной перелёт, стыковка в Стамбуле, Внуково 05:20, восемь часов в Москве и поезд домой."},
 ]
 
@@ -249,8 +257,12 @@ STEP_INTRO: dict[str, str] = {
 <p>Этот шаг — всё, что делается <strong>до 30 октября</strong>: билеты и брони в «Документах», чек-листы сборов и дел (галочки сохраняются), деньги, связь и аптечка. Отмечай выполненное прямо здесь.</p></div>""",
     "train-msk": """<div class="note info"><h4>🚆 На этом шаге</h4>
 <p>Посадка 07:27, в купе <strong>один приём пищи</strong> — вагон-ресторан платный, поэтому еда с собой (чек-лист магазина — в «Подготовке»). На Восточный прибываем 20:49 — дальше метро/такси во Внуково, вылет в 02:40.</p></div>""",
+    "ist-flight": """<div class="note info"><h4>✈️ На этом шаге</h4>
+<p>Ночной рейс <strong>TK 422</strong> Внуково → Стамбул. Вылет 02:40, прилёт 06:55. Спим в самолёте, завтрак на борту. Багаж идёт до Панамы, но в Панаме его надо забрать и пройти таможню (билеты разные — "Золотое правило" из "Подготовки").</p></div>""",
+    "ist-layover": """<div class="note info"><h4>🔄 На этом шаге</h4>
+<p><strong>6 ч 55 мин</strong> пересадки в Стамбуле (IST): лаунж, душ, завтрак. Если время позволит — краткая экскурсия (но лучше остаться в аэропорту, запас времени!). Дальше рейс TK 903 в Панаму.</p></div>""",
     "ist-panama": """<div class="note info"><h4>✈️ На этом шаге</h4>
-<p>Стыковка в Стамбуле <strong>6 ч 55 мин</strong> — хватает на лаунж и ужин. Багаж идёт до Панамы, но в Панаме его надо забрать и пройти таможню (билеты разные — «Золотое правило» из «Подготовки»). Ночь в аэропорту/городе, дальше CM в Коста-Рику.</p></div>""",
+<p>Длинный перелёт <strong>TK 903</strong> Стамбул → Панама (~15ч). Вылет 13:50, прилёт 20:05. Обед/ужин на борту. Ночь в отеле рядом с аэропортом PTY.</p></div>""", 
     "panama-night": """<div class="note info"><h4>🌃 На этом шаге</h4>
 <p>Только ночь: ужин у отеля, ранний завтрак (выезд до 13:28). Проходите <strong>пограничный контроль Панамы</strong> — правила и что проверяют — ниже. Номер отеля и ваучер — в «Документах».</p></div>""",
     "arrival-cr": """<div class="note info"><h4>🛬 На этом шаге</h4>
@@ -309,13 +321,24 @@ STEP_INCLUDES: dict[str, list] = {
         ("lifehacks.md", "### 30.10 — Поезд, прибытие в Москву 20:49"),
         ("@meal", ["Поезд Киров", "Москва, Восточный"]),
     ],
-    "ist-panama": [
+    "ist-flight": [
         ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
         ("plan-poezdki.md", "### 📖 Инструкция A — Стыковка в аэропорту (IST, SJO)"),
         ("pravila-zakony.md", "### Турция (транзит в Стамбуле IST)"),
+        ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
+        ("@meal", ["TK 422"]),
+    ],
+    "ist-layover": [
+        ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
+        ("pravila-zakony.md", "### Турция (транзит в Стамбуле IST)"),
+        ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
+        ("@meal", ["Стамбул, пересадка 6 ч 55"]),
+    ],
+    "ist-panama": [
+        ("plan-poezdki.md", "### 31 октября 2026, Суббота — Москва → Стамбул → Панама"),
         ("pravila-zakony.md", "### 31.10 — Ночной перелёт Москва → Стамбул → Панама"),
         ("lifehacks.md", "### 31.10 — Ночной перелёт Москва → Панама со стыковкой в Стамбуле"),
-        ("@meal", ["TK 422", "Стамбул, пересадка 6 ч 55", "TK 903"]),
+        ("@meal", ["TK 903"]),
     ],
     "panama-night": [
         ("plan-poezdki.md", "### 31.10 (20:05) – 01.11 (13:28) — Ночь в Панаме"),
@@ -551,8 +574,8 @@ def write_steps() -> None:
         body = (
             f'<section class="hero step-hero"><div class="hero-body">'
             f'<div class="step-kicker">Шаг {s["num"]} из {len(STEPS) - 1}</div>'
-            f"<h1>{s["icon"]} {html.escape(s["title"])}</h1>"
-            f"<p>{html.escape(s["summary"])}</p>"
+            f"<h1>{s['icon']} {html.escape(s['title'])}</h1>"
+            f"<p>{html.escape(s['summary'])}</p>"
             f'<div class="hero-tags"><span>📅 {html.escape(s["dateLabel"])}</span>'
             f'<span>📍 {html.escape(s["place"])}</span></div>'
             f"</div></section>\n"
@@ -586,7 +609,7 @@ def write_steps() -> None:
         if "steps-seed" not in t:
             t = t.replace(
                 "</body>",
-                f'<script id="steps-seed" type="application/json">{seed}</script>\n</body>',
+                f'<script id="steps-seed" type="application/json">{seed}</script>\n<script src="assets/js/app.js"></script>\n</body>',
             )
             p.write_text(t, encoding="utf-8")
     print(f"  steps:            {len(STEPS)} шагов, steps.html + step-*.html")
@@ -975,6 +998,23 @@ self.addEventListener("fetch", function (e) {{
     print(f"  sw.js            {len(files)} файлов, кэш cr-{ver}")
 
 
+def write_www() -> None:
+    """Веб-сборка для Capacitor: публичные файлы → www/ (не коммитится)."""
+    www = ROOT / "www"
+    if www.exists():
+        shutil.rmtree(www)
+    www.mkdir()
+    n = 0
+    for f in ROOT.iterdir():
+        if f.is_file() and (f.suffix == ".html"
+                            or f.name in ("calendar.ics", "manifest.json", "sw.js")):
+            shutil.copy2(f, www / f.name)
+            n += 1
+    for d in ("assets", "docs"):
+        shutil.copytree(ROOT / d, www / d)
+    print(f"  www/             {n} файлов + assets/ docs/ (Capacitor)")
+
+
 def main() -> None:
     for md_name, (out, title) in PAGES_MD.items():
         src = SRC_MD / md_name
@@ -1004,6 +1044,7 @@ def main() -> None:
     write_dela_seed()
     write_calendar()
     write_sw()
+    write_www()
     print("done")
 
 

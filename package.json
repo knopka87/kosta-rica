@@ -1,0 +1,16 @@
+{
+  "name": "kosta-rica-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Личный путеводитель по поездке Коста-Рика 2026 (статический сайт + Android-приложение)",
+  "scripts": {
+    "build": "python3 build.py",
+    "sync": "npm run build && npx cap sync android",
+    "apk": "cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  }
+}
