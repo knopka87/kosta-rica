@@ -1046,7 +1046,61 @@ def main() -> None:
     write_calendar()
     write_sw()
     write_www()
+    validate_trip_json()
     print("done")
+
+
+def validate_trip_json() -> None:
+    """Валидация trip.json — падает если данные сломаны (лечит D8)."""
+    import datetime
+
+    trip_path = ROOT / "trip.json"
+    if not trip_path.exists():
+        print("  trip.json: не найден (пропуск)")
+        return
+
+    try:
+        data = json.loads(trip_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        sys.exit(f"trip.json: не удалось распарсить JSON: {e}")
+
+    segments = data.get("segments", [])
+    if not segments:
+        sys.exit("trip.json: нет segments")
+
+    # Проверка required fields
+    required = ["id", "num", "kind", "title", "startAt"]
+    valid_kinds = {"preparation", "train", "flight", "stay", "transfer", "layover", "window"}
+
+    for seg in segments:
+        for field in required:
+            if field not in seg:
+                sys.exit(f"trip.json: сегмент {seg.get('id', '?')} без поля '{field}'")
+        if seg.get("kind") and seg["kind"] not in valid_kinds:
+            sys.exit(f"trip.json: неверный kind '{seg['kind']}' в {seg['id']}")
+
+        # Проверка startAt > 0
+        try:
+            start = datetime.datetime.fromisoformat(seg["startAt"])
+            end = datetime.datetime.fromisoformat(seg["endAt"])
+            if end <= start:
+                sys.exit(f"trip.json: endAt <= startAt в {seg['id']}")
+        except Exception as e:
+            sys.exit(f"trip.json: ошибка парсинга дат в {seg['id']}: {e}")
+
+    # Проверка пересечений и дыр (исключаем preparation)
+    sorted_segs = sorted(
+        [s for s in segments if s.get("kind") != "preparation"],
+        key=lambda s: s["startAt"],
+    )
+    for i in range(len(sorted_segs) - 1):
+        curr_end = datetime.datetime.fromisoformat(sorted_segs[i]["endAt"])
+        next_start = datetime.datetime.fromisoformat(sorted_segs[i + 1]["startAt"])
+        diff = (next_start - curr_end).total_seconds()
+        if diff > 86400:  # >24 часов дыра
+            sys.exit(f"trip.json: дыра >24ч между {sorted_segs[i]['id']} и {sorted_segs[i+1]['id']}")
+
+    print(f"  trip.json:        {len(segments)} сегментов, валидация пройдена")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,428 @@
+{
+  "version": 1,
+  "trip": {
+    "id": "cr-2026",
+    "title": "Коста-Рика 2026",
+    "homeTz": "Europe/Kirov",
+    "startAt": "2026-10-30T07:27:00+03:00",
+    "endAt": "2026-11-10T05:07:00+03:00"
+  },
+  "segments": [
+    {
+      "id": "prep",
+      "num": 0,
+      "kind": "preparation",
+      "title": "Подготовка к поездке",
+      "icon": "🧳",
+      "startAt": "2026-10-01T00:00:00+03:00",
+      "endAt": "2026-10-29T23:59:00+03:00",
+      "fromTz": "Europe/Kirov",
+      "place": "Киров",
+      "summary": "Документы, билеты, сборы, дела, деньги, связь, аптечка и чек-листы — всё, что делаем до отъезда.",
+      "content": ["plan-poezdki.md#общая-информация", "packing-list.md", "dela.html"]
+    },
+    {
+      "id": "train-msk",
+      "num": 1,
+      "kind": "train",
+      "title": "Поезд Киров → Москва",
+      "icon": "🚆",
+      "startAt": "2026-10-30T04:27:00+00:00",
+      "endAt": "2026-10-30T17:49:00+00:00",
+      "fromTz": "Europe/Kirov",
+      "toTz": "Europe/Moscow",
+      "from": { "name": "Киров-Пасс" },
+      "to": { "name": "Москва-Восточный" },
+      "carrier": "РЖД",
+      "number": "№131",
+      "booking": { "private": true, "ref": "doc:tickets#train" },
+      "baggage": { "note": "один рюкзак/чемодан" },
+      "alerts": [
+        { "level": "info", "text": "В билете один приём пищи — вагон-ресторан платный" }
+      ],
+      "actions": [
+        { "text": "Завтрак в Кирове", "when": "before-start" },
+        { "text": "Посадка 07:27", "when": "at-start" },
+        { "text": "Обед на борту (в билете)", "when": "during" },
+        { "text": "Прибытие 20:49, трансфер во Внуково", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Расписание поезда", "href": "step-train-msk.html#30-октября-2026-пятница--поезд-киров--москва" },
+        { "label": "Еда в поезд — что купить", "href": "step-train-msk.html#еда-в-поезд--что-купить-с-собой" }
+      ],
+      "planB": "Если опаздываешь на поезд — смотри электрички до Москвы, дальше метро во Внуково.",
+      "content": ["plan-poezdki.md#30-октября-2026-пятница--поезд-киров--москва", "lifehacks.md#3010--поезд-прибытие-в-москву-2049"]
+    },
+    {
+      "id": "ist-flight",
+      "num": 2,
+      "kind": "flight",
+      "title": "Москва → Стамбул",
+      "icon": "✈️",
+      "startAt": "2026-10-30T23:40:00+00:00",
+      "endAt": "2026-10-31T03:55:00+03:00",
+      "fromTz": "Europe/Moscow",
+      "toTz": "Europe/Istanbul",
+      "from": { "code": "SVO", "name": "Внуково" },
+      "to": { "code": "IST", "name": "Стамбул", "terminal": null },
+      "carrier": "Turkish Airlines",
+      "number": "TK 422",
+      "booking": { "private": true, "ref": "doc:tickets#tk422" },
+      "baggage": { "checked": "прокидывается до Панамы", "cabin": "1 место" },
+      "alerts": [
+        { "level": "critical", "text": "Багаж идёт до Панамы, но в Панаме его надо забрать и пройти таможню — билеты разные PNR" }
+      ],
+      "actions": [
+        { "text": "Быть во Внуково к 01:00", "when": "before-start" },
+        { "text": "Регистрация TK 422", "when": "at-start" },
+        { "text": "Сон на борту, завтрак", "when": "during" },
+        { "text": "Прилёт в Стамбул 06:55, пересадка", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Правила Турции (транзит)", "href": "step-ist-flight.html#турция-транзит-в-стамбуле-ist" },
+        { "label": "Ночной перелёт — лайфхаки", "href": "step-ist-flight.html#3110--ночной-перелёт-москва--панама-со-стыковкой-в-стамбуле" }
+      ],
+      "planB": "Если TK 422 задержан — проверь статус на сайте Turkish Airlines, дальше решай на месте.",
+      "content": ["plan-poezdki.md#31-октября-2026-суббота--москва--стамбул--панама", "pravila-zakony.md#турция-транзит-в-стамбуле-ist"]
+    },
+    {
+      "id": "ist-layover",
+      "num": 3,
+      "kind": "layover",
+      "title": "Стамбул: пересадка 6ч 55м",
+      "icon": "🔄",
+      "startAt": "2026-10-31T03:55:00+03:00",
+      "endAt": "2026-10-31T10:50:00+03:00",
+      "fromTz": "Europe/Istanbul",
+      "place": "IST, транзитная зона",
+      "summary": "Лаунж, душ, завтрак, выход в город (если время).",
+      "alerts": [
+        { "level": "info", "text": "6 ч 55 мин — хватает на лаунж и душ, но не на экскурсию в город" }
+      ],
+      "actions": [
+        { "text": "Пройти транзитный контроль", "when": "at-start" },
+        { "text": "Найти лаунж или ресторан", "when": "before-end" },
+        { "text": "Завтрак", "when": "during" },
+        { "text": "Регистрация на TK 903", "when": "before-end" }
+      ],
+      "links": [
+        { "label": "Схема IST", "href": "step-ist-layover.html#схема-аэропорта-стамбул" }
+      ],
+      "planB": "Если TK 903 задержан — лаунж спасение. Если нет доступа к лаунжу — бесплатные зоны отдыха в IST.",
+      "content": ["plan-poezdki.md#31-октября-2026-суббота--москва--стамбул--панама", "lifehacks.md#3110--ночной-перелёт-москва--панама-со-стыковкой-в-стамбуле"]
+    },
+    {
+      "id": "ist-panama",
+      "num": 4,
+      "kind": "flight",
+      "title": "Стамбул → Панама",
+      "icon": "✈️",
+      "startAt": "2026-10-31T10:50:00+03:00",
+      "endAt": "2026-10-31T20:05:00-05:00",
+      "fromTz": "Europe/Istanbul",
+      "toTz": "America/Panama",
+      "from": { "code": "IST", "name": "Стамбул" },
+      "to": { "code": "PTY", "name": "Панама" },
+      "carrier": "Turkish Airlines",
+      "number": "TK 903",
+      "booking": { "private": true, "ref": "doc:tickets#tk903" },
+      "baggage": { "checked": "забрать в Панаме!", "cabin": "1 место", "note": "багаж НЕ прокидывается на Copa" },
+      "alerts": [
+        { "level": "critical", "text": "В Панаме забрать багаж и пройти таможню — билеты разные PNR!" }
+      ],
+      "actions": [
+        { "text": "Регистрация TK 903", "when": "before-start" },
+        { "text": "Обед/ужин на борту", "when": "during" },
+        { "text": "Заполнить миграционную карту Панамы на борту", "when": "before-end" },
+        { "text": "Прилёт 20:05, забрать багаж, таможня", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Пограничный контроль Панамы", "href": "step-ist-panama.html#инструкция-d--пограничный-контроль" },
+        { "label": "Фразы на испанском", "href": "phrasebook.html#airport" }
+      ],
+      "planB": "Если рейс задержан и стыковка в Панаме горит — Copa CM 342 следующий в 17:40.",
+      "content": ["plan-poezdki.md#31-октября-2026-суббота--москва--стамбул--панама", "pravila-zakony.md#3110--ночной-перелёт-москва--стамбул--панама"]
+    },
+    {
+      "id": "panama-night",
+      "num": 5,
+      "kind": "stay",
+      "title": "Ночь в Панаме",
+      "icon": "🌃",
+      "startAt": "2026-10-31T20:05:00-05:00",
+      "endAt": "2026-11-01T13:28:00-05:00",
+      "fromTz": "America/Panama",
+      "place": "Отель рядом с PTY",
+      "summary": "Только ночь: ужин у отеля, пограничный контроль Панамы, вылет в Сан-Хосе 13:28.",
+      "booking": { "private": true, "ref": "doc:hotel#panama" },
+      "alerts": [
+        { "level": "info", "text": "Ранний вылет — заказать breakfast box на ресепшене накануне" }
+      ],
+      "actions": [
+        { "text": "Пройти пограничный контроль Панамы", "when": "at-start" },
+        { "text": "Ужин у отеля", "when": "during" },
+        { "text": "Ранний завтрак", "when": "before-end" },
+        { "text": "Вылет CM 342 в 13:28", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Ночь в Панаме: тайминг", "href": "step-panama-night.html#3110-2005--0111-1328--ночь-в-панаме" },
+        { "label": "Правила Панамы", "href": "step-panama-night.html#панама" }
+      ],
+      "planB": "Если CM 342 отменён — смотри Copa на следующий день, пиши в поддержку.",
+      "content": ["plan-poezdki.md#3110-2005--0111-1328--ночь-в-панаме", "pravila-zakony.md#панама"]
+    },
+    {
+      "id": "arrival-cr",
+      "num": 6,
+      "kind": "flight",
+      "title": "Прилёт в Коста-Рику",
+      "icon": "🛬",
+      "startAt": "2026-11-01T18:28:00-05:00",
+      "endAt": "2026-11-01T22:50:00-06:00",
+      "fromTz": "America/Panama",
+      "toTz": "America/Costa_Rica",
+      "from": { "code": "PTY", "name": "Панама" },
+      "to": { "code": "SJO", "name": "Сан-Хосе" },
+      "carrier": "Copa Airlines",
+      "number": "CM 342",
+      "booking": { "private": true, "ref": "doc:tickets#cm342" },
+      "alerts": [
+        { "level": "info", "text": "2 часа окна в SJO: забрать багаж → общий зал → сдача на Sansa к 15:15 (13 кг!)" }
+      ],
+      "actions": [
+        { "text": "Прилёт 13:51 в SJO", "when": "at-start" },
+        { "text": "Забрать багаж", "when": "during" },
+        { "text": "Сдать багаж на Sansa (строго 13 кг!)", "when": "during" },
+        { "text": "Рейс RZ 1076 в 16:00", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Прилёт: SJO → LIR → Тамариндо", "href": "step-arrival-cr.html#1-ноября-2026-воскресенье--панама--сан-хосе--либерия" },
+        { "label": "Разведка цен в SJO", "href": "step-arrival-cr.html#разведка-0111--прилёт-в-sjo--снять-цены--чтобы-потом-купить-правильно" }
+      ],
+      "content": ["plan-poezdki.md#1-ноября-2026-воскресенье--панама--сан-хосе--либерия", "lifehacks.md#0111--прилёт-в-сан-хосе-1351-вылет-в-либерию-1600"]
+    },
+    {
+      "id": "transfer-lir",
+      "num": 6.5,
+      "kind": "flight",
+      "title": "Сан-Хосе → Либерия",
+      "icon": "✈️",
+      "startAt": "2026-11-01T22:00:00-06:00",
+      "endAt": "2026-11-01T22:50:00-06:00",
+      "fromTz": "America/Costa_Rica",
+      "toTz": "America/Costa_Rica",
+      "from": { "code": "SJO", "name": "��ан-Хосе" },
+      "to": { "code": "LIR", "name": "Либерия" },
+      "carrier": "Sansa",
+      "number": "RZ 1076",
+      "booking": { "private": true, "ref": "doc:tickets#rz1076" },
+      "baggage": { "note": "строго 13 кг!" },
+      "actions": [
+        { "text": "Регистрация Sansa к 15:15", "when": "before-start" },
+        { "text": "Вылет 16:00", "when": "at-start" },
+        { "text": "Прилёт в Либерию", "when": "at-end" }
+      ],
+      "planB": "Если Sansa отменяет рейс — такси до Либери (~2 часа, $80-100).",
+      "content": ["plan-poezdki.md#1-ноября-2026-воскресенье--панама--сан-хосе--либерия"]
+    },
+    {
+      "id": "tamarindo",
+      "num": 7,
+      "kind": "stay",
+      "title": "Тамариндо: 5 дней",
+      "icon": "🏖️",
+      "startAt": "2026-11-02T00:30:00-06:00",
+      "endAt": "2026-11-06T05:00:00-06:00",
+      "fromTz": "America/Costa_Rica",
+      "place": "Occidental Tamarindo 4★ All Inclusive",
+      "summary": "Пляжи, командировка, туры и закаты — главная база поездки.",
+      "booking": { "private": true, "ref": "doc:hotel#occidental" },
+      "actions": [
+        { "text": "Заселение ~18:30", "when": "at-start" },
+        { "text": "Пляж, серфинг, закаты", "when": "during" },
+        { "text": "Туры: мангры, остров Марипоса", "when": "during" },
+        { "text": "Check-out 6 ноября, сборы", "when": "before-end" }
+      ],
+      "links": [
+        { "label": "Отель: Occidental 4★ AI", "href": "step-tamarindo.html#тамариндо-0111--0611" },
+        { "label": "Правила Коста-Рики", "href": "step-tamarindo.html#поведение-и-этикет" }
+      ],
+      "content": ["plan-poezdki.md#тамариндо-0111--0611", "eda.md#коста-рика--где-поесть", "pravila-zakony.md#коста-рика"]
+    },
+    {
+      "id": "sjo-window",
+      "num": 8,
+      "kind": "flight",
+      "title": "Вылет и окно в SJO",
+      "icon": "🔁",
+      "startAt": "2026-11-06T11:00:00-06:00",
+      "endAt": "2026-11-06T20:46:00-05:00",
+      "fromTz": "America/Costa_Rica",
+      "toTz": "America/Panama",
+      "from": { "code": "LIR", "name": "Либерия" },
+      "to": { "code": "SJO", "name": "Сан-Хосе" },
+      "carrier": "Sansa",
+      "number": "RZ 1073",
+      "booking": { "private": true, "ref": "doc:tickets#rz1073" },
+      "alerts": [
+        { "level": "info", "text": "6 часов в SJO — основное окно покупок!" }
+      ],
+      "actions": [
+        { "text": "Выезд 05:00, breakfast box", "when": "before-start" },
+        { "text": "Прилёт в SJO 08:20", "when": "at-start" },
+        { "text": "Покупки в SJO (кофе, ром, сувениры)", "when": "during" },
+        { "text": "Рейс CM 343 в 14:46", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "SJO: 6 часов покупок", "href": "step-sjo-window.html#sjo-сан-хосе-0611-6-часов" }
+      ],
+      "planB": "Если RZ 1073 отменяется — такси до SJO (~1 час), дальше Copa.",
+      "content": ["plan-poezdki.md#6-ноября-2026-пятница--тамариндо--либерия--сан-хосе", "chto-kupit.md#sjo-сан-хосе-0611-6-часов"]
+    },
+    {
+      "id": "panama-flight",
+      "num": 8.5,
+      "kind": "flight",
+      "title": "Сан-Хосе → Панама",
+      "icon": "✈️",
+      "startAt": "2026-11-06T20:46:00-05:00",
+      "endAt": "2026-11-06T22:12:00-05:00",
+      "fromTz": "America/Costa_Rica",
+      "toTz": "America/Panama",
+      "from": { "code": "SJO", "name": "Сан-Хосе" },
+      "to": { "code": "PTY", "name": "Панама" },
+      "carrier": "Copa Airlines",
+      "number": "CM 343",
+      "booking": { "private": true, "ref": "doc:tickets#cm343" },
+      "actions": [
+        { "text": "Регистрация CM 343", "when": "before-start" },
+        { "text": "Вылет 14:46", "when": "at-start" },
+        { "text": "Прилёт 17:12, полные сутки в Панаме!", "when": "at-end" }
+      ],
+      "content": ["plan-poezdki.md#6-ноября-2026-пятница--сан-хосе--панама-запас-по-времени"]
+    },
+    {
+      "id": "panama-days",
+      "num": 9,
+      "kind": "stay",
+      "title": "Панама: полные сутки",
+      "icon": "🇵🇦",
+      "startAt": "2026-11-06T22:12:00-05:00",
+      "endAt": "2026-11-07T22:00:00-05:00",
+      "fromTz": "America/Panama",
+      "place": "Casco Viejo · Панамский канал",
+      "summary": "Ужин в Casco Viejo, ночью шлюзы, днём канал и город, покупки и дьюти-фри PTY.",
+      "actions": [
+        { "text": "Ужин в Casco Viejo", "when": "at-start" },
+        { "text": "Ночью — шлюзы Панамского канала", "when": "during" },
+        { "text": "Днём — канал и город", "when": "during" },
+        { "text": "Покупки, дьюти-фри", "when": "during" },
+        { "text": "Вылет TK 904 в 22:00", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Панама: полные сутки", "href": "step-panama-days.html#панама-полные-сутки" },
+        { "label": "Что купить в Панаме", "href": "step-panama-days.html#панама--где-и-что-покупать" }
+      ],
+      "content": ["plan-poezdki.md#2-я-0611-1712--0711-2200--полные-сутки!", "chto-kupit.md#панама"]
+    },
+    {
+      "id": "home-flight-1",
+      "num": 10,
+      "kind": "flight",
+      "title": "Панама → Стамбул",
+      "icon": "✈️",
+      "startAt": "2026-11-08T03:00:00+00:00",
+      "endAt": "2026-11-08T15:45:00+03:00",
+      "fromTz": "America/Panama",
+      "toTz": "Europe/Istanbul",
+      "from": { "code": "PTY", "name": "Панама" },
+      "to": { "code": "IST", "name": "Стамбул" },
+      "carrier": "Turkish Airlines",
+      "number": "TK 904",
+      "booking": { "private": true, "ref": "doc:tickets#tk904" },
+      "baggage": { "checked": "до Москвы", "cabin": "1 место" },
+      "actions": [
+        { "text": "Быть в PTY за 3 часа", "when": "before-start" },
+        { "text": "Регистрация TK 904", "when": "at-start" },
+        { "text": "Обед/ужин на борту", "when": "during" },
+        { "text": "Прилёт в Стамбул 18:45", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Панама → Стамбул", "href": "step-home.html#7-ноября-2026-суббота--панама--стамбул" }
+      ],
+      "content": ["plan-poezdki.md#7-ноября-2026-суббота--панама--стамбул"]
+    },
+    {
+      "id": "home-layover",
+      "num": 10.5,
+      "kind": "layover",
+      "title": "Стамбул: пересадка",
+      "icon": "🔄",
+      "startAt": "2026-11-08T15:45:00+03:00",
+      "endAt": "2026-11-08T22:20:00+03:00",
+      "fromTz": "Europe/Istanbul",
+      "place": "IST, транзитная зона",
+      "summary": "Лаунж, дьюти-фри, отдых перед долгим перелётом.",
+      "actions": [
+        { "text": "Пройти транзит", "when": "at-start" },
+        { "text": "Дьюти-фри IST", "when": "during" },
+        { "text": "Регистрация TK 407", "when": "before-end" },
+        { "text": "Вылет 01:20 (09.11)", "when": "at-end" }
+      ],
+      "planB": "Если TK 407 задержан — лаунж в IST, питание за счёт авиакомпании.",
+      "content": ["plan-poezdki.md#9-ноября-2026-понедельник--поезд-москва--киров"]
+    },
+    {
+      "id": "home-flight-2",
+      "num": 10.6,
+      "kind": "flight",
+      "title": "Стамбул → Москва",
+      "icon": "✈️",
+      "startAt": "2026-11-08T22:20:00+03:00",
+      "endAt": "2026-11-09T02:20:00+03:00",
+      "fromTz": "Europe/Istanbul",
+      "toTz": "Europe/Moscow",
+      "from": { "code": "IST", "name": "Стамбул" },
+      "to": { "code": "SVO", "name": "Внуково" },
+      "carrier": "Turkish Airlines",
+      "number": "TK 407",
+      "booking": { "private": true, "ref": "doc:tickets#tk407" },
+      "actions": [
+        { "text": "Вылет 01:20", "when": "at-start" },
+        { "text": "Сон на борту", "when": "during" },
+        { "text": "Прилёт во Внуково 05:20", "when": "at-end" }
+      ],
+      "content": ["plan-poezdki.md#9-ноября-2026-понедельник--поезд-москва--киров"]
+    },
+    {
+      "id": "home-train",
+      "num": 10.7,
+      "kind": "train",
+      "title": "Москва → Киров",
+      "icon": "🚂",
+      "startAt": "2026-11-09T10:20:00+03:00",
+      "endAt": "2026-11-10T02:07:00+03:00",
+      "fromTz": "Europe/Moscow",
+      "toTz": "Europe/Kirov",
+      "from": { "name": "Москва-Ярославская" },
+      "to": { "name": "Киров-Пасс" },
+      "carrier": "РЖД",
+      "number": "№070",
+      "booking": { "private": true, "ref": "doc:tickets#train070" },
+      "alerts": [
+        { "level": "info", "text": "8 часов в Москве: чемодан в камеру хранения на Ярославском, к поезду к 12:20" }
+      ],
+      "actions": [
+        { "text": "Прилёт 05:20, такси до Ярославского", "when": "at-start" },
+        { "text": "Камера хранения, лёгкая прогулка", "when": "during" },
+        { "text": "Посадка 13:20", "when": "before-end" },
+        { "text": "Прибытие в Киров 05:07 (11.11)", "when": "at-end" }
+      ],
+      "links": [
+        { "label": "Поезд 070: расписание", "href": "step-home.html#9-ноября-2026-понедельник--поезд-москва--киров" }
+      ],
+      "planB": "Если TK 407 сильно задержан — смотри вечерние поезда из Москвы.",
+      "content": ["plan-poezdki.md#9-ноября-2026-понедельник--поезд-москва--киров"]
+    }
+  ]
+}
