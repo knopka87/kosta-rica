@@ -283,6 +283,17 @@
 .det-body h1, .det-body h2 { font-size: 17px; margin-top: 20px; }
 .det-body h3 { font-size: 15.5px; }
 
+/* Экран блокировки «Документов» — это состояние страницы, а не второй
+   документ, поэтому заголовок там больше не h1. Вид сохраняем прежний
+   (раньше его задавало правило .lock-screen h1). */
+.lock-screen .lock-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 10px 0 6px;
+}
+
 /* --- оглавление этапов --- */
 
 .step-count {

@@ -108,7 +108,7 @@
     var button = document.createElement("button");
     button.type = "button";
     button.className = "map-load-button";
-    button.textContent = "Загрузить офлайн-карту · 40 МБ";
+    button.textContent = "Показать карту";
     button.addEventListener("click", function () { loadMaps(mounts, button); });
     first.parentNode.insertBefore(button, first);
   }
