@@ -986,6 +986,78 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
 .editable-summary h3 { font-size: 17px; margin: 20px 0 4px; }
 .editable-summary .summary-todo { margin-top: 6px; }
 
+/* === Погода (assets/js/weather.js) === */
+.weather {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+  margin: 16px 0 22px;
+}
+.w-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.w-place { font-weight: 600; color: var(--ink-soft); font-size: 13.5px; }
+.w-now { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.w-icon { font-size: 44px; line-height: 1; }
+.w-main { min-width: 110px; }
+.w-temp { font-size: 34px; font-weight: 700; line-height: 1.05; }
+.w-feel { font-size: 13px; color: var(--ink-mute); }
+.w-facts { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--ink-soft); }
+.w-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.w-day {
+  background: var(--sand-50);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 7px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 13px;
+  text-align: center;
+}
+.w-day b { color: var(--ink-soft); font-size: 12.5px; }
+.w-day i { font-style: normal; font-size: 18px; }
+.w-day .w-max { font-weight: 700; }
+.w-day .w-min, .w-day .w-pop { color: var(--ink-mute); font-size: 12px; }
+.w-day.today { border-color: var(--jungle-500); background: #f0fdfa; }
+.w-note { margin-top: 10px; font-size: 13px; color: var(--ink-mute); }
+.w-norms .w-temp { font-size: 26px; }
+
+/* === Календарь (.ics) === */
+.ics-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 22px;
+}
+.btn-ics {
+  display: inline-block;
+  background: var(--jungle-700);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14.5px;
+  padding: 9px 17px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+}
+.btn-ics:hover { background: var(--jungle-800); }
+.ics-hint { font-size: 13px; color: var(--ink-mute); }
+
 @media print {
   .topbar, .footer, .totop, .toc, .checklist-tools { display: none !important; }
   body { background: #fff; }

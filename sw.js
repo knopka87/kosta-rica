@@ -1,7 +1,7 @@
 /* Генерируется build.py — не редактировать вручную.
-   Версия кэша (sha1 содержимого): 94cf14e5dbdc */
+   Версия кэша (sha1 содержимого): 468516f0b8ca */
 "use strict";
-var CACHE = "cr-94cf14e5dbdc";
+var CACHE = "cr-468516f0b8ca";
 var ASSETS = [
   "credits.html",
   "dela.html",
@@ -14,6 +14,7 @@ var ASSETS = [
   "pokupki.html",
   "pravila.html",
   "sbory.html",
+  "calendar.ics",
   "assets/css/style.css",
   "assets/img/arenal.jpg",
   "assets/img/casco-viejo.jpg",
@@ -28,6 +29,7 @@ var ASSETS = [
   "assets/js/docs.js",
   "assets/js/editable-list.js",
   "assets/js/main.js",
+  "assets/js/weather.js",
   "docs/doc-01.bin",
   "docs/doc-02.bin",
   "docs/doc-03.bin",

@@ -307,6 +307,140 @@ def write_dela_seed() -> None:
     print(f"  dela-seed        {len(seed['sections'])} раздела, {n} пунктов → index.html")
 
 
+# --- календарь (.ics) ---------------------------------------------------------
+
+# Все времена в UTC (DTSTART/DTEND ...Z) — без VTIMEZONE, принимается всеми
+# календарями. Смещения: Москва/Стамбул +3, Панама −5, Коста-Рика −6.
+# Все-day события — чистые даты, DTEND включительно (RFC 5545).
+CALENDAR_EVENTS: list[tuple[str, str, str, str, str]] = [
+    ("20261030T042700Z", "20261030T174900Z",
+     "🚂 Поезд 131 Киров → Москва-Восточный",
+     "07:27–20:49 по Москве. Вагон 06, нижнее.",
+     "Киров-Пасс → Москва-Восточный"),
+    ("20261030T234000Z", "20261031T035500Z",
+     "✈️ TK 422 Внуково → Стамбул",
+     "Вылет 31.10 02:40, прилёт 06:55. Быть во Внуково к 01:00.",
+     "Внуково (SVO) → Стамбул (IST)"),
+    ("20261031T105000Z", "20261101T010500Z",
+     "✈️ TK 903 Стамбул → Панама",
+     "Пересадка 6 ч 55 в Стамбуле. Вылет 13:50, прилёт в Панаму 20:05.",
+     "Стамбул (IST) → Панама (PTY)"),
+    ("20261031", "20261101",
+     "🏨 Ночь в Панаме",
+     "Прилёт 20:05. Завтра 13:28 вылет в Сан-Хосе.",
+     "Панама"),
+    ("20261101T182800Z", "20261101T195100Z",
+     "✈️ CM 342 Панама → Сан-Хосе",
+     "13:28–13:51 по местному. 2 часа в аэропорту: duty free, сдача багажа на Sansa.",
+     "Панама (PTY) → Сан-Хосе (SJO)"),
+    ("20261101T220000Z", "20261101T225000Z",
+     "✈️ RZ 1076 Сан-Хосе → Либерия",
+     "16:00–16:50 по местному. На Sansa строго 13 кг! Далее трансфер ~1 ч в Тамариндо.",
+     "Сан-Хосе (SJO) → Либерия (LIR)"),
+    ("20261102T003000Z", "20261102T010000Z",
+     "🏨 Заселение Occidental Tamarindo",
+     "~18:30 по местному (01.11). All Inclusive, прямой выход на пляж.",
+     "Occidental Tamarindo, Playa Tamarindo, Guanacaste"),
+    ("20261102", "20261106",
+     "💼 Командировка в Тамариндо",
+     "02–05 ноября. All Inclusive, туры, закаты на пляже.",
+     "Occidental Tamarindo, Guanacaste"),
+    ("20261106T110000Z", "20261106T120000Z",
+     "🚕 Выезд из отеля → аэропорт LIR",
+     "05:00–06:00 по местному. Строго к 05:00, в аэропорту к 06:00. Такси заказать накануне, breakfast box!",
+     "Occidental Tamarindo → LIR"),
+    ("20261106T133000Z", "20261106T142000Z",
+     "✈️ RZ 1073 Либерия → Сан-Хосе",
+     "07:30–08:20 по местному. Багаж 13 кг. В SJO — 6 часов ожидания.",
+     "Либерия (LIR) → Сан-Хосе (SJO)"),
+    ("20261106T204600Z", "20261106T221200Z",
+     "✈️ CM 343 Сан-Хосе → Панама",
+     "14:46–17:12 по местному. Прилёт — полные сутки в Панаме!",
+     "Сан-Хосе (SJO) → Панама (PTY)"),
+    ("20261106", "20261107",
+     "🏨 Панама — полные сутки",
+     "Ужин в Casco Viejo, ночью расписание шлюзов Панамского канала.",
+     "Панама"),
+    ("20261107", "20261108",
+     "🌎 Панамский канал и Casco Viejo",
+     "Днём канал и старый город, вечером дьюти-фри → аэропорт.",
+     "Панама"),
+    ("20261108T030000Z", "20261108T154500Z",
+     "✈️ TK 904 Панама → Стамбул",
+     "Вылет 07.11 22:00, прилёт 08.11 18:45. 12 ч 45 в воздухе.",
+     "Панама (PTY) → Стамбул (IST)"),
+    ("20261108T222000Z", "20261109T022000Z",
+     "✈️ TK 407 Стамбул → Внуково",
+     "Вылет 09.11 01:20, прилёт 05:20. 8 часов в Москве.",
+     "Стамбул (IST) → Внуково (SVO)"),
+    ("20261109T102000Z", "20261110T020700Z",
+     "🚂 Поезд 070 Москва → Киров",
+     "Ярославский вокзал 13:20, прибытие Киров-Пасс 10.11 в 05:07.",
+     "Москва-Ярославская → Киров-Пасс"),
+]
+
+ICS_BAR = (
+    '\n<div class="ics-bar">\n'
+    '  <a class="btn-ics" href="calendar.ics" download="kosta-rica-2026.ics">'
+    "📅 Скачать календарь — весь маршрут</a>\n"
+    '  <span class="ics-hint">поезда, рейсы, отели · .ics для Apple/Google/Outlook</span>\n'
+    "</div>\n"
+)
+
+
+def ics_escape(text: str) -> str:
+    return (
+        text.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+    )
+
+
+def ics_fold(line: str) -> str:
+    """Складывает строку по RFC 5545: ≤75 октетов, продолжение с пробелом."""
+    data = line.encode("utf-8")
+    if len(data) <= 74:
+        return line
+    parts: list[str] = []
+    i, limit = 0, 74
+    while i < len(data):
+        j = min(i + limit, len(data))
+        while j < len(data) and (data[j] & 0xC0) == 0x80:  # не рвём UTF-8-символ
+            j -= 1
+        parts.append(data[i:j].decode("utf-8"))
+        i, limit = j, 73
+    return "\r\n ".join(parts)
+
+
+def write_calendar() -> None:
+    """Генерирует calendar.ics — весь маршрут одним файлом (UTC, CRLF, fold)."""
+    lines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Kosta-Rika 2026//Pura Vida//RU",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:Коста-Рика 2026 · 30.10–10.11",
+    ]
+    for n, (start, end, summary, desc, loc) in enumerate(CALENDAR_EVENTS, 1):
+        lines += [
+            "BEGIN:VEVENT",
+            f"UID:kr2026-{n:02d}@kosta-rica",
+            "DTSTAMP:20261003T000000Z",
+            f"DTSTART:{start}",
+            f"DTEND:{end}",
+            f"SUMMARY:{ics_escape(summary)}",
+        ]
+        if desc:
+            lines.append(f"DESCRIPTION:{ics_escape(desc)}")
+        if loc:
+            lines.append(f"LOCATION:{ics_escape(loc)}")
+        lines.append("END:VEVENT")
+    lines.append("END:VCALENDAR")
+    text = "\r\n".join(ics_fold(line) for line in lines) + "\r\n"
+    with open(ROOT / "calendar.ics", "w", encoding="utf-8", newline="") as f:
+        f.write(text)
+    print(f"  calendar.ics     {len(CALENDAR_EVENTS)} событий")
+
+
 def write_sw() -> None:
     """Генерирует sw.js: precache всех страниц/ассетов/документов.
 
@@ -319,6 +453,8 @@ def write_sw() -> None:
     for p in sorted(ROOT.glob("*.html")):
         if p.name != "template.html":
             files.append(p.name)
+    for p in sorted(ROOT.glob("*.ics")):
+        files.append(p.name)
     for sub in ("assets", "docs"):
         for p in sorted((ROOT / sub).rglob("*")):
             if p.is_file():
@@ -405,6 +541,8 @@ def main() -> None:
             continue
         text = src.read_text(encoding="utf-8")
         body = md_to_body(text, out)
+        if out == "marshrut.html" and "</h1>" in body:
+            body = body.replace("</h1>", "</h1>" + ICS_BAR, 1)
         toc = md_toc(text, out)
         (ROOT / out).write_text(render(title, body, toc), encoding="utf-8")
         print(f"  {out:16} ← {md_name}")
@@ -421,6 +559,7 @@ def main() -> None:
         print(f"  {out:16} ← src/{src_name}")
 
     write_dela_seed()
+    write_calendar()
     write_sw()
     print("done")
 
