@@ -68,12 +68,21 @@
 
   // --- Тест 4: Touch targets ≥ 48px (WCAG 2.2) ---
   test("Touch targets are ≥ 48px", function () {
-    var buttons = document.querySelectorAll("button, .action-btn, .quick-link, .bottom-nav a");
+    var buttons = document.querySelectorAll("button, .action-btn, .quick-link, .bottom-nav a, .nav a");
     var failures = [];
     buttons.forEach(function (el) {
+      // Пропускаем скрытые элементы
+      var style = window.getComputedStyle(el);
+      if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") {
+        return;
+      }
       var rect = el.getBoundingClientRect();
+      // Пропускаем элементы без размеров (ещё не отрендерены)
+      if (rect.width === 0 || rect.height === 0) {
+        return;
+      }
       if (rect.width < 44 || rect.height < 44) {
-        failures.push(el.tagName + " " + rect.width + "x" + rect.height);
+        failures.push(el.tagName + " " + Math.round(rect.width) + "x" + Math.round(rect.height));
       }
     });
     assert(
@@ -115,16 +124,16 @@
     assert(typeof window.CRStorage.get === "function", "CRStorage.get not a function");
     assert(typeof window.CRStorage.set === "function", "CRStorage.set not a function");
 
-    // Тестовая запись
-    var ok = window.CRStorage.set("_test", { hello: "world" });
+    // Тестовая запись: set(namespace, key, value)
+    var ok = window.CRStorage.set("qa_test", "key1", { hello: "world" });
     assert(ok, "CRStorage.set returned false");
 
-    var val = window.CRStorage.get("_test");
+    var val = window.CRStorage.get("qa_test", "key1");
     assert(val, "CRStorage.get returned null");
     assert(val.hello === "world", "CRStorage get/set failed: got " + JSON.stringify(val));
 
     // Очистка
-    window.CRStorage.clear("_test");
+    window.CRStorage.clear("qa_test");
   });
 
   // --- Тест 8: Dashboard загружается ---
