@@ -16,7 +16,15 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent
-SRC_MD = ROOT.parent / "kosta-rica"
+# Путь к markdown: сначала пробуем ROOT.parent/kosta-rica (локально), потом ROOT/kosta-rica (GitHub Actions)
+_sibling_md = ROOT.parent / "kosta-rica"
+_in_repo_md = ROOT / "kosta-rica"
+if _sibling_md.exists():
+    SRC_MD = _sibling_md
+elif _in_repo_md.exists():
+    SRC_MD = _in_repo_md
+else:
+    sys.exit("SRC_MD not found: tried ../kosta-rica and ./kosta-rica")
 SRC_HTML = ROOT / "src"
 TEMPLATE = (ROOT / "template.html").read_text(encoding="utf-8")
 SECRET_DIR = ROOT / ".tmp-secret"  # plaintext-секреты перед шифрованием, не коммитится
