@@ -16,15 +16,19 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent
-# Путь к markdown: сначала пробуем ROOT.parent/kosta-rica (локально), потом ROOT/kosta-rica (GitHub Actions)
-_sibling_md = ROOT.parent / "kosta-rica"
+
+# Markdown берём из копии внутри репозитория. Раньше приоритет был у соседней
+# папки ../kosta-rica, и это расходилось с GitHub Actions, где её просто нет:
+# локальная сборка собиралась из одного текста, задеплоенная — из другого.
+# Правки в репозиторную копию локально не проявлялись вообще.
 _in_repo_md = ROOT / "kosta-rica"
-if _sibling_md.exists():
-    SRC_MD = _sibling_md
-elif _in_repo_md.exists():
+_sibling_md = ROOT.parent / "kosta-rica"
+if _in_repo_md.exists():
     SRC_MD = _in_repo_md
+elif _sibling_md.exists():
+    SRC_MD = _sibling_md
 else:
-    sys.exit("SRC_MD not found: tried ../kosta-rica and ./kosta-rica")
+    sys.exit("SRC_MD не найден: ни ./kosta-rica, ни ../kosta-rica")
 SRC_HTML = ROOT / "src"
 TEMPLATE = (ROOT / "template.html").read_text(encoding="utf-8")
 SECRET_DIR = ROOT / ".tmp-secret"  # plaintext-секреты перед шифрованием, не коммитится
@@ -1268,8 +1272,29 @@ def write_www() -> None:
     print(f"  www/             {n} файлов + assets/ docs/ (Capacitor)")
 
 
+def warn_duplicate_md() -> None:
+    """Вторая копия markdown рядом с репозиторием — источник расхождений.
+
+    Сборка читает ./kosta-rica. Если рядом лежит ../kosta-rica с другим
+    содержимым, правки в ней не попадут ни в сайт, ни в деплой, и это надо
+    видеть сразу, а не по странному тексту на готовой странице.
+    """
+    sibling = ROOT.parent / "kosta-rica"
+    if SRC_MD != ROOT / "kosta-rica" or not sibling.exists():
+        return
+    differing = []
+    for p in sorted(SRC_MD.glob("*.md")):
+        other = sibling / p.name
+        if other.exists() and other.read_bytes() != p.read_bytes():
+            differing.append(p.name)
+    if differing:
+        print(f"  ВНИМАНИЕ: ../kosta-rica расходится с рабочей копией "
+              f"({', '.join(differing)}) — сборка её НЕ читает")
+
+
 def main() -> None:
     validate_trip_json()
+    warn_duplicate_md()
     for md_name, (out, title) in PAGES_MD.items():
         src = SRC_MD / md_name
         if not src.exists():
