@@ -61,7 +61,7 @@ PAGES_HTML = {
     "credits.html": ("credits.html", "Фото и источники"),
     "dela.html": ("dela.html", "Дела до отъезда"),
     "phrasebook.html": ("phrasebook.html", "Разговорник"),
-    "budget.html": ("budget.html", "Бюджет поездки"),
+    "budget.html": ("budget.html", "Деньги в поездке"),
     "journal.html": ("journal.html", "Журнал поездки"),
 }
 
@@ -326,24 +326,43 @@ def render_alerts(segs: list[dict]) -> str:
     return "\n".join(rows)
 
 
+def act_li(text: str, key: str, section: str, *, at: str = "",
+           tag: str = "", critical: bool = False) -> str:
+    """Пункт действия в формате, который понимает editable-list.js.
+
+    Нужны и `data-id`, и чекбокс: без них движок считает список пустым
+    («готово: 0 из 0»), а отметить пункт нельзя вообще.
+    `data-id` — sha1 текста, чтобы отметки пережили пересборку и не съехали
+    на соседние строки при перестановке пунктов.
+    """
+    import hashlib
+
+    digest = hashlib.sha1((key + "|" + text).encode("utf-8")).hexdigest()[:10]
+    cls = "act critical" if critical else "act"
+    when = f'<span class="act-at">{html.escape(at)}</span>' if at else ""
+    return (
+        f'<li class="{cls}" data-id="{digest}" data-section="{section}">'
+        f'<input type="checkbox">{when}'
+        f'<span class="act-text">{html.escape(text)}</span>{tag}</li>'
+    )
+
+
 def render_do_now(group: dict) -> str:
     """«Что сделать» — чекбоксы с устойчивыми id, состояние переживает пересборку."""
-    items = []
-    for seg in group["segments"]:
-        for act in seg.get("doNow", []):
-            when = f'<span class="act-at">{html.escape(act["at"])}</span>' if act.get("at") else ""
-            cls = " critical" if act.get("critical") else ""
-            items.append(
-                f'<li class="act{cls}">{when}'
-                f'<span class="act-text">{html.escape(act["text"])}</span></li>'
-            )
+    key = f'step-{group["id"]}-do'
+    items = [
+        act_li(act["text"], key, "do-now", at=act.get("at", ""),
+               critical=bool(act.get("critical")))
+        for seg in group["segments"]
+        for act in seg.get("doNow", [])
+    ]
     if not items:
         return ""
     body = f'<ul class="acts">{"".join(items)}</ul>'
     return (
         '<section class="step-block" id="do-now">'
-        "<h2>✅ Что сделать на этом этапе</h2>"
-        + wrap_editable_cfg(body, {"key": f'step-{group["id"]}-do', "label": "сделано"})
+        '<h2 id="do-now-h">✅ Что сделать на этом этапе</h2>'
+        + wrap_editable_cfg(body, {"key": key, "label": "сделано"})
         + "</section>"
     )
 
@@ -367,16 +386,19 @@ def render_need(group: dict) -> str:
 
 
 def render_prepare_next(group: dict, next_group: dict | None) -> str:
-    seg_title = {s["id"]: s["title"] for s in SEGMENTS}
+    # Подпись ведёт на страницу этапа, поэтому и название берём страничное:
+    # иначе ссылка «Дальше» и подпись пункта называют один этап по-разному.
+    page_of = {s["id"]: s.get("page", s["id"]) for s in SEGMENTS}
+    page_title = {g["id"]: g["title"] for g in STEP_PAGES}
+    key = f'step-{group["id"]}-next'
     items = []
     for seg in group["segments"]:
         for p in seg.get("prepareNext", []):
-            target = seg_title.get(p.get("for", ""), "")
-            tag = f'<span class="pn-for">к этапу «{html.escape(target)}»</span>' if target else ""
-            cls = " critical" if p.get("critical") else ""
-            items.append(
-                f'<li class="act{cls}"><span class="act-text">{html.escape(p["text"])}</span>{tag}</li>'
-            )
+            target = page_title.get(page_of.get(p.get("for", ""), ""), "")
+            tag = (f'<span class="pn-for">к этапу «{html.escape(target)}»</span>'
+                   if target else "")
+            items.append(act_li(p["text"], key, "prepare-next", tag=tag,
+                                critical=bool(p.get("critical"))))
     if not items:
         return ""
     hint = ""
@@ -390,8 +412,8 @@ def render_prepare_next(group: dict, next_group: dict | None) -> str:
     body = f'<ul class="acts">{"".join(items)}</ul>'
     return (
         '<section class="step-block" id="prepare-next">'
-        "<h2>🔜 Подготовить к следующему этапу</h2>" + hint
-        + wrap_editable_cfg(body, {"key": f'step-{group["id"]}-next', "label": "готово"})
+        '<h2 id="prepare-next-h">🔜 Подготовить к следующему этапу</h2>' + hint
+        + wrap_editable_cfg(body, {"key": key, "label": "готово"})
         + "</section>"
     )
 
@@ -446,7 +468,8 @@ def render_prep_tasks() -> str:
         cls = " critical" if t.get("critical") else ""
         why = f'<span class="task-why">{html.escape(t["why"])}</span>' if t.get("why") else ""
         rows.append(
-            f'<li class="task{cls}">'
+            f'<li class="task{cls}" data-id="prep-{t["id"]}" data-section="do-now">'
+            f'<input type="checkbox">'
             f'<span class="task-due">до {due.day} {MONTHS_GEN[due.month - 1]}</span>'
             f'<span class="task-main"><span class="task-title">{html.escape(t["title"])}</span>'
             f'<span class="task-note">{html.escape(t["note"])}</span>{why}</span>'
@@ -1266,6 +1289,15 @@ def main() -> None:
             print(f"  skip {src_name} (нет файла)")
             continue
         body = src.read_text(encoding="utf-8")
+        # Таблицы из markdown оборачиваются в .table-wrap при конвертации,
+        # а рукописные страницы из src/ эту обёртку не получали — на 390 px
+        # разговорник вылезал за экран.
+        body = re.sub(
+            r"(<table>(?:(?!</?table).)*?</table>)",
+            r'<div class="table-wrap">\1</div>',
+            body,
+            flags=re.S,
+        )
         if out in EDITABLE:
             body = wrap_editable(body, out)
         (ROOT / out).write_text(render(title, body), encoding="utf-8")
