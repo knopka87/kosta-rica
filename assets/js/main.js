@@ -33,9 +33,17 @@
     });
   }
 
-  /* ---------- Чек-листы: отметки сохраняются в localStorage ---------- */
+  /* ---------- Чек-листы: отметки сохраняются в localStorage ----------
+     Редактируемые списки (.editable-list / .editable-summary) обслуживает
+     свой движок — assets/js/editable-list.js, их здесь не трогаем. */
   var prose = document.querySelector(".prose");
-  var boxes = prose ? Array.prototype.slice.call(prose.querySelectorAll('input[type="checkbox"]')) : [];
+  var boxes = prose
+    ? Array.prototype.slice
+        .call(prose.querySelectorAll('input[type="checkbox"]'))
+        .filter(function (b) {
+          return !b.closest(".editable-list") && !b.closest(".editable-summary");
+        })
+    : [];
   var storeKey = "cr:checks:" + page;
 
   function loadState() {

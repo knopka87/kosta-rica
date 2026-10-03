@@ -24,6 +24,7 @@
       <a href="hotel.html" data-page="hotel">Отель и карта</a>
       <a href="eda.html" data-page="eda">Еда</a>
       <a href="sbory.html" data-page="sbory">Сборы</a>
+      <a href="dela.html" data-page="dela">Дела</a>
       <a href="pokupki.html" data-page="pokupki">Покупки</a>
       <a href="pravila.html" data-page="pravila">Правила</a>
       <a href="lifehacks.html" data-page="lifehacks">Лайфхаки</a>
@@ -94,6 +95,11 @@
     <h3>Сборы</h3>
     <p>Чек-листы по всем категориям с сохранением отметок и прогрессом.</p>
   </a>
+  <a class="card" href="dela.html">
+    <div class="ico">✅</div>
+    <h3>Дела до отъезда</h3>
+    <p>Задачи перед выездом: отметки, свои пункты, порядок и разделы — редактируется.</p>
+  </a>
   <a class="card" href="pokupki.html">
     <div class="ico">🛍️</div>
     <h3>Покупки</h3>
@@ -117,23 +123,15 @@
 </div>
 
 <h2>Что сделать до выезда</h2>
-<p>Отмечай галочками — прогресс сохраняется в браузере.</p>
+<p>Отмечай галочками — прогресс сохраняется в браузере. Пункты можно добавлять и править на <a href="dela.html">странице «Дела»</a>.</p>
 
 <div class="note warn">
   <h4>⛔ Критичное</h4>
-  <p>Эти пункты влияют на то, поедешь ли ты вообще. Остальное — в <a href="sbory.html">чек-листе сборов</a>.</p>
+  <p>Первые два пункта — до всего остального. Вещи — в <a href="sbory.html">чек-листе сборов</a>.</p>
 </div>
 
-<ul class="todo-list">
-  <li><label><input type="checkbox"> <span><strong>Багаж на Sansa (01.11 и 06.11):</strong> на каждом рейсе строго 13 кг — переупаковать два чемодана в один лёгкий (или наземный трансфер Тамариндо → SJO как запасной вариант)</span></label></li>
-  <li><label><input type="checkbox"> <span><strong>Забронировать отель в Панаме на 06–07.11</strong> (полные сутки!)</span></label></li>
-  <li><label><input type="checkbox"> <span>Оформить медицинскую страховку (покрытие ≥ $50 000 + эвакуация)</span></label></li>
-  <li><label><input type="checkbox"> <span>Уточнить в «Тривио» правила тарифа Copa (обмен/возврат)</span></label></li>
-  <li><label><input type="checkbox"> <span>Online check-in на TK 422 (откроется 30.10), на Copa — за 24 ч до каждого рейса</span></label></li>
-  <li><label><input type="checkbox"> <span>Сообщить в банк о поездке: Россия → Турция → Панама → Коста-Рика</span></label></li>
-  <li><label><input type="checkbox"> <span>Скачать офлайн-карты Guanacaste и Панамы + офлайн-переводчик испанский</span></label></li>
-  <li><label><input type="checkbox"> <span>Проверить, включён ли трансфер LIR → Тамариндо в программу командировки</span></label></li>
-</ul>
+<div class="editable-summary" data-list-key="dela" data-label="сделано"></div>
+<script type="application/json" id="dela-seed">{"sections":[{"id":"dela-kritichnoe","title":"🔥 Критичное","items":[{"id":"a537385926","checked":false,"text":"Багаж на Sansa (01.11 и 06.11): на каждом рейсе строго 13 кг — переупаковать два чемодана в один лёгкий (или наземный трансфер Тамариндо → SJO как запасной вариант)"},{"id":"2eaf0471ad","checked":false,"text":"Забронировать отель в Панаме на 06–07.11 (полные сутки!)"}]},{"id":"dela-podgotovka","title":"✅ Подготовка","items":[{"id":"616b9df5bb","checked":false,"text":"Оформить медицинскую страховку (покрытие ≥ $50 000 + эвакуация)"},{"id":"4d1f64ebd5","checked":false,"text":"Уточнить в «Тривио» правила тарифа Copa (обмен/возврат)"},{"id":"a6bcd24113","checked":false,"text":"Online check-in на TK 422 (откроется 30.10), на Copa — за 24 ч до каждого рейса"},{"id":"6d76327d15","checked":false,"text":"Сообщить в банк о поездке: Россия → Турция → Панама → Коста-Рика"},{"id":"9f1f8c2d28","checked":false,"text":"Скачать офлайн-карты Guanacaste и Панамы + офлайн-переводчик испанский"},{"id":"06348aaa16","checked":false,"text":"Проверить, включён ли трансфер LIR → Тамариндо в программу командировки"}]}]}</script>
 
 <div class="note ok">
   <h4>✅ Куплено / готово</h4>
@@ -201,6 +199,7 @@
 
 <div class="totop" id="totop" role="button" aria-label="Наверх">↑</div>
 <script src="assets/js/docs.js"></script>
+<script src="assets/js/editable-list.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -50,6 +50,7 @@ PAGES_HTML = {
     "hotel.html": ("hotel.html", "Отель и карта"),
     "dokumenty.html": ("dokumenty.html", "Документы"),
     "credits.html": ("credits.html", "Фото и источники"),
+    "dela.html": ("dela.html", "Дела до отъезда"),
 }
 
 
@@ -128,7 +129,73 @@ def md_to_body(src_text: str, page: str) -> str:
 
     # широкие таблицы — в прокручиваемый контейнер
     body = re.sub(r"(<table>.*?</table>)", r'<div class="table-wrap">\1</div>', body, flags=re.S)
+
+    # редактируемый чек-лист: стабильные id пунктов и обёртка
+    if page in EDITABLE:
+        body = wrap_editable(body, page)
     return body
+
+
+# --- редактируемые списки ---------------------------------------------------
+
+LI_RE = re.compile(
+    r"<li>(?:(?!</li>).)*?<input type=\"checkbox\"(?:(?!</li>).)*?</li>", re.S
+)
+HEADING_RE = re.compile(r"<h([1-4]) id=\"([^\"]+)\"")
+WEIGHT_RE = re.compile(r"<!--\s*w:\s*(\d+)\s*-->")
+
+# страницы с редактируемым чек-листом (движок assets/js/editable-list.js)
+EDITABLE = {
+    "sbory.html": {"key": "sbory", "label": "взято", "limit": "13000"},
+    "dela.html": {"key": "dela", "label": "сделано"},
+}
+
+
+def wrap_editable(body: str, out: str) -> str:
+    """Стабильные id пунктов/разделов + обёртка .editable-list."""
+    cfg = EDITABLE[out]
+    body = add_list_ids(body)
+    attrs = f' data-list-key="{cfg["key"]}" data-label="{cfg["label"]}"'
+    if "limit" in cfg:
+        attrs += f' data-weight-limit="{cfg["limit"]}"'
+    return f'<div class="editable-list"{attrs}>\n{body}\n</div>'
+
+
+def add_list_ids(body: str) -> str:
+    """Чекбокс-пунктам: data-id (sha1 текста, дедуп по порядку), data-section
+    (id ближайшего заголовка выше), <!--w:350--> → data-weight."""
+    import hashlib
+
+    headings = [(m.start(), m.group(2)) for m in HEADING_RE.finditer(body)]
+    seen: dict[str, int] = {}
+
+    def prep(m: re.Match) -> str:
+        li = m.group(0)
+        weight = None
+        wm = WEIGHT_RE.search(li)
+        if wm:
+            weight = wm.group(1)
+            li = li.replace(wm.group(0), "")
+
+        text = re.sub(r"<[^>]+>", " ", li)
+        text = " ".join(html.unescape(text).split()).lower()
+        digest = hashlib.sha1(text.encode("utf-8")).hexdigest()[:10]
+        seen[digest] = seen.get(digest, 0) + 1
+        if seen[digest] > 1:
+            digest = f"{digest}-{seen[digest]}"
+
+        section = ""
+        for pos, hid in reversed(headings):
+            if pos < m.start():
+                section = hid
+                break
+
+        attrs = f' data-id="{digest}" data-section="{section}"'
+        if weight:
+            attrs += f' data-weight="{weight}"'
+        return "<li" + attrs + li[len("<li"):]
+
+    return LI_RE.sub(prep, body)
 
 
 def md_toc(src_text: str, page: str) -> str:
@@ -153,6 +220,91 @@ def render(title: str, body: str, toc: str = "") -> str:
     else:
         page = re.sub(r"\$if\(toc\)\$.*?\$endif\$", "", page, flags=re.S)
     return page.replace("$body$", body)
+
+
+def write_dela_seed() -> None:
+    """Сид сводки «Дела» на главной: читает собранный dela.html
+    (пункты уже с data-id/data-section после wrap_editable) и встраивает
+    JSON в index.html — офлайн работает без fetch."""
+    from html.parser import HTMLParser
+
+    class SeedParser(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__()
+            self.headings: dict[str, str] = {}
+            self.sections: dict[str, dict] = {}
+            self.order: list[str] = []
+            self._heading_id: str | None = None
+            self._heading_text: list[str] = []
+            self._item: dict | None = None
+            self._in_item = False
+
+        def handle_starttag(self, tag: str, attrs: list) -> None:
+            a = dict(attrs)
+            if tag in ("h2", "h3") and a.get("id"):
+                self._heading_id = a["id"]
+                self._heading_text = []
+            elif tag == "li" and a.get("data-id") and a.get("data-section") is not None:
+                self._item = {
+                    "id": a["data-id"],
+                    "section": a["data-section"],
+                    "text": [],
+                    "checked": "checked" in a,
+                }
+                self._in_item = True
+            elif tag == "input" and self._item is not None and a.get("type") == "checkbox":
+                if "checked" in a:
+                    self._item["checked"] = True
+
+        def handle_endtag(self, tag: str) -> None:
+            if tag in ("h2", "h3") and self._heading_id is not None:
+                self.headings[self._heading_id] = " ".join("".join(self._heading_text).split())
+                self._heading_id = None
+            elif tag == "li" and self._item is not None:
+                sid = self._item.pop("section")
+                self._item["text"] = " ".join("".join(self._item.pop("text")).split())
+                if sid not in self.sections:
+                    self.sections[sid] = {"id": sid, "title": "", "items": []}
+                    self.order.append(sid)
+                self.sections[sid]["items"].append(self._item)
+                self._item = None
+                self._in_item = False
+
+        def handle_data(self, data: str) -> None:
+            if self._heading_id is not None:
+                self._heading_text.append(data)
+            elif self._in_item and self._item is not None:
+                self._item["text"].append(data)
+
+    src = ROOT / "dela.html"
+    idx = ROOT / "index.html"
+    marker = "<!--dela-seed-->"
+    if not src.exists() or not idx.exists():
+        if idx.exists() and marker in idx.read_text(encoding="utf-8"):
+            sys.exit("dela-seed: нет dela.html, но маркер есть в index.html")
+        return
+
+    parser = SeedParser()
+    parser.feed(src.read_text(encoding="utf-8"))
+    if not parser.sections:
+        sys.exit("dela-seed: в dela.html не найдено ни одного пункта")
+    for sid, sec in parser.sections.items():
+        sec["title"] = parser.headings.get(sid, "")
+
+    seed = {
+        "sections": [parser.sections[sid] for sid in parser.order],
+    }
+    blob = json.dumps(seed, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+
+    text = idx.read_text(encoding="utf-8")
+    if marker not in text:
+        sys.exit("dela-seed: нет маркера <!--dela-seed--> в index.html")
+    idx.write_text(
+        text.replace(marker, f'<script type="application/json" id="dela-seed">{blob}</script>'),
+        encoding="utf-8",
+    )
+    n = sum(len(s["items"]) for s in seed["sections"])
+    print(f"  dela-seed        {len(seed['sections'])} раздела, {n} пунктов → index.html")
 
 
 def write_sw() -> None:
@@ -263,9 +415,12 @@ def main() -> None:
             print(f"  skip {src_name} (нет файла)")
             continue
         body = src.read_text(encoding="utf-8")
+        if out in EDITABLE:
+            body = wrap_editable(body, out)
         (ROOT / out).write_text(render(title, body), encoding="utf-8")
         print(f"  {out:16} ← src/{src_name}")
 
+    write_dela_seed()
     write_sw()
     print("done")
 
