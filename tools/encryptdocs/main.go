@@ -11,7 +11,6 @@
 //
 // Формат *.bin:  magic "CRDOC1\0" | salt(16) | nonce(12) | AES-256-GCM(ciphertext)
 // manifest.bin — тот же формат, внутри JSON со списком файлов.
-// meta.json    — проверочный хэш пароля (не даёт содержимого, только «верный/неверный»).
 //
 // PBKDF2-HMAC-SHA256, 210 000 итераций — совпадает с настройками в assets/js/docs.js.
 package main
@@ -23,7 +22,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/binary"
-	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -45,11 +43,6 @@ type manifestEntry struct {
 	Name string `json:"name"` // оригинальное имя файла
 	Enc  string `json:"enc"`  // имя зашифрованного файла
 	Size int64  `json:"size"` // размер исходного PDF
-}
-
-type meta struct {
-	Verifier string `json:"verifier"`
-	Files    int    `json:"files"`
 }
 
 // pbkdf2SHA256 — реализация RFC 8018 без внешних зависимостей.
@@ -214,13 +207,6 @@ func main() {
 	nonce := randomBytes(nonceLen)
 	manifestBlob := join([]byte(magic), manifestSalt, nonce, gcm.Seal(nil, nonce, jsonList, nil))
 	if err := os.WriteFile(filepath.Join(*outDir, "manifest.bin"), manifestBlob, 0o644); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	vh := sha256.Sum256([]byte("crdocs|" + pw))
-	metaBlob, _ := json.Marshal(meta{Verifier: hex.EncodeToString(vh[:]), Files: len(list)})
-	if err := os.WriteFile(filepath.Join(*outDir, "meta.json"), metaBlob, 0o644); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

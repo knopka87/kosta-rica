@@ -21,16 +21,6 @@
   var form = document.getElementById("lockForm");
   var input = document.getElementById("lockPassword");
 
-  function hex(buf) {
-    return Array.prototype.map.call(new Uint8Array(buf), function (b) {
-      return ("0" + b.toString(16)).slice(-2);
-    }).join("");
-  }
-
-  function sha256(str) {
-    return crypto.subtle.digest("SHA-256", ENC.encode(str));
-  }
-
   function derive(password, salt) {
     return crypto.subtle.importKey("raw", ENC.encode(password), "PBKDF2", false, ["deriveBits"])
       .then(function (key) {
@@ -72,19 +62,13 @@
     });
   }
 
-  /* Проверка пароля: только хэш в meta.json, содержимого он не даёт. */
+  /* AES-GCM манифеста одновременно проверяет пароль и целостность данных. */
   function verify(pw) {
-    return fetch("docs/meta.json")
-      .then(function (r) { return r.json(); })
-      .then(function (meta) {
-        return sha256("crdocs|" + pw).then(function (h) {
-          if (hex(h) !== meta.verifier) throw new Error("wrong");
-        });
+    return fetchBuf("docs/manifest.bin")
+      .then(function (buf) { return decrypt(pw, buf); })
+      .then(function (plain) {
+        return JSON.parse(new TextDecoder().decode(plain));
       });
-  }
-
-  function netErr() {
-    return "Не удалось загрузить — проверь соединение";
   }
 
   /* ---------- Список PDF на странице «Документы» ---------- */
@@ -147,10 +131,8 @@
   function unlock(pw) {
     errBox.textContent = "";
     return verify(pw)
-      .then(function () { return fetchBuf("docs/manifest.bin"); })
-      .then(function (buf) { return decrypt(pw, buf); })
-      .then(function (plain) {
-        renderList(JSON.parse(new TextDecoder().decode(plain)));
+      .then(function (manifest) {
+        renderList(manifest);
         sessionStorage.setItem(STORE, pw);
         lockScreen.style.display = "none";
         docList.classList.add("show");
@@ -160,10 +142,8 @@
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      unlock(input.value.trim()).catch(function (err) {
-        errBox.textContent = err && err.message === "wrong"
-          ? "Неверный пароль"
-          : netErr();
+      unlock(input.value.trim()).catch(function () {
+        errBox.textContent = "Не удалось открыть: проверь пароль, соединение и целостность данных";
         input.select();
       });
     });
@@ -246,9 +226,9 @@
               unlock(pw).catch(function () {});
             }
           })
-          .catch(function (err) {
+          .catch(function () {
             f.querySelector(".secret-err").textContent =
-              err && err.message === "wrong" ? "Неверный пароль" : netErr();
+              "Не удалось открыть: проверь пароль и данные";
           });
       });
     });

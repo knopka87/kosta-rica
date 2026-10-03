@@ -554,8 +554,6 @@ STEP_INCLUDES: dict[str, list] = {
         ("lifehacks.md", "## 📅 Ноябрь (1–6) — конкретные рекомендации"),
         ("lifehacks.md", "## 🛡️ Безопасность в Тамариндо"),
         ("eda.md", "## 🌴 Коста-Рика — где поесть"),
-        ("lifehacks.md", "## 🚐 Транспорт"),
-        ("lifehacks.md", "## 🏖️ Пляжи и природа"),
         ("lifehacks.md", "## 🤫 Секретные места (менее туристические)"),
         ("pravila-zakony.md", "## Поведение и этикет"),
         ("pravila-zakony.md", "## Безопасность на водах"),
@@ -1104,6 +1102,8 @@ def write_sw() -> None:
                 rel = p.relative_to(ROOT).as_posix()
                 # D10: Не включаем PMTiles в precache — пользователь скачивает явно
                 if rel.endswith(".pmtiles"):
+                    continue
+                if rel == "assets/js/qa-tests.js":
                     continue
                 files.append(rel)
     if (ROOT / "manifest.json").exists():

@@ -365,20 +365,19 @@
   </div>
 </nav>
 
-<div class="totop" id="totop" role="button" aria-label="Наверх">↑</div>
-<script src="assets/js/docs.js"></script>
-<script src="assets/js/editable-list.js"></script>
-<script src="assets/js/weather.js"></script>
-<script src="assets/js/maps.js"></script>
-<script src="assets/js/budget.js"></script>
-<script src="assets/js/journal.js"></script>
+<button class="totop" id="totop" type="button" aria-label="Наверх">↑</button>
 <script id="steps-seed" type="application/json">[{"id": "prep", "num": 0, "icon": "🧳", "title": "Подготовка", "startAt": "2026-10-01T00:00:00+03:00", "endAt": "2026-10-30T07:27:00+03:00", "dateLabel": "до 30 октября", "place": "Киров", "summary": "Доллары наличными, страховка, переупаковка под Sansa, аптечка и документы — всё, что нельзя доделать в дороге."}, {"id": "train-msk", "num": 1, "icon": "🚆", "title": "Киров → Москва → Внуково", "startAt": "2026-10-30T07:27:00+03:00", "endAt": "2026-10-31T02:40:00+03:00", "dateLabel": "30–31 октября", "place": "Киров-Пасс → VKO", "summary": "Поезд 13 ч 22 мин, затем переезд через Москву во Внуково к ночному вылету."}, {"id": "ist-flight", "num": 2, "icon": "✈️", "title": "Внуково → Стамбул", "startAt": "2026-10-31T02:40:00+03:00", "endAt": "2026-10-31T06:55:00+03:00", "dateLabel": "31 октября", "place": "VKO → IST", "summary": "4 ч 15 мин ночью. Задача одна — выспаться: следующий сон только через сутки."}, {"id": "ist-layover", "num": 3, "icon": "🔄", "title": "Стамбул: пересадка 6 ч 55 мин", "startAt": "2026-10-31T06:55:00+03:00", "endAt": "2026-10-31T13:50:00+03:00", "dateLabel": "31 октября", "place": "IST, транзитная зона", "summary": "Последняя цивилизованная остановка перед 14-часовым перелётом: душ, нормальная еда, зарядка."}, {"id": "ist-panama", "num": 4, "icon": "✈️", "title": "Стамбул → Панама", "startAt": "2026-10-31T13:50:00+03:00", "endAt": "2026-10-31T20:05:00-05:00", "dateLabel": "31 октября", "place": "IST → PTY", "summary": "14 ч 15 мин — самый длинный перелёт поездки. Прилёт в тот же календарный день: минус 8 часов к часам."}, {"id": "panama-night", "num": 5, "icon": "🌃", "title": "Ночь в Панаме", "startAt": "2026-10-31T20:05:00-05:00", "endAt": "2026-11-01T13:28:00-05:00", "dateLabel": "31 октября – 1 ноября", "place": "Отель рядом с PTY", "summary": "17 часов: пограничный контроль, сон, завтрак. Осматривать город будем на обратном пути."}, {"id": "arrival-cr", "num": 6, "icon": "🛬", "title": "Прилёт в Коста-Рику", "startAt": "2026-11-01T13:28:00-05:00", "endAt": "2026-11-01T18:30:00-06:00", "dateLabel": "1 ноября", "place": "PTY → Playa Tamarindo", "summary": "Самый плотный день маршрута: перелёт, 84 минуты на пересадку в Сан-Хосе, маленький самолёт до Либерии и час до отеля."}, {"id": "tamarindo", "num": 7, "icon": "🏖️", "title": "Тамариндо", "startAt": "2026-11-01T18:30:00-06:00", "endAt": "2026-11-06T05:00:00-06:00", "dateLabel": "1–6 ноября", "place": "Occidental Tamarindo 4★ · All Inclusive", "summary": "Главная база: командировка, пляж, туры. Единственный участок, где можно не смотреть на часы."}, {"id": "sjo-window", "num": 8, "icon": "🔁", "title": "Отъезд из Тамариндо и окно в Сан-Хосе", "startAt": "2026-11-06T05:00:00-06:00", "endAt": "2026-11-06T17:12:00-05:00", "dateLabel": "6 ноября", "place": "Тамариндо → LIR → SJO", "summary": "Выезд в 05:00, перелёт на Сан-Хосе, 6 ч 26 мин на покупки и рейс в Панаму."}, {"id": "panama-days", "num": 9, "icon": "🇵🇦", "title": "Панама: полные сутки", "startAt": "2026-11-06T17:12:00-05:00", "endAt": "2026-11-07T22:00:00-05:00", "dateLabel": "6–7 ноября", "place": "Casco Viejo · Панамский канал", "summary": "29 часов — это не транзит, а полноценный день: канал, старый город, последние покупки."}, {"id": "home", "num": 10, "icon": "✈️", "title": "Дорога домой", "startAt": "2026-11-07T22:00:00-05:00", "endAt": "2026-11-10T05:07:00+03:00", "dateLabel": "7–10 ноября", "place": "PTY → Киров-Пасс", "summary": "Панама → Стамбул → Москва → Киров. Двое с половиной суток, из них восемь часов с чемоданами в Москве."}]</script>
-<script src="assets/js/steps.js"></script>
-<script src="assets/js/dashboard.js"></script>
-<script src="assets/js/local-search.js"></script>
-<script src="assets/js/versioned-storage.js"></script>
-<script src="assets/js/capacitor-adapter.js"></script>
-<script src="assets/js/qa-tests.js"></script>
-<script src="assets/js/main.js"></script>
+<script defer src="assets/js/versioned-storage.js"></script>
+<script defer src="assets/js/capacitor-adapter.js"></script>
+<script defer src="assets/js/docs.js"></script>
+<script defer src="assets/js/editable-list.js"></script>
+<script defer src="assets/js/weather.js"></script>
+<script defer src="assets/js/maps.js"></script>
+<script defer src="assets/js/budget.js"></script>
+<script defer src="assets/js/journal.js"></script>
+<script defer src="assets/js/steps.js"></script>
+<script defer src="assets/js/dashboard.js"></script>
+<script defer src="assets/js/local-search.js"></script>
+<script defer src="assets/js/main.js"></script>
 </body>
 </html>

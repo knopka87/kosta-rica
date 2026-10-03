@@ -34,7 +34,7 @@
   --maxw-narrow: 720px;
   --topbar-h: 56px;
   --bottombar-h: 64px;
-  --touch-target: 48px; /* WCAG 2.2 AA/AAA */
+  --touch-target: 48px;
 }
 
 * { box-sizing: border-box; }
@@ -55,6 +55,11 @@ body {
 
 a { color: var(--jungle-700); text-decoration-thickness: 1px; text-underline-offset: 2px; }
 a:hover { color: var(--jungle-900); }
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
 
 /* ---------------- Topbar ---------------- */
 
@@ -282,6 +287,13 @@ a:hover { color: var(--jungle-900); }
   line-height: 1.5;
 }
 
+.prose > table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .prose thead th {
   background: var(--jungle-800);
   color: #fff;
@@ -349,6 +361,7 @@ a:hover { color: var(--jungle-900); }
   border-radius: 999px;
   padding: 3px 11px;
   cursor: pointer;
+  min-height: 32px;
 }
 
 .checklist-tools button:hover { border-color: var(--jungle-600); color: var(--jungle-800); }
@@ -439,6 +452,18 @@ a:hover { color: var(--jungle-900); }
 .step-hero .hero-body p {
   color: rgba(255, 255, 255, .9);
   font-size: clamp(14px, 1.8vw, 16px);
+}
+
+.hero:not(:has(img)) {
+  min-height: 0;
+  background: linear-gradient(135deg, var(--jungle-800), var(--jungle-700));
+  padding: clamp(24px, 5vw, 40px);
+}
+
+.hero:not(:has(img)) .hero-body {
+  position: static;
+  padding: 0;
+  background: none;
 }
 
 .step-kicker {
@@ -802,6 +827,8 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   transition: .2s;
   box-shadow: 0 8px 24px -8px rgba(15, 118, 110, .7);
   z-index: 40;
+  border: 0;
+  padding: 0;
 }
 
 .totop.show { opacity: 1; pointer-events: auto; transform: none; }
@@ -910,9 +937,18 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
 
 @media (max-width: 520px) {
   body { font-size: 16px; }
-  .page { padding: 18px 14px 46px; }
+  .page { padding: 18px 14px calc(var(--bottombar-h) + 28px); }
   .prose table { font-size: 13.5px; }
   .lock-form { flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }
 
 /* === Редактируемые списки (assets/js/editable-list.js) === */
@@ -947,6 +983,7 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   border-radius: 999px;
   padding: 4px 13px;
   cursor: pointer;
+  min-height: 36px;
 }
 .list-toolbar button:hover { border-color: var(--jungle-500); color: var(--jungle-700); }
 .list-toolbar button.on {
@@ -974,6 +1011,8 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   border-radius: 6px;
   padding: 3px 7px;
   cursor: pointer;
+  min-width: 32px;
+  min-height: 32px;
 }
 .li-ctl button:hover,
 .h-ctl button:hover { border-color: var(--jungle-500); color: var(--jungle-700); }
@@ -1359,6 +1398,7 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   background: linear-gradient(135deg, var(--jungle-800), var(--jungle-600));
   color: #fff;
   box-shadow: var(--shadow);
+  text-decoration: none;
 }
 .now-card:hover { color: #fff; filter: brightness(1.05); }
 .now-kicker {
@@ -1821,6 +1861,44 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   line-height: 1;
 }
 
+.now-action {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14.5px;
+}
+
+.now-action label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-target);
+  cursor: pointer;
+}
+
+.now-action input {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  accent-color: var(--jungle-700);
+}
+
+.map-load-button {
+  width: 100%;
+  min-height: var(--touch-target);
+  margin: 12px 0;
+  padding: 12px 18px;
+  border: 1px solid var(--jungle-700);
+  border-radius: var(--radius);
+  background: var(--jungle-700);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.map-load-button:hover { background: var(--jungle-800); }
+.map-load-button:disabled { opacity: .65; cursor: wait; }
+
 /* --- План Б --- */
 .plan-b {
   background: var(--coral-soft);
@@ -1974,8 +2052,8 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
     --sand-100: #1a2028;
     --sand-200: #2a3340;
     --ink: #e7e5e4;
-    --ink-soft: #a8a29e;
-    --ink-mute: #78716c;
+    --ink-soft: #d6d3d1;
+    --ink-mute: #a8a29e;
     --line: #2a3340;
     --card: #1a2028;
     --jungle-700: #2dd4bf;
@@ -2003,6 +2081,18 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   .nav a:hover {
     background: var(--sand-200);
   }
+
+  .nav a.active {
+    background: #0f766e;
+    color: #fff;
+  }
+
+  .burger {
+    background: var(--card);
+    border-color: var(--line);
+  }
+
+  .burger span { background: var(--ink); }
 
   .event-card, .quick-link, .accordion details {
     background: var(--card);
@@ -2073,8 +2163,35 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
     color: #fed7aa;
   }
 
+  .note.info,
+  .note.ok,
+  .note.warn,
+  .note.danger,
+  .prose blockquote { color: var(--ink); }
+
+  .note.info { background: #0a2033; border-color: #1d4f73; }
+  .note.ok { background: #0d2618; border-color: #27643f; }
+  .note.warn { background: #2b1d08; border-color: #6b4610; }
+  .note.danger { background: #2b1010; border-color: #6b2525; }
+
   .now-banner {
     background: linear-gradient(135deg, #064e3b, #065f46);
+  }
+
+  .now-card {
+    background: linear-gradient(135deg, #115e59, #0f766e);
+  }
+
+  .fact .v,
+  .card h3,
+  .prose h3,
+  .timeline .date {
+    color: #5eead4;
+  }
+
+  .w-day.today,
+  .step-card.current {
+    background: #102925;
   }
 
   /* Таблицы в тёмной теме */

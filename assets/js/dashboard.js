@@ -17,6 +17,14 @@
 
   // --- Утилиты ---
   function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
   function fmtLocal(isoStr, tz) {
     // Форматирует ISO-строку в локальное время с учётом часового пояса
     try {
@@ -126,8 +134,8 @@
     var remaining = end.getTime() - now.getTime();
 
     var html = '<div class="now-banner">' +
-      '<h2>' + s.icon + ' ' + s.title + '</h2>' +
-      '<p>' + (s.from ? (s.from.code || s.from.name) : '') + ' → ' + (s.to ? (s.to.code || s.to.name) : '') + '</p>' +
+      '<h2>' + escapeHtml(s.icon) + ' ' + escapeHtml(s.title) + '</h2>' +
+      '<p>' + escapeHtml(s.from ? (s.from.code || s.from.name) : '') + ' → ' + escapeHtml(s.to ? (s.to.code || s.to.name) : '') + '</p>' +
       '<div class="now-time">Осталось: ' + fmtDiff(remaining) + '</div>' +
       '</div>';
 
@@ -141,7 +149,7 @@
         var label = a.level === "critical" ? "⚠️ Критично" :
                     a.level === "warning" ? "⚡ Внимание" :
                     a.level === "info" ? "ℹ️ Информация" : "✅";
-        html += '<div class="alert ' + cls + '"><strong>' + label + '</strong>' + a.text + '</div>';
+        html += '<div class="alert ' + cls + '"><strong>' + label + '</strong>' + escapeHtml(a.text) + '</div>';
       }
     }
 
@@ -151,10 +159,10 @@
         '<ul style="list-style:none;padding:0;margin:0 0 20px;">';
       for (var j = 0; j < s.actions.length; j++) {
         var act = s.actions[j];
-        html += '<li style="padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px;">' +
-          '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;">' +
-          '<input type="checkbox" style="width:18px;height:18px;accent-color:var(--jungle-700);">' +
-          '<span>' + act.text + '</span>' +
+        html += '<li class="now-action">' +
+          '<label>' +
+          '<input type="checkbox">' +
+          '<span>' + escapeHtml(act.text) + '</span>' +
           '</label></li>';
       }
       html += '</ul>';
@@ -163,7 +171,7 @@
     // Далее
     if (nextEvent) {
       html += '<div class="plan-b"><strong>🔜 Далее</strong>' +
-        nextEvent.seg.icon + ' ' + nextEvent.seg.title +
+        escapeHtml(nextEvent.seg.icon) + ' ' + escapeHtml(nextEvent.seg.title) +
         ' через ' + fmtDiff(nextEvent.diff) + '</div>';
     }
 
@@ -181,8 +189,8 @@
   function renderAtDestination(current) {
     var s = current.seg;
     return '<div class="now-banner">' +
-      '<h2>' + s.icon + ' ' + s.title + '</h2>' +
-      '<p>📍 ' + (s.place || "") + '</p>' +
+      '<h2>' + escapeHtml(s.icon) + ' ' + escapeHtml(s.title) + '</h2>' +
+      '<p>📍 ' + escapeHtml(s.place || "") + '</p>' +
       '<div class="now-time">Находитесь в этом месте</div>' +
       '</div>' +
       '<div class="quick-links">' +
@@ -227,8 +235,28 @@
       NOW_EL.innerHTML = renderInTransit(current, nextEvent, data);
     }
 
+    bindActionState(current.seg.id);
+
     // Обновление статуса сети
     updateOnlineStatus();
+  }
+
+  function bindActionState(segmentID) {
+    var boxes = NOW_EL.querySelectorAll(".now-action input[type=checkbox]");
+    if (!boxes.length) return;
+    var key = "cr:dashboard:actions:" + segmentID;
+    var saved = [];
+    try { saved = JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) {}
+    boxes.forEach(function (box, index) {
+      box.checked = saved.indexOf(index) !== -1;
+      box.addEventListener("change", function () {
+        var done = [];
+        boxes.forEach(function (item, itemIndex) {
+          if (item.checked) done.push(itemIndex);
+        });
+        try { localStorage.setItem(key, JSON.stringify(done)); } catch (e) {}
+      });
+    });
   }
 
   // --- Статус сети ---
@@ -236,12 +264,23 @@
     var status = document.getElementById("network-status");
     if (!status) return;
     var dot = status.querySelector(".status-dot");
+    var label = status.querySelector(".status-label");
+    if (!dot) {
+      dot = document.createElement("span");
+      dot.className = "status-dot";
+      status.prepend(dot);
+    }
+    if (!label) {
+      label = document.createElement("span");
+      label.className = "status-label";
+      status.appendChild(label);
+    }
     if (navigator.onLine) {
       dot.classList.remove("offline");
-      status.textContent = "Онлайн · данные актуальны";
+      label.textContent = "Онлайн · данные актуальны";
     } else {
       dot.classList.add("offline");
-      status.textContent = "Офлайн · работает кэш";
+      label.textContent = "Офлайн · работает кэш";
     }
   }
 

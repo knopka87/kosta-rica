@@ -24,7 +24,17 @@
       burger.setAttribute("aria-expanded", open ? "true" : "false");
     });
     nav.addEventListener("click", function (e) {
-      if (e.target.tagName === "A") nav.classList.remove("open");
+      if (e.target.tagName === "A") {
+        nav.classList.remove("open");
+        burger.setAttribute("aria-expanded", "false");
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && nav.classList.contains("open")) {
+        nav.classList.remove("open");
+        burger.setAttribute("aria-expanded", "false");
+        burger.focus();
+      }
     });
   }
 

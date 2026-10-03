@@ -77,21 +77,40 @@
     setTimeout(function () { map.invalidateSize(); }, 200);
   }
 
-  function init() {
-    var mounts = document.querySelectorAll("[data-map]");
-    if (!mounts.length) return;
+  function loadMaps(mounts, button) {
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Загружаю карту…";
+    }
     loadCSS(VENDOR_CSS)
       .then(function () { return loadScript(VENDOR[0]); })
       .then(function () { return loadScript(VENDOR[1]); })
       .then(function () {
         Array.prototype.forEach.call(mounts, setup);
+        if (button) button.remove();
       })
       .catch(function (err) {
         console.warn("карта недоступна:", err);
+        if (button) {
+          button.disabled = false;
+          button.textContent = "Повторить загрузку карты";
+        }
         Array.prototype.forEach.call(mounts, function (el) {
-          el.innerHTML = '<div class="map-fallback">Карта не загрузилась. Обнови страницу или проверь память устройства.</div>';
+          el.innerHTML = '<div class="map-fallback">Карта не загрузилась. Проверь сеть и свободную память устройства.</div>';
         });
       });
+  }
+
+  function init() {
+    var mounts = document.querySelectorAll("[data-map]");
+    if (!mounts.length) return;
+    var first = mounts[0];
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "map-load-button";
+    button.textContent = "Загрузить офлайн-карту · 40 МБ";
+    button.addEventListener("click", function () { loadMaps(mounts, button); });
+    first.parentNode.insertBefore(button, first);
   }
 
   if (document.readyState === "loading") {

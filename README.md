@@ -150,7 +150,7 @@ DOCS_PASSWORD=... go run ./tools/encryptdocs -in ../kosta-rica/documents -extra 
 
 - Алгоритм: **AES-256-GCM**, ключ — **PBKDF2-HMAC-SHA256, 210 000 итераций**, salt 16 байт на файл.
 - `docs/manifest.bin` — список файлов, сам зашифрован (имена билетов не светятся в открытом виде).
-- `docs/meta.json` — только проверочный хэш пароля («верный/неверный»), содержимого не даёт.
+- Пароль проверяется расшифровкой `docs/manifest.bin`; отдельного быстрого verifier нет.
 - PDF из `-in` шифруются как `doc-NN.bin`; файлы из `-extra` — как `<имя>.bin`
   (стабильные ссылки из HTML-заглушек, например `secret-marshrut.html.bin`).
 - Расшифровка — в браузере (`assets/js/docs.js`, WebCrypto): PDF открываются в новой вкладке,
