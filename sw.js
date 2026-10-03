@@ -1,7 +1,7 @@
 /* Генерируется build.py — не редактировать вручную.
-   Версия кэша (sha1 содержимого): 3f58d7035254 */
+   Версия кэша (sha1 содержимого): 739bbc5d912a */
 "use strict";
-var CACHE = "cr-3f58d7035254";
+var CACHE = "cr-739bbc5d912a";
 var ASSETS = [
   "budget.html",
   "credits.html",
@@ -42,6 +42,7 @@ var ASSETS = [
   "assets/img/tamarindo-beach.jpg",
   "assets/img/tamarindo-street.jpg",
   "assets/js/budget.js",
+  "assets/js/capacitor-adapter.js",
   "assets/js/dashboard.js",
   "assets/js/docs.js",
   "assets/js/editable-list.js",

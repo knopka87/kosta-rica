@@ -92,6 +92,16 @@
   </div>
 </footer>
 
+<!-- Lock overlay (биометрическая блокировка) -->
+<div id="lock-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);align-items:center;justify-content:center;">
+  <div style="background:var(--card);border-radius:var(--radius);padding:32px;max-width:360px;width:90%;text-align:center;box-shadow:var(--shadow-lg);">
+    <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+    <h2 style="margin:0 0 8px;font-size:20px;">Блокировка</h2>
+    <p style="margin:0 0 20px;color:var(--ink-mute);font-size:14px;">Документы защищены. Разблокируйте для доступа.</p>
+    <button onclick="CapacitorAdapters.biometric.unlock('Требуется разблокировка')" style="min-height:48px;padding:12px 24px;background:var(--jungle-700);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;width:100%;">Разблокировать</button>
+  </div>
+</div>
+
 <!-- Нижняя мобильная панель (Фаза 2) -->
 <nav class="bottom-nav" aria-label="Основная навигация">
   <div class="bottom-nav-inner">
@@ -126,6 +136,7 @@
 <script src="assets/js/dashboard.js"></script>
 <script src="assets/js/local-search.js"></script>
 <script src="assets/js/versioned-storage.js"></script>
+<script src="assets/js/capacitor-adapter.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

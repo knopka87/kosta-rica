@@ -2,9 +2,29 @@
   "appId": "com.knopka87.kostarica",
   "appName": "Коста-Рика 2026",
   "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0f766e",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    },
+    "Keyboard": {
+      "resize": "body",
+      "style": "dark"
+    },
+    "StatusBar": {
+      "style": "LIGHT",
+      "backgroundColor": "#0f766e"
+    }
+  },
   "android": {
     "allowMixedContent": false,
     "captureInput": true,
-    "webContentsDebuggingEnabled": false
+    "webContentsDebuggingEnabled": false,
+    "packageVersion": 1
+  },
+  "server": {
+    "androidScheme": "https"
   }
 }
