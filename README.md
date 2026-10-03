@@ -76,6 +76,19 @@ python3 -m http.server 8000
   Кнопка «Скачать календарь» — на главной и в «Маршруте»; файл прекэширован
   для офлайна.
 
+## Офлайн-карта
+
+- На странице «Отель» — интерактивная карта OpenStreetMap, которая работает
+  **полностью без интернета**: векторные тайлы (Protomaps-схема, z0–13,
+  Гуанакасте + центральная Коста-Рика + Панама) лежат одним файлом
+  `assets/map/central-america.pmtiles` (~41 МБ) и прекэшируются service worker'ом.
+- Стек: Leaflet 1.9.4 + protomaps-leaflet 5.1 (вендор в `assets/vendor/`),
+  лениво грузятся только на страницах с mount `[data-map]` (см. `assets/js/maps.js`).
+- SW отдаёт PMTiles-запросы с `Range` нарезкой из кэша (`pmtilesRange` в `sw.js`),
+  поэтому reader'у не нужна сеть.
+- Перегенерация тайлов: `protomaps/basemaps` (`tiles/`, Maven) +
+  `--osm-path=<geofabrik extract> --maxzoom=13 --bounds=<route bbox>`.
+
 ## Документы: шифрование
 
 PDF из `../kosta-rica/documents/` и секретные HTML-фрагменты шифруются в `docs/`.

@@ -494,12 +494,60 @@ self.addEventListener("activate", function (e) {{
   );
 }});
 
+// PMTiles читается через Range-запросы — нарезаем тело из кэша сами
+function pmtilesRange(req, url) {{
+  return caches.open(CACHE).then(function (c) {{
+    return c.match(url.pathname, {{ ignoreSearch: true }});
+  }}).then(function (hit) {{
+    if (!hit) return fetch(req);
+    return hit.arrayBuffer().then(function (buf) {{
+      var total = buf.byteLength;
+      var range = req.headers.get("range");
+      var m = range && /^bytes=(\\d+)-(\\d*)$/.exec(range);
+      if (!m) {{
+        return new Response(buf, {{
+          status: 200,
+          headers: {{
+            "Content-Type": "application/x-protobuf",
+            "Content-Length": String(total),
+            "Accept-Ranges": "bytes"
+          }}
+        }});
+      }}
+      var start = parseInt(m[1], 10);
+      var end = m[2] ? parseInt(m[2], 10) : total - 1;
+      if (end > total - 1) end = total - 1;
+      if (start > end || start > total - 1) {{
+        return new Response(null, {{
+          status: 416,
+          headers: {{"Content-Range": "bytes */" + total}}
+        }});
+      }}
+      var chunk = buf.slice(start, end + 1);
+      return new Response(chunk, {{
+        status: 206,
+        headers: {{
+          "Content-Type": "application/x-protobuf",
+          "Content-Range": "bytes " + start + "-" + end + "/" + total,
+          "Content-Length": String(chunk.byteLength),
+          "Accept-Ranges": "bytes"
+        }}
+      }});
+    }});
+  }});
+}}
+
 self.addEventListener("fetch", function (e) {{
   var req = e.request;
   if (req.method !== "GET") return;
   var url = new URL(req.url);
   // чужие домены (погода, статусы рейсов) — всегда напрямую в сеть
   if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.endsWith(".pmtiles")) {{
+    e.respondWith(pmtilesRange(req, url));
+    return;
+  }}
 
   e.respondWith(
     caches.open(CACHE).then(function (c) {{

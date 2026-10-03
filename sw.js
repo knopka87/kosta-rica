@@ -1,7 +1,7 @@
 /* Генерируется build.py — не редактировать вручную.
-   Версия кэша (sha1 содержимого): 468516f0b8ca */
+   Версия кэша (sha1 содержимого): a952a6cbc062 */
 "use strict";
-var CACHE = "cr-468516f0b8ca";
+var CACHE = "cr-a952a6cbc062";
 var ASSETS = [
   "credits.html",
   "dela.html",
@@ -29,7 +29,19 @@ var ASSETS = [
   "assets/js/docs.js",
   "assets/js/editable-list.js",
   "assets/js/main.js",
+  "assets/js/maps.js",
   "assets/js/weather.js",
+  "assets/map/central-america.pmtiles",
+  "assets/vendor/leaflet/images/layers-2x.png",
+  "assets/vendor/leaflet/images/layers.png",
+  "assets/vendor/leaflet/images/marker-icon-2x.png",
+  "assets/vendor/leaflet/images/marker-icon.png",
+  "assets/vendor/leaflet/images/marker-shadow.png",
+  "assets/vendor/leaflet/leaflet.css",
+  "assets/vendor/leaflet/leaflet.js",
+  "assets/vendor/leaflet/leaflet.js.map",
+  "assets/vendor/protomaps-leaflet.js",
+  "assets/vendor/protomaps-leaflet.js.map",
   "docs/doc-01.bin",
   "docs/doc-02.bin",
   "docs/doc-03.bin",
@@ -60,12 +72,60 @@ self.addEventListener("activate", function (e) {
   );
 });
 
+// PMTiles читается через Range-запросы — нарезаем тело из кэша сами
+function pmtilesRange(req, url) {
+  return caches.open(CACHE).then(function (c) {
+    return c.match(url.pathname, { ignoreSearch: true });
+  }).then(function (hit) {
+    if (!hit) return fetch(req);
+    return hit.arrayBuffer().then(function (buf) {
+      var total = buf.byteLength;
+      var range = req.headers.get("range");
+      var m = range && /^bytes=(\d+)-(\d*)$/.exec(range);
+      if (!m) {
+        return new Response(buf, {
+          status: 200,
+          headers: {
+            "Content-Type": "application/x-protobuf",
+            "Content-Length": String(total),
+            "Accept-Ranges": "bytes"
+          }
+        });
+      }
+      var start = parseInt(m[1], 10);
+      var end = m[2] ? parseInt(m[2], 10) : total - 1;
+      if (end > total - 1) end = total - 1;
+      if (start > end || start > total - 1) {
+        return new Response(null, {
+          status: 416,
+          headers: {"Content-Range": "bytes */" + total}
+        });
+      }
+      var chunk = buf.slice(start, end + 1);
+      return new Response(chunk, {
+        status: 206,
+        headers: {
+          "Content-Type": "application/x-protobuf",
+          "Content-Range": "bytes " + start + "-" + end + "/" + total,
+          "Content-Length": String(chunk.byteLength),
+          "Accept-Ranges": "bytes"
+        }
+      });
+    });
+  });
+}
+
 self.addEventListener("fetch", function (e) {
   var req = e.request;
   if (req.method !== "GET") return;
   var url = new URL(req.url);
   // чужие домены (погода, статусы рейсов) — всегда напрямую в сеть
   if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.endsWith(".pmtiles")) {
+    e.respondWith(pmtilesRange(req, url));
+    return;
+  }
 
   e.respondWith(
     caches.open(CACHE).then(function (c) {

@@ -1058,6 +1058,31 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
 .btn-ics:hover { background: var(--jungle-800); }
 .ics-hint { font-size: 13px; color: var(--ink-mute); }
 
+/* === Офлайн-карта (assets/js/maps.js) === */
+.map-box {
+  height: 420px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin: 12px 0 6px;
+  z-index: 0;
+}
+.map-box .leaflet-container {
+  font: inherit;
+  background: #e8f0ec;
+}
+.map-fallback {
+  padding: 24px 16px;
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  text-align: center;
+}
+.map-box .leaflet-control-attribution {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
 @media print {
   .topbar, .footer, .totop, .toc, .checklist-tools { display: none !important; }
   body { background: #fff; }
