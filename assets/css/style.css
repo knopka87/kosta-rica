@@ -1836,6 +1836,96 @@ a.card:hover { transform: translateY(-2px); border-color: var(--jungle-500); box
   letter-spacing: .04em;
 }
 
+/* --- Поиск (Фаза 4, D15) --- */
+.search-bar {
+  position: relative;
+  margin: 16px 0;
+}
+.search-bar input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  font-size: 15px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  transition: border-color .15s;
+  min-height: var(--touch-target);
+}
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--jungle-700);
+}
+.search-bar::before {
+  content: "🔍";
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  pointer-events: none;
+}
+.search-bar .search-hint {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin-top: 4px;
+}
+#search-results {
+  margin: 12px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.search-count {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.search-empty {
+  font-size: 14px;
+  color: var(--ink-mute);
+  padding: 20px;
+  text-align: center;
+}
+.search-result {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.search-result-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  margin: 6px 0;
+  text-decoration: none;
+  color: var(--ink-soft);
+  transition: border-color .15s, background .15s;
+  min-height: var(--touch-target);
+}
+.search-result-link:hover {
+  border-color: var(--jungle-500);
+  background: var(--sand-50);
+  color: var(--jungle-700);
+}
+.search-result-icon {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.search-result-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+}
+.search-result-preview {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-top: 2px;
+}
+
 /* --- Mobile-first (до 768px) --- */
 @media (max-width: 768px) {
   .bottom-nav {
